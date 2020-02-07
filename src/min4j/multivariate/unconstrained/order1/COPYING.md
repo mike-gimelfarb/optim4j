@@ -1,4 +1,4 @@
-The SQP (PSQP) algorithm was written by Ladislav Luksan in Fortran and made available on his webpage, and translated into Java. 
+The Conjugate Variable Metric (PLIC) algorithm was written by Ladislav Luksan in Fortran and made available on his webpage, and translated into Java. 
 It is licensed under the GNU Lesser General Public License (see LICENSE file) and contains the following copyright notice:
 
 >This library (with exception of the ACM algorithms) is a free software;
