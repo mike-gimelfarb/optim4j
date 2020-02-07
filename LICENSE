@@ -1,5 +1,6 @@
 The most general license that covers all code in this library is the GNU Lesser General Public license. 
-However, code written by me is listed under the MIT license.
+However, code written by me is listed under the MIT license. Each sub-package contains a COPYING.md file
+with more details regarding copyrights of files listed there.
 ==========================================================================
 ==========================================================================
 
