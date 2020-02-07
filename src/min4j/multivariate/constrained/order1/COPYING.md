@@ -1,4 +1,4 @@
-Algorith TOLMIN was originally written by M. J. D. Powell and translated from Fortran into Java. It is listed under the GNU Lesser General Public License (see LICENSE file).
+Algorithm TOLMIN was originally written by M. J. D. Powell and translated from Fortran into Java. It is listed under the GNU Lesser General Public License (see LICENSE file).
 
 The Shor Algorithm was borrowed from the SolvOpt program and translated from Fortran into Java. It contains the following copyright notice:
 
