@@ -143,6 +143,7 @@ The Differential Search algorithm was translated from MatLab and appears to be l
 The conjugate gradient and LBFGS-B routines were originally written by Jorge Nocedal, and translated into Java. Conjugate gradient is free for personal or commercial use (no license mentioned), while LBFGS-B is licensed under the "New BSD License" (aka "Modified BSD License" or "3-clause license"):
 
 >Copyright 2020 Jorge Nocedal
+>
 >Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions >are met:
 >
 >1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
