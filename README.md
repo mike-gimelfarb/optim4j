@@ -24,8 +24,7 @@ java.util.function.Function<double[], Double> rosenbrock = x -> {
 	return y;
 };
 
-// initial condition (here set to zeros)
-// note: here we set the dimension of the problem to 20
+// initial condition (here set to zeros) and set the problem dimension to 20
 double[] initial = new double[20];
 ```
 
