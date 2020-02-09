@@ -28,6 +28,10 @@ import utils.BlasMath;
 import utils.RealMath;
 
 /**
+ * A basic implementation of the classical CMA-ES algorithm. Suited for
+ * minimization of a (relatively smooth) non-linear function without
+ * constraints.
+ * 
  * 
  * REFERENCES:
  * 
@@ -358,6 +362,19 @@ public class CmaesAlgorithm extends AbstractCmaesOptimizer {
 	// ==========================================================================
 	// HELPER METHODS
 	// ==========================================================================
+	/**
+	 * This include code translated from the JAMA package. The code is released into
+	 * the public domain, but contains the following license information.
+	 * 
+	 * 
+	 * Copyright Notice
+	 * 
+	 * This software is a cooperative product of The MathWorks and the National
+	 * Institute of Standards and Technology (NIST) which has been released to the
+	 * public domain. Neither The MathWorks nor NIST assumes any responsibility
+	 * whatsoever for its use by other parties, and makes no guarantees, expressed
+	 * or implied, about its quality, reliability, or any other characteristic.
+	 */
 	protected static final void tred2(int n, final double[][] V, final double[] d, final double[] e) {
 
 		// This is derived from the Algol procedures tred2 by

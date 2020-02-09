@@ -32,8 +32,8 @@ import utils.BlasMath;
 import utils.RealMath;
 
 /**
- * A translation of the SolvOpt program for minimization of a non-linear
- * function subject to general constraints.
+ * A translation of the Shor algorithm from the SolvOpt program for minimization
+ * of a general differentiable function subject to general constraints.
  * 
  * 
  * REFERENCES:

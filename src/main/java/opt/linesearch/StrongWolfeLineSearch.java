@@ -27,8 +27,8 @@ import utils.BlasMath;
 import utils.Pair;
 
 /**
- * This is an independent implementation of the line search based on the Strong
- * Wolfe conditions, as outlined in Nocedal and Wright (2006).
+ * An independent implementation of the line search based on the Strong Wolfe
+ * conditions, as outlined in Nocedal and Wright (2006).
  * 
  * 
  * REFERENCES:

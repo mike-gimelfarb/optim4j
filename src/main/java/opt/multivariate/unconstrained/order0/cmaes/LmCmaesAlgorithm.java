@@ -27,6 +27,10 @@ import java.util.function.Function;
 import utils.BlasMath;
 
 /**
+ * A variant of the CMA-ES algorithm with limited memory and linear-time updates
+ * for large-scale minimization problems. Suited for minimization of a
+ * (relatively smooth) non-linear function without constraints.
+ * 
  * 
  * REFERENCES:
  * 

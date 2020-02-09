@@ -29,6 +29,9 @@ import opt.multivariate.unconstrained.order0.GradientFreeOptimizer;
 import utils.BlasMath;
 
 /**
+ * A translation of the controlled random search (CRS) algorithm for the
+ * minimization of a general non-linear function without constraints.
+ * 
  * 
  * REFERENCES:
  * 

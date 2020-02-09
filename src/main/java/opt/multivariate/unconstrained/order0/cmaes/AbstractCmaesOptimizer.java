@@ -30,7 +30,6 @@ import utils.BlasMath;
 /**
  * An abstract class to represent all covariance matrix adaptation strategy
  * based algorithm (CMA-ES).
- *
  */
 public abstract class AbstractCmaesOptimizer extends GradientFreeOptimizer {
 

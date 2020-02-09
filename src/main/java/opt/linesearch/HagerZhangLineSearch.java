@@ -28,10 +28,10 @@ import utils.BlasMath;
 import utils.Pair;
 
 /**
- * A translation of the code from the Julia package, implementing the
- * Hager-Zhang line search introduced in Hager and Zhang (2006). This should be
- * the preferred line search subroutine in general purpose optimization, along
- * with More-Thuente.
+ * A translation of the code from the Julia package, implementing the line
+ * search introduced in Hager and Zhang (2006). This should be the preferred
+ * line search subroutine in general purpose optimization, along with
+ * More-Thuente.
  * 
  * 
  * REFERENCES

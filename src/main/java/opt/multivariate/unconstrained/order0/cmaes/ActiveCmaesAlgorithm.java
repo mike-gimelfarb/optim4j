@@ -26,6 +26,10 @@ import java.util.function.Function;
 import utils.BlasMath;
 
 /**
+ * The active variant of the CMA-ES algorithm, which includes a negative update
+ * of the covariance matrix. Suited for minimization of a (relatively smooth)
+ * non-linear function without constraints.
+ * 
  * 
  * REFERENCES:
  * 

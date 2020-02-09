@@ -27,17 +27,17 @@ import utils.BlasMath;
 import utils.Pair;
 
 /**
- * An inexact line search method introduced in Fletcher (2013) and described in
+ * An inexact line search method introduced in Fletcher (1987) and described in
  * Antoniou et al. (2007).
  * 
  * 
  * REFERENCES
  * 
- * [1] Antoniou, Andreas, and Wu-Sheng Lu. Practical optimization: algorithms
- * and engineering applications. Springer Science & Business Media, 2007.
+ * [1] Practical Methods of Optimization (Roger Fletcher), John Wiley & Sons,
+ * 1987.
  * 
- * [2] Fletcher, Roger. Practical methods of optimization. John Wiley & Sons,
- * 2013.
+ * [2] Antoniou, Andreas, and Wu-Sheng Lu. Practical optimization: algorithms
+ * and engineering applications. Springer Science & Business Media, 2007.
  */
 public final class FletcherLineSearch extends LineSearch {
 

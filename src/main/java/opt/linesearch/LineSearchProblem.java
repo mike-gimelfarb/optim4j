@@ -28,8 +28,8 @@ import utils.BlasMath;
 /**
  * A class that represents a univariate function that is defined by evaluating a
  * multivariate function along a ray. In other words, given a vector x0 and a
- * vector v, and an arbitrary function f, this class represents a function g of
- * the form
+ * vector v, and an arbitrary differentiable function f, this class represents a
+ * function g of the form
  * 
  * g(a) = f(x0 + a*v)
  * 

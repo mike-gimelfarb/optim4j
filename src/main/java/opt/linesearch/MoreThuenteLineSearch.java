@@ -60,9 +60,9 @@ import utils.BlasMath;
 import utils.Pair;
 
 /**
- * This is a translation of the approximate line search routine by More and
- * Thuente (1994) from the MINPACK project. This should be the preferred line
- * search subroutine in general purpose optimization, along with Hager-Zhang.
+ * A translation of the approximate line search routine by More and Thuente
+ * (1994) from the MINPACK project. This should be the preferred line search
+ * subroutine in general purpose optimization, along with Hager-Zhang.
  * 
  * 
  * REFERENCES:

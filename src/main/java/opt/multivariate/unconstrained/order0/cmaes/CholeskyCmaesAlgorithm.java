@@ -26,6 +26,10 @@ import java.util.function.Function;
 import utils.BlasMath;
 
 /**
+ * A variant of the CMA-ES algorithm that updates the covariance matrix using
+ * Cholesky factors. Suited for minimization of a (relatively smooth) non-linear
+ * function without constraints.
+ * 
  * 
  * REFERENCES:
  * 

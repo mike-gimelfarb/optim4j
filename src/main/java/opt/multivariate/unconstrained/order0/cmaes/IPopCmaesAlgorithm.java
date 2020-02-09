@@ -28,6 +28,12 @@ import opt.multivariate.unconstrained.order0.GradientFreeOptimizer;
 import opt.multivariate.unconstrained.order0.cmaes.AbstractCmaesOptimizer.AbstractCmaesFactory;
 
 /**
+ * An object-oriented implementation of the adaptive increasing population
+ * CMA-ES algorithm and its variants (e.g. IPOP-CMA-ES, NIPOP-aCMA-ES, etc). The
+ * underlying CMA-ES implementation can be specified by the user. Suited for
+ * minimization of a (relatively smooth) non-linear function without
+ * constraints.
+ * 
  * 
  * REFERENCES:
  * 

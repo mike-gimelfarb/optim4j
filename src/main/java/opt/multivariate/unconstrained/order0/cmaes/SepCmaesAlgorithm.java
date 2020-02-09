@@ -27,6 +27,11 @@ import utils.BlasMath;
 import utils.Constants;
 
 /**
+ * A variant of the CMA-ES algorithm using a diagonal covariance matrix with
+ * linear time updates, for large-scale separable minimization problems. Suited
+ * for minimization of a (relatively smooth) non-linear separable function
+ * without constraints.
+ * 
  * 
  * REFERENCES:
  * 

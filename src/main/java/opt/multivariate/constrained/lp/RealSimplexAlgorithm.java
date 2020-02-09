@@ -32,8 +32,8 @@ import utils.RealMath;
 
 /**
  * A translation of the revised simplex algorithm for minimizing a linear
- * function subject to linear constraints by Alan Miller originally written by
- * Alfred Morris at the Naval Surface Warfare Center.
+ * function subject to linear constraints maintained by Alan Miller and
+ * originally written by Alfred Morris at the Naval Surface Warfare Center.
  * 
  * 
  * REFERENCES:

@@ -29,6 +29,21 @@ import utils.BlasMath;
 
 /**
  *
+ * REFERENCES:
+ * 
+ * [1] Rosenbrock, HoHo. "An automatic method for finding the greatest or least
+ * value of a function." The Computer Journal 3.3 (1960): 175-184.
+ * 
+ * [2] Swann, W. H. (1964). Report on the Development of a new Direct Search
+ * Method of Optimisation, Imperial Chemical Industries Ltd., Central Instrument
+ * Laboratory Research Note 64/3.
+ * 
+ * [3] Palmer, J. R. "An improved procedure for orthogonalising the search
+ * vectors in Rosenbrock's and Swann's direct search optimisation methods." The
+ * Computer Journal 12.1 (1969): 69-71.
+ * 
+ * [4] Box, M. J.; Davies, D.; Swann, W. H. (1969). Non-Linear optimisation
+ * Techniques. Oliver & Boyd.
  */
 public final class RosenbrockAlgorithm extends GradientFreeOptimizer {
 

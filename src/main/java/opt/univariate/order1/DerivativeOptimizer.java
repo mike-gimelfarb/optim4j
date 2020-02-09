@@ -64,6 +64,11 @@ public abstract class DerivativeOptimizer extends UnivariateOptimizer {
 		myEvals = myDEvals = 0;
 	}
 
+	@Override
+	public Double optimize(final Function<? super Double, Double> f, final Double guess) {
+		throw new IllegalArgumentException("f' not provided; no numerical diff. method exists yet!");
+	}
+
 	// ==========================================================================
 	// PUBLIC METHODS
 	// ==========================================================================
@@ -82,10 +87,6 @@ public abstract class DerivativeOptimizer extends UnivariateOptimizer {
 
 		// perform optimization using the bracketed routine
 		return optimize(f, df, a, b);
-	}
-
-	public Double optimize(final Function<? super Double, Double> f, final Double guess) {
-		throw new IllegalArgumentException("Not provided derivative of function.");
 	}
 
 	/**
