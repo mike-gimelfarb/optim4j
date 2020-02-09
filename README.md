@@ -13,16 +13,16 @@ This program is designed to work with Java functions or lambda expressions. Belo
 
   1. Define the optimization problem:
 
-  ```
+  ```java
     // function to optimize: here it is the standard Rosenbrock (aka banana) function
     // note: the dimension here is determined by the size of the input
-    java.util.function.Function<double[], Double> rosenbrock = x -> {
-      double y = 0.0;
-      for (int i = 0; i < x.length - 1; i++) {
-        y += 100 * Math.pow(x[i + 1] - x[i] * x[i], 2) + Math.pow(x[i] - 1, 2);
-      }
-      return y;
-    };
+		java.util.function.Function<double[], Double> rosenbrock = x -> {
+			double y = 0.0;
+			for (int i = 0; i < x.length - 1; i++) {
+				y += 100 * Math.pow(x[i + 1] - x[i] * x[i], 2) + Math.pow(x[i] - 1, 2);
+			}
+			return y;
+		};
 
     // initial condition (here set to zeros)
     // note: here we set the dimension of the problem to 20
@@ -31,7 +31,7 @@ This program is designed to work with Java functions or lambda expressions. Belo
 
 2. Define the optimization algorithm:
   
-  ```
+  ```java
     import opt.multivariate.unconstrained.order0.cmaes.BiPopCmaesAlgorithm;
     
     // use the (very recent) algorithm NBIPOP-aCMA-ES, which performs well on most functions
@@ -40,7 +40,7 @@ This program is designed to work with Java functions or lambda expressions. Belo
   
   3. Run the optimize method, and print out the solution:
   
-  ```
+  ```java
     double[] solution = optimizer.optimize(rosenbrock, initial);
     
     System.out.println("solution x = " + java.util.Arrays.toString(solution));
