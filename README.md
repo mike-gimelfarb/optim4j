@@ -1,6 +1,6 @@
 # min4j
 This is a self-contained library of subroutines for performing local and global optimization of non-linear functions (some state-of-the-art), written entirely in Java. It consists of:
-1. existing subroutines, often written originally in other programming languages (mostly Fortran and C/C++), that were translated to Java
+1. existing subroutines, often written originally in other programming languages (mostly Fortran and C/C++) and provided generously for the benefit of the public, that were translated to Java
 2. algorithms implemented from scratch based on existing literature.
 
 **This library is a work in progress (read: beta version). Detailed testing of current algorithms still remains to be done, and many additional features and algorithms will be added in the future.**
