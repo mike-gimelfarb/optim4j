@@ -8,5 +8,7 @@ This is a self-contained library of subroutines for performing local and global 
 ## Requirements
 This package only requires JRE >= 1.8. That's it!
 
+## Credits
+
 ## License
 The code, packaged as a single library, is licensed under the GNU Lesser General Public License (version 2 or later). However, some subroutines can be used independently under more flexible licenses (typically MIT or BSD license). The license type or license header are listed at the top of each code file.
