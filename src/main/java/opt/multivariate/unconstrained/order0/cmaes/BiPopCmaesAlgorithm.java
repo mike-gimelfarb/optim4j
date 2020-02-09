@@ -1,3 +1,24 @@
+/*
+Copyright (c) 2020 Mike Gimelfarb
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the > "Software"), to
+deal in the Software without restriction, including without limitation the
+rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+sell copies of the Software, and to permit persons to whom the Software is
+furnished to do so, > subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
 package opt.multivariate.unconstrained.order0.cmaes;
 
 import java.util.Arrays;
@@ -7,21 +28,22 @@ import opt.multivariate.unconstrained.order0.GradientFreeOptimizer;
 import opt.multivariate.unconstrained.order0.cmaes.AbstractCmaesOptimizer.AbstractCmaesFactory;
 
 /**
- * Hansen, Nikolaus. "Benchmarking a BI-population CMA-ES on the BBOB-2009
+ * 
+ * REFERENCES:
+ * 
+ * [1] Hansen, Nikolaus. "Benchmarking a BI-population CMA-ES on the BBOB-2009
  * function testbed." Proceedings of the 11th Annual Conference Companion on
  * Genetic and Evolutionary Computation Conference: Late Breaking Papers. ACM,
  * 2009.
  * 
- * Ilya Loshchilov, Marc Schoenauer, and Michèle Sebag. "Black-box Optimization
- * Benchmarking of NIPOP-aCMA-ES and NBIPOP-aCMA-ES on the BBOB-2012 Noiseless
- * Testbed." Genetic and Evolutionary Computation Conference (GECCO-2012), ACM
- * Press : 269-276. July 2012.
+ * [2] Ilya Loshchilov, Marc Schoenauer, and Michèle Sebag. "Black-box
+ * Optimization Benchmarking of NIPOP-aCMA-ES and NBIPOP-aCMA-ES on the
+ * BBOB-2012 Noiseless Testbed." Genetic and Evolutionary Computation Conference
+ * (GECCO-2012), ACM Press : 269-276. July 2012.
  * 
- * Loshchilov, Ilya, Marc Schoenauer, and Michele Sebag. "Alternative restart
- * strategies for CMA-ES." International Conference on Parallel Problem Solving
- * from Nature. Springer, Berlin, Heidelberg, 2012.
- * 
- * @author Michael
+ * [3] Loshchilov, Ilya, Marc Schoenauer, and Michele Sebag. "Alternative
+ * restart strategies for CMA-ES." International Conference on Parallel Problem
+ * Solving from Nature. Springer, Berlin, Heidelberg, 2012.
  */
 public final class BiPopCmaesAlgorithm extends GradientFreeOptimizer {
 

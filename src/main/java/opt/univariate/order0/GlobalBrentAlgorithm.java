@@ -1,3 +1,9 @@
+/**
+ * Original FORTRAN77 version by Richard Brent.
+ * FORTRAN90 version by John Burkardt.
+ * 
+ * This code is distributed under the GNU LGPL license. 
+ */
 package opt.univariate.order0;
 
 import java.util.function.Function;
@@ -5,8 +11,11 @@ import java.util.function.Function;
 import utils.Constants;
 
 /**
- *
- * @author Michael
+ * 
+ * REFERENCES:
+ * 
+ * [1] Brent, Richard P. Algorithms for minimization without derivatives.
+ * Courier Corporation, 2013.
  */
 public final class GlobalBrentAlgorithm extends DerivativeFreeOptimizer {
 

@@ -1,3 +1,10 @@
+/*
+Original FORTRAN77 version by R ONeill.
+FORTRAN90 version by John Burkardt.
+Java version by Mike Gimelfarb.
+
+This code is distributed under the GNU LGPL license.
+*/
 package opt.multivariate.unconstrained.order0.direct;
 
 import java.util.Arrays;
@@ -6,9 +13,25 @@ import java.util.function.Function;
 import opt.multivariate.unconstrained.order0.GradientFreeOptimizer;
 
 /**
- * Alan Miller
+ * A translation of the Nelder Mead algorithm by R. O'Neill (1979) for
+ * optimization of a general multivariate function without constraints. A
+ * modification suggested by Gao and Han (2012) to adapt the parameters of the
+ * simplex that was shown to work better in larger dimensions is also
+ * implemented.
  *
- * @author Michael
+ * 
+ * REFERENCES:
+ * 
+ * [1] Nelder, John A., and Roger Mead. "A simplex method for function
+ * minimization." The computer journal 7.4 (1965): 308-313.
+ * 
+ * [2] O'Neill, R. T. "Algorithm AS 47: function minimization using a simplex
+ * procedure." Journal of the Royal Statistical Society. Series C (Applied
+ * Statistics) 20.3 (1971): 338-345.
+ * 
+ * [3] Gao, Fuchang, and Lixing Han. "Implementing the Nelder-Mead simplex
+ * algorithm with adaptive parameters." Computational Optimization and
+ * Applications 51.1 (2012): 259-277.
  */
 public final class NelderMeadAlgorithm extends GradientFreeOptimizer {
 

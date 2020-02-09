@@ -1,3 +1,14 @@
+/*
+The original license type of this software is unknown. However, the author provides the
+following condition for use of this software.
+
+Condition for Use: This software is freely available for educational or commercial use, 
+but we expect that all publications describing work using this software quote at least 
+one of the references given below.
+
+[1] J. C. Gilbert and J. Nocedal. Global Convergence Properties of Conjugate Gradient 
+Methods for Optimization, (1992) SIAM J. on Optimization, 2, 1.
+*/
 package opt.multivariate.unconstrained.order1;
 
 import java.util.Arrays;
@@ -7,8 +18,16 @@ import utils.BlasMath;
 import utils.RealMath;
 
 /**
- *
- * @author Michael
+ * 
+ * An implementation of the conjugate gradient algorithm for the minimization of
+ * a general nonlinear differentiable function, translated from the CG+ software
+ * package by Gilbert and Nocedal (1992).
+ * 
+ * 
+ * REFERENCES:
+ * 
+ * [1] J. C. Gilbert and J. Nocedal. Global Convergence Properties of Conjugate
+ * Gradient Methods for Optimization, (1992) SIAM J. on Optimization, 2, 1.
  */
 public final class ConjugateGradientAlgorithm extends GradientOptimizer {
 

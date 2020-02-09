@@ -1,3 +1,23 @@
+/*
+UOBYQA---Unconstrained Optimization BY Quadratic Approximation.
+Copyright (C) 2000 M. J. D. Powell (University of Cambridge)
+
+This package is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This package is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Lesser General Public License
+ https://www.gnu.org/copyleft/lesser.html
+for more details.
+
+Michael J. D. Powell <mjdp@cam.ac.uk>
+University of Cambridge
+Cambridge, UK.
+ */
 package opt.multivariate.unconstrained.order0.quad;
 
 import java.util.Arrays;
@@ -9,7 +29,10 @@ import utils.RealMath;
 
 /**
  *
- * @author Michael
+ * REFERENCES:
+ * 
+ * [1] Powell, Michael JD. "UOBYQA: unconstrained optimization by quadratic
+ * approximation." Mathematical Programming 92.3 (2002): 555-582.
  */
 public final class UobyqaAlgorithm extends GradientFreeOptimizer {
 

@@ -1,3 +1,27 @@
+/**
+This code is a translation of public domain software.
+
+
+Copyright (c) 2020 Mike Gimelfarb
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the > "Software"), to
+deal in the Software without restriction, including without limitation the
+rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+sell copies of the Software, and to permit persons to whom the Software is
+furnished to do so, > subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+ */
 package opt.multivariate.constrained.lp;
 
 import java.util.Arrays;
@@ -11,9 +35,10 @@ import utils.RealMath;
  * function subject to linear constraints by Alan Miller originally written by
  * Alfred Morris at the Naval Surface Warfare Center.
  * 
- * [1] Code found at: https://jblevins.org/mirror/amiller/#nswc
  * 
- * @author Michael
+ * REFERENCES:
+ * 
+ * [1] Original code source: https://jblevins.org/mirror/amiller/#nswc
  */
 public final class RealSimplexAlgorithm extends Optimizer<double[], Double, RealLinearProgram> {
 

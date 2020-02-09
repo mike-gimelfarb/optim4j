@@ -1,8 +1,14 @@
+/**
+ * Code translated from the SLATEC library. It is therefore in the public domain.
+ * 
+ * [1] https://en.wikipedia.org/wiki/SLATEC
+ * 
+ * [2] http://www.netlib.org/slatec/index.html
+ */
 package utils;
 
 /**
- *
- * @author Michael
+ * 
  */
 public final class BlasMath {
 

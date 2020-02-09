@@ -1,3 +1,30 @@
+/*
+Please note, even though the main code for AMALGAM can be available under MIT 
+licensed, the dchdcm subroutine is a derivative of LINPACK code that is licensed
+under the 3-Clause BSD license. The other subroutines:
+
+
+Copyright (c) 2020 Mike Gimelfarb
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the > "Software"), to
+deal in the Software without restriction, including without limitation the
+rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+sell copies of the Software, and to permit persons to whom the Software is
+furnished to do so, > subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+
 package opt.multivariate.unconstrained.order0.evol;
 
 import java.util.Arrays;
@@ -7,13 +34,10 @@ import opt.multivariate.unconstrained.order0.GradientFreeOptimizer;
 import utils.BlasMath;
 
 /**
- * Bosman, Peter AN, J�rn Grahl, and Dirk Thierens. "AMaLGaM IDEAs in
+ * [1] Bosman, Peter AN, J�rn Grahl, and Dirk Thierens. "AMaLGaM IDEAs in
  * noiseless black-box optimization benchmarking." Proceedings of the 11th
  * Annual Conference Companion on Genetic and Evolutionary Computation
  * Conference: Late Breaking Papers. ACM, 2009.
- * 
- * @author Michael
- *
  */
 public final class AmalgamAlgorithm extends GradientFreeOptimizer {
 
@@ -553,6 +577,9 @@ public final class AmalgamAlgorithm extends GradientFreeOptimizer {
 		return ibest;
 	}
 
+	// adapted from the LINPACK package
+	// j.j. dongarra and g.w. stewart, argonne national laboratory and
+	// university of maryland.
 	private static void dchdcm(final double[][] a, final int lda, final int p, final double[] work, final int[] info) {
 
 		// internal variables

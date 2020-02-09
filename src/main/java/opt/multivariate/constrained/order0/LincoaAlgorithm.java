@@ -1,3 +1,23 @@
+/*
+LINCOA---a LINearly Constrained Optimization Algorithm.
+Copyright (C) 2013 M. J. D. Powell (University of Cambridge)
+
+This package is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This package is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Lesser General Public License
+ https://www.gnu.org/copyleft/lesser.html
+for more details.
+
+Michael J. D. Powell <mjdp@cam.ac.uk>
+University of Cambridge
+Cambridge, UK.
+*/
 package opt.multivariate.constrained.order0;
 
 import java.util.Arrays;
@@ -12,13 +32,13 @@ import utils.RealMath;
  * Powell.
  * 
  * 
+ * REFERENCES:
+ * 
  * [1] Code found at: https://zhangzk.net/software.html
  * 
  * [2] Powell, Michael JD. "On fast trust region methods for quadratic models
  * with linear constraints." Mathematical Programming Computation 7.3 (2015):
  * 237-267.
- * 
- * @author Michael
  */
 public final class LincoaAlgorithm {
 

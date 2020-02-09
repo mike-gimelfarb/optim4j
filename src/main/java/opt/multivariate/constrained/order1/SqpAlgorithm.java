@@ -1,3 +1,50 @@
+/*
+---------------------------------------------------------------------------
+Copyright:
+
+    Subroutines PMIN, PBUN, PNEW, PVAR, Copyright ACM, 2001, were published 
+    as Algorithm 811 in ACM Transactions on Mathematical Software, Vol.27,  
+    No.2, 2001. Subroutines PLIS, PLIP, PNET, PNED, PNEC, PSED, PSEC, PSEN,  
+    PGAD, PGAC, PMAX, PSUM, PEQN, PEQL, Copyright ACM, 2009, were published 
+    as Algorithm 896 in ACM Transactions on Mathematical Software, Vol.36, 
+    No.3, 2009. Here are the author's modifications of the above ACM 
+    algorithms. They are posted here by permission of ACM for your personal 
+    use, not for redistribution. The remaining subroutines, Copyright 
+    Ladislav Luksan, 2007, were supported by the Czech Academy of Sciences. 
+    Many of sparse matrix modules were prepared by Miroslav Tuma.
+
+License: 
+
+    This library (with exception of the ACM algorithms) is a free software;
+    you can redistribute it and/or modify it under the terms of the GNU 
+    Lesser General Public License as published by the Free Software 
+    Foundation; either version 2.1 of the License, or (at your option) 
+    any later version (see http://www.gnu.org/copyleft/gpl.html).
+
+    This library is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+    Lesser General Public License for more details.
+
+    Permission is hereby granted to use or copy this program under the
+    terms of the GNU LGPL, provided that the Copyright, this License,
+    and the Availability of the original version is retained on all copies.
+    User documentation of any code that uses this code or any modified
+    version of this code must cite the Copyright, this License, the
+    Availability note, and "Used by permission." Permission to modify
+    the code and to distribute modified code is granted, provided the
+    Copyright, this License, and the Availability note are retained,
+    and a notice that the code was modified is included.
+
+Availability:
+
+    http://www.cs.cas.cz/~luksan/subroutines.html
+
+Acknowledgements:
+
+    This work was supported by the Grant Agency of the Czech Academy of 
+    Sciences, under grant IAA1030405.
+*/
 package opt.multivariate.constrained.order1;
 
 import java.util.Arrays;
@@ -13,9 +60,9 @@ import utils.RealMath;
  * non-linear differentiable function subject to general constraints.
  * 
  * 
- * [1] Code found at: http://www.cs.cas.cz/~luksan/subroutines.html
+ * REFERENCES:
  * 
- * @author Michael
+ * [1] Original code found at: http://www.cs.cas.cz/~luksan/subroutines.html
  */
 public final class SqpAlgorithm extends GradientOptimizer {
 

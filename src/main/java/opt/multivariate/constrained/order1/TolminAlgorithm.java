@@ -1,3 +1,23 @@
+/*
+TOLMIN---a TOlerant Linearly-constrained MINimization algorithm.
+Copyright (C) 1990 M. J. D. Powell (University of Cambridge)
+
+This package is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This package is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Lesser General Public License
+ https://www.gnu.org/copyleft/lesser.html
+for more details.
+
+Michael J. D. Powell <mjdp@cam.ac.uk>
+University of Cambridge
+Cambridge, UK.
+*/
 package opt.multivariate.constrained.order1;
 
 import java.util.Arrays;
@@ -13,12 +33,12 @@ import utils.RealMath;
  * J. D. Powell.
  * 
  * 
+ * REFERENCES:
+ * 
  * [1] Code found at: https://zhangzk.net/software.html
  * 
  * [2] Powell, M. J. D. "A tolerant algorithm for linearly constrained
  * optimization calculations." Mathematical Programming 45.1-3 (1989): 547-566.
- * 
- * @author Michael
  */
 public final class TolminAlgorithm {
 

@@ -1,3 +1,25 @@
+/* 
+Copyright (c) 2008-2013 Carlos Henrique da Silva Santos
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+ 
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+ 
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. 
+*/
 package opt.multivariate.unconstrained.order0.evol;
 
 import java.util.Arrays;
@@ -7,7 +29,13 @@ import java.util.function.Function;
 import opt.multivariate.unconstrained.order0.GradientFreeOptimizer;
 import utils.Constants;
 
-// from the NLOpt library
+/**
+ * 
+ * REFERENCES:
+ * 
+ * [1] Steven G. Johnson, The NLopt nonlinear-optimization package,
+ * http://github.com/stevengj/nlopt
+ */
 public final class EschAlgorithm extends GradientFreeOptimizer {
 
 	// ==========================================================================

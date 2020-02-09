@@ -1,3 +1,16 @@
+/*
+ * The original code does not have any licensing information, but based on online
+ * sources, it is likely in the public domain.
+ * 
+ * Copyright for the original TNBC Fortran routines:
+ * TRUNCATED-NEWTON METHOD:  SUBROUTINES
+ * WRITTEN BY:  STEPHEN G. NASH
+ * SCHOOL OF INFORMATION TECHNOLOGY & ENGINEERING
+ * EORGE MASON UNIVERSITY
+ * FAIRFAX, VA 22030
+ * 
+ * [1] https://fossies.org/linux/scipy/scipy/optimize/tnc/README
+ */
 package opt.multivariate.unconstrained.order1;
 
 import java.util.Arrays;
@@ -7,8 +20,18 @@ import utils.BlasMath;
 import utils.Constants;
 
 /**
- *
- * @author Michael
+ * An implementation of the truncated Newton optimization of a general
+ * non-linear differentiable function without. The original code was written by
+ * Stephen Nash and translated to Java.
+ * 
+ * 
+ * REFERENCES:
+ * 
+ * [1] Nash, Stephen G. "A survey of truncated-Newton methods." Journal of
+ * computational and applied mathematics 124.1-2 (2000): 45-59.
+ * 
+ * [2] Nash, Stephen G. "Preconditioning of truncated-Newton methods." SIAM
+ * Journal on Scientific and Statistical Computing 6.3 (1985): 599-616.
  */
 public final class TruncatedNewtonAlgorithm extends GradientOptimizer {
 

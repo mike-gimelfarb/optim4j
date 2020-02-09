@@ -1,3 +1,23 @@
+/*
+COBYLA---Constrained Optimization BY Linear Approximation.
+Copyright (C) 1992 M. J. D. Powell (University of Cambridge)
+
+This package is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This package is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Lesser General Public License
+ https://www.gnu.org/copyleft/lesser.html
+for more details.
+
+Michael J. D. Powell <mjdp@cam.ac.uk>
+University of Cambridge
+Cambridge, UK.
+*/
 package opt.multivariate.constrained.order0;
 
 import java.util.Arrays;
@@ -10,6 +30,9 @@ import utils.BlasMath;
  * function subject to non-linear inequality constraints. Originally written by
  * M. J. D. Powell.
  *
+ *
+ * REFERENCES:
+ * 
  * [1] Fortran Code is from https://zhangzk.net/software.html
  * 
  * [2] M. J. D. Powell, "A direct search optimization method that models the
@@ -22,8 +45,6 @@ import utils.BlasMath;
  * of Cambridge, Department of Applied Mathematics and Theoretical Physics,
  * Numerical Analysis Group, Report NA1998/04 from
  * http://www.damtp.cam.ac.uk/user/na/reports.html
- * 
- * @author Michael
  */
 public final class CobylaAlgorithm {
 

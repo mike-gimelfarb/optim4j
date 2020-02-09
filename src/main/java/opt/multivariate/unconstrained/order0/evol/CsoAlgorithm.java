@@ -1,3 +1,24 @@
+/*
+Copyright (c) 2020 Mike Gimelfarb
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the > "Software"), to
+deal in the Software without restriction, including without limitation the
+rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+sell copies of the Software, and to permit persons to whom the Software is
+furnished to do so, > subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
 package opt.multivariate.unconstrained.order0.evol;
 
 import java.util.Arrays;
@@ -7,13 +28,19 @@ import opt.multivariate.unconstrained.order0.GradientFreeOptimizer;
 import utils.BlasMath;
 
 /**
- * Implemented according to "A Competitive Swarm Optimizer for Large Scale
- * Optimization" by Cheng and Jin, 2015
- *
- * Uses an optional local ring topology (e.g. see "Population Structure and
- * Particle Swarm Performance" by Kennedy and Mendes)
- *
- * @author Michael
+ * A particle swarm optimization algorithm with competition, using an optional
+ * local ring topology.
+ * 
+ * 
+ * REFERENCES:
+ * 
+ * [1] Cheng, Ran & Jin, Yaochu. (2014). A Competitive Swarm Optimizer for Large
+ * Scale Optimization. IEEE transactions on cybernetics. 45.
+ * 10.1109/TCYB.2014.2322602.
+ * 
+ * [2] Kennedy, James & Mendes, Rui. (2002). Population structure and particle
+ * swarm performance. Proc IEEE Congr Evol Comput. 2. 1671 - 1676.
+ * 10.1109/CEC.2002.1004493.
  */
 public final class CsoAlgorithm extends GradientFreeOptimizer {
 
