@@ -6,7 +6,7 @@ This is a self-contained library of subroutines for performing local and global 
 **This library is a work in progress (read: beta version). Detailed testing of current algorithms still remains to be done, and many additional features and algorithms will be added in the future.**
 
 ## Requirements and Installation
-This package only requires JRE >= 1.8. That's it!
+This package only requires JRE >= 1.8. No dependencies!
 
 ## Usage
 This program is designed to work with Java functions or lambda expressions. Below is a worked example.
