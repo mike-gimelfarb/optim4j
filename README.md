@@ -11,25 +11,25 @@ This package only requires JRE >= 1.8. That's it!
 ## Usage
 This program is designed to work with Java functions or lambda expressions. Below is a worked example.
 
-  1. Define the optimization problem:
+1. Define the optimization problem:
 
-  '''
-    // function to optimize: here it is the standard Rosenbrock (aka banana) function
-    // note: the dimension here is determined by the size of the input
-    java.util.function.Function<double[], Double> rosenbrock = x -> {
-      double y = 0.0;
-      for (int i = 0; i < x.length - 1; i++) {
-        y += 100 * Math.pow(x[i + 1] - x[i] * x[i], 2) + Math.pow(x[i] - 1, 2);
-      }
-      return y;
-    };
+'''
+// function to optimize: here it is the standard Rosenbrock (aka banana) function
+// note: the dimension here is determined by the size of the input
+java.util.function.Function<double[], Double> rosenbrock = x -> {
+  double y = 0.0;
+  for (int i = 0; i < x.length - 1; i++) {
+    y += 100 * Math.pow(x[i + 1] - x[i] * x[i], 2) + Math.pow(x[i] - 1, 2);
+  }
+  return y;
+};
 
-    // initial condition (here set to zeros)
-    // note: here we set the dimension of the problem to 20
-    double[] initial = new double[20];
-  '''
+// initial condition (here set to zeros)
+// note: here we set the dimension of the problem to 20
+double[] initial = new double[20];
+'''
 
-  2. Define the optimization algorithm:
+2. Define the optimization algorithm:
   
   '''
     import opt.multivariate.unconstrained.order0.cmaes.BiPopCmaesAlgorithm;
