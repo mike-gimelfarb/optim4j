@@ -21,7 +21,7 @@ The current version supports the optimization algorithms list below. Please note
 	- Strong Wolfe Conditions
 2. univariate problems:
 	- derivative-free methods:
-		- Brent (local version)
+		- Brent (two local versions)
 		- Brent (global version)
 		- Calvin
 		- Davies-Swann-Campey
@@ -32,7 +32,7 @@ The current version supports the optimization algorithms list below. Please note
 	- first-order methods:
 		- Cubic Interpolation
 		- Modified Secant
-3. multivariate:
+3. multivariate problems:
 	- unconstrained and box-constrained problems:
 		- derivative-free methods:
 			- quadratic approximation methods:
@@ -53,11 +53,11 @@ The current version supports the optimization algorithms list below. Please note
 				- Nelder-Mead Simplex
 				- Praxis
 				- Rosenbrock
-			- other evolutionary and swarm-based methods:
+			- evolutionary and swarm-based methods:
 				- Adaptive PSO
 				- Cooperatively Co-Evolving PSO
 				- Competitive Swarm Optimization (CSO)
-				- AMALGAM
+				- AMaLGaM IDEA
 				- Differential Search
 				- ESCH
 				- PIKAIA
@@ -78,7 +78,7 @@ The current version supports the optimization algorithms list below. Please note
 			- Shor (SOLVOPT)
 			- SQP Variable Metric (PSQP)
 			- TOLMIN
-	- problems with specific structure:
+	- other problems with specific structure:
 		- linear programming problems:
 			- Revised Simplex
 		- least-squares problems:
