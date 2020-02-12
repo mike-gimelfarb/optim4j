@@ -3,7 +3,7 @@ This is a self-contained library of subroutines for performing local and global 
 1. existing subroutines, often written originally in other programming languages (mostly Fortran and C/C++) and provided generously for the benefit of the public, that were translated to Java
 2. algorithms implemented from scratch based on existing literature.
 
-**This library is a work in progress (read: beta version). Some algorithms, including those translated from code packages written by other authors, may not yet work as intended. Detailed testing of current algorithms still remains to be done, and many additional features and algorithms will be added in the future.**
+**This library is a work in progress (read: beta version). There can still be errors in translation (e.g. from other packages) or errors in code written for this package. Detailed testing of current algorithms still remains to be done, and many additional features and algorithms will be added in the future.**
 
 ## Requirements and Installation
 This package only requires JRE >= 1.8. No dependencies!
