@@ -1,4 +1,4 @@
-# min4j
+# optim4j
 This is a self-contained library of subroutines for performing local and global minimization of non-linear functions (some state-of-the-art), written entirely in Java. It consists of:
 1. existing subroutines, often written originally in other programming languages (mostly Fortran and C/C++) and provided generously for the benefit of the public, that were translated to Java
 2. algorithms implemented from scratch based on existing literature.
