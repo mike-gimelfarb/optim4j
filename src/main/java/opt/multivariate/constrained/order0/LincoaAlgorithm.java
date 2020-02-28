@@ -23,6 +23,7 @@ package opt.multivariate.constrained.order0;
 import java.util.Arrays;
 import java.util.function.Function;
 
+import opt.OptimizerSolution;
 import utils.BlasMath;
 import utils.RealMath;
 
@@ -42,16 +43,10 @@ import utils.RealMath;
  */
 public final class LincoaAlgorithm {
 
-	// ==========================================================================
-	// FIELDS
-	// ==========================================================================
 	private final Function<Integer, Integer> mySize;
 	private final double myTol, myRho0;
 	private final int myMaxEvals;
 
-	// ==========================================================================
-	// CONSTRUCTORS
-	// ==========================================================================
 	/**
 	 *
 	 * @param tolerance
@@ -77,9 +72,6 @@ public final class LincoaAlgorithm {
 		this(tolerance, initialRadius, maxEvals, d -> 2 * d + 1);
 	}
 
-	// ==========================================================================
-	// PUBLIC METHODS
-	// ==========================================================================
 	/**
 	 *
 	 * @param func
@@ -88,21 +80,19 @@ public final class LincoaAlgorithm {
 	 * @param guess
 	 * @return
 	 */
-	public final double[] optimize(final Function<? super double[], Double> func, final double[][] a, final double[] b,
-			final double[] guess) {
+	public final OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> func,
+			final double[][] a, final double[] b, final double[] guess) {
 
 		final int n = guess.length;
 		final double[] x = Arrays.copyOf(guess, n);
 		final int m = b.length;
 		final int[] fev = new int[1];
 
+		// TODO: check convergence
 		lincoa(func, n, mySize.apply(n), m, a, n, b, x, myRho0, myTol, 0, myMaxEvals, fev);
-		return x;
+		return new OptimizerSolution<>(x, fev[0], 0, false);
 	}
 
-	// ==========================================================================
-	// HELPER METHODS
-	// ==========================================================================
 	private static void lincoa(final Function<? super double[], Double> func, final int n, final int npt, final int m,
 			final double[][] a, final int ia, final double[] b, final double[] x, final double rhobeg,
 			final double rhoend, final int iprint, final int maxfun, final int[] fev) {

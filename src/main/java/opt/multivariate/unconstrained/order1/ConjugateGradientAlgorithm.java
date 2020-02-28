@@ -14,8 +14,9 @@ package opt.multivariate.unconstrained.order1;
 import java.util.Arrays;
 import java.util.function.Function;
 
+import opt.OptimizerSolution;
+import opt.multivariate.GradientOptimizer;
 import utils.BlasMath;
-import utils.RealMath;
 
 /**
  * 
@@ -31,34 +32,23 @@ import utils.RealMath;
  */
 public final class ConjugateGradientAlgorithm extends GradientOptimizer {
 
-	// ==========================================================================
-	// FIELDS
-	// ==========================================================================
 	private final int myMaxEvals, myMethod;
 
 	// saved variables for the line search routine
 	final double[] stx = new double[1], sty = new double[1], fx = new double[1], fy = new double[1],
 			dgx = new double[1], dgy = new double[1], fxm = new double[1], fym = new double[1], dgxm = new double[1],
 			dgym = new double[1];
-
 	final int[] infoc = new int[1];
-
 	final boolean[] stage1 = new boolean[1], brackt = new boolean[1];
-
 	double dg, dgm, dgtest, finit, ftest1, fm, stmin, stmax, width, width1;
 
 	// saved variables for the main subroutine
 	final double[] dgout = new double[1], stp = new double[1], dgfam = new double[1];
-
 	final int[] info = new int[1], nfev = new int[1];
-
 	double gtol, gnorm, stp1, ftol, xtol, stpmin, stpmax, beta, betafr, betapr, dg0, gg, gg0, dgold, dg1;
 	int mp, lp, iter, nfun, maxfev, nrst, ides, ndes;
 	boolean isnew, finish;
 
-	// ==========================================================================
-	// CONSTRUCTORS
-	// ==========================================================================
 	/**
 	 *
 	 * @param tolerance
@@ -80,29 +70,23 @@ public final class ConjugateGradientAlgorithm extends GradientOptimizer {
 		this(tolerance, maxEvaluations, 3);
 	}
 
-	// ==========================================================================
-	// IMPLEMENTATIONS
-	// ==========================================================================
 	@Override
-	public final double[] optimize(final Function<? super double[], Double> f,
+	public final OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> f,
 			final Function<? super double[], double[]> df, final double[] guess) {
 
 		// prepare variables
 		final int[] evals = new int[1];
+		final boolean[] converged = new boolean[1];
 
 		// call main subroutine
-		final double[] result = main(f, df, guess, myTol, evals);
-		myEvals += evals[0];
-		myGEvals += evals[0];
-		return result;
+		// TODO: check convergence
+		final double[] result = main(f, df, guess, myTol, evals, converged);
+		return new OptimizerSolution<>(result, evals[0], evals[0], converged[0]);
 	}
 
-	// ==========================================================================
-	// HELPER METHODS
-	// ==========================================================================
 	private double[] main(final Function<? super double[], Double> func,
-			final Function<? super double[], double[]> dfunc, final double[] guess, final double eps,
-			final int[] evals) {
+			final Function<? super double[], double[]> dfunc, final double[] guess, final double eps, final int[] evals,
+			final boolean[] converged) {
 		final int n = guess.length;
 		final double[] x = Arrays.copyOf(guess, n);
 		double[] g = new double[n];
@@ -114,7 +98,6 @@ public final class ConjugateGradientAlgorithm extends GradientOptimizer {
 		final boolean[] finmain = { false };
 		boolean do20 = true;
 
-		evals[0] = 0;
 		while (true) {
 			if (do20) {
 
@@ -129,9 +112,10 @@ public final class ConjugateGradientAlgorithm extends GradientOptimizer {
 
 			// check the flag
 			if (iflag[0] <= 0) {
-				return iflag[0] < 0 ? null : x;
+				converged[0] = iflag[0] >= 0;
+				return x;
 			} else if (evals[0] >= myMaxEvals) {
-				return null;
+				return x;
 			} else if (iflag[0] == 1) {
 				do20 = true;
 			} else {
@@ -470,7 +454,7 @@ public final class ConjugateGradientAlgorithm extends GradientOptimizer {
 			info[0] = 1;
 			bound = 1;
 			final double theta = 3.0 * (fx[0] - fp) / (stp[0] - stx[0]) + dx[0] + dp;
-			final double s = RealMath.maxAbs(theta, dx[0], dp);
+			final double s = Math.max(Math.abs(theta), Math.max(Math.abs(dx[0]), Math.abs(dp)));
 			double gamma = s * Math.sqrt((theta / s) * (theta / s) - (dx[0] / s) * (dp / s));
 			if (stp[0] < stx[0]) {
 				gamma = -gamma;
@@ -491,7 +475,7 @@ public final class ConjugateGradientAlgorithm extends GradientOptimizer {
 			info[0] = 2;
 			bound = 0;
 			final double theta = 3.0 * (fx[0] - fp) / (stp[0] - stx[0]) + dx[0] + dp;
-			final double s = RealMath.maxAbs(theta, dx[0], dp);
+			final double s = Math.max(Math.abs(theta), Math.max(Math.abs(dx[0]), Math.abs(dp)));
 			double gamma = s * Math.sqrt((theta / s) * (theta / s) - (dx[0] / s) * (dp / s));
 			if (stp[0] > stx[0]) {
 				gamma = -gamma;
@@ -511,7 +495,7 @@ public final class ConjugateGradientAlgorithm extends GradientOptimizer {
 			info[0] = 3;
 			bound = 1;
 			final double theta = 3.0 * (fx[0] - fp) / (stp[0] - stx[0]) + dx[0] + dp;
-			final double s = RealMath.maxAbs(theta, dx[0], dp);
+			final double s = Math.max(Math.abs(theta), Math.max(Math.abs(dx[0]), Math.abs(dp)));
 			double gamma = (theta / s) * (theta / s) - (dx[0] / s) * (dp / s);
 			gamma = s * Math.sqrt(Math.max(0.0, gamma));
 			if (stp[0] > stx[0]) {
@@ -545,7 +529,7 @@ public final class ConjugateGradientAlgorithm extends GradientOptimizer {
 			bound = 0;
 			if (brackt[0] == true) {
 				final double theta = 3.0 * (fp - fy[0]) / (sty[0] - stp[0]) + dy[0] + dp;
-				final double s = RealMath.maxAbs(theta, dy[0], dp);
+				final double s = Math.max(Math.abs(theta), Math.max(Math.abs(dy[0]), Math.abs(dp)));
 				double gamma = s * Math.sqrt((theta / s) * (theta / s) - (dy[0] / s) * (dp / s));
 				if (stp[0] > sty[0]) {
 					gamma = -gamma;

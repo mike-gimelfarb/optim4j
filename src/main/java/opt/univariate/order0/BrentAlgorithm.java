@@ -8,7 +8,9 @@ package opt.univariate.order0;
 
 import java.util.function.Function;
 
-import utils.Constants;
+import opt.OptimizerSolution;
+import opt.univariate.DerivativeFreeOptimizer;
+import utils.RealMath;
 
 /**
  * 
@@ -16,115 +18,84 @@ import utils.Constants;
  * 
  * [1] Brent, Richard P. Algorithms for minimization without derivatives.
  * Courier Corporation, 2013.
+ * 
+ * [2] Kahaner, David, Cleve Moler, and Stephen Nash. "Numerical methods and
+ * software." Englewood Cliffs: Prentice Hall, 1989 (1989).
  */
 public final class BrentAlgorithm extends DerivativeFreeOptimizer {
 
-	// ==========================================================================
-	// CONSTRUCTORS
-	// ==========================================================================
+	private double c, d, e, fu, fv, fw, fx, midpoint, p, q, r, tol1, tol2, u, v, w, x;
+
 	/**
 	 *
-	 * @param absoluteTolerance
-	 * @param relativeTolerance
+	 * @param absTolerance
+	 * @param relTolerance
 	 * @param maxEvaluations
 	 */
-	public BrentAlgorithm(final double absoluteTolerance, final double relativeTolerance, final int maxEvaluations) {
-		super(absoluteTolerance, relativeTolerance, maxEvaluations);
+	public BrentAlgorithm(final double absTolerance, final double relTolerance, final int maxEvaluations) {
+		super(absTolerance, relTolerance, maxEvaluations);
 	}
 
-	// ==========================================================================
-	// IMPLEMENTATIONS
-	// ==========================================================================
 	@Override
-	public final double optimize(final Function<? super Double, Double> f, final double a, final double b) {
+	public final OptimizerSolution<Double, Double> optimize(final Function<? super Double, Double> f, final double a,
+			final double b) {
 
 		// prepare variables
-		final int[] fev = new int[1];
+		final int[] status = new int[1];
+		final double[] aarr = { a };
+		final double[] barr = { b };
+		final double[] arg = { 0.5 * (a + b) };
+		double value = f.apply(arg[0]);
+		int evals = 1;
+		boolean converged = false;
 
-		// call main subroutine
-		final double result = lbrent(f, a, b, myRelTol, myTol, myMaxEvals, fev);
-		myEvals = fev[0];
-		return result;
+		// main loop
+		while (true) {
+			localmin(aarr, barr, arg, status, value, myRelTol, myTol);
+			if (status[0] == 0) {
+				converged = true;
+				break;
+			} else if (evals >= myMaxEvals) {
+				break;
+			} else {
+				value = f.apply(arg[0]);
+				++evals;
+			}
+		}
+		return new OptimizerSolution<>(arg[0], evals, 0, converged);
 	}
 
-	// ==========================================================================
-	// HELPER METHODS
-	// ==========================================================================
-	private static double lbrent(final Function<? super Double, Double> f, double a, double b, final double rtol,
-			final double atol, final int maxfev, final int[] fev) {
+	private void localmin(final double[] a, final double[] b, final double[] arg, final int[] status,
+			final double value, final double eps, final double tol) {
 
-		// INITIALIZE CONSTANTS
-		final double c = (1.0 / Constants.GOLDEN) / Constants.GOLDEN;
+		if (status[0] == 0) {
 
-		// INITIALIZE ITERATION VARIABLES
-		double d = 0.0, e = 0.0, m = 0.0, p = 0.0, q = 0.0, r = 0.0, t2 = 0.0, tol = 0.0, x = a + c * (b - a), w = x,
-				v = w, u, fx = f.apply(x), fw = fx, fv = fw;
-		fev[0] = 1;
-		boolean goto10 = true;
-
-		while (true) {
-
-			if (goto10) {
-
-				// CHECK CONVERGENCE
-				m = 0.5 * (a + b);
-				tol = rtol * Math.abs(x) + atol;
-				t2 = 2.0 * tol;
-				if (Math.abs(x - m) <= t2 - 0.5 * (b - a)) {
-					return x;
-				}
-
-				// parabolic interpolation
-				r = 0.0;
-				q = r;
-				p = q;
-				if (Math.abs(e) > tol) {
-					r = (x - w) * (fx - fv);
-					q = (x - v) * (fx - fw);
-					p = (x - v) * q - (x - w) * r;
-					q = 2.0 * (q - r);
-					if (q <= 0.0) {
-						q = -q;
-					} else {
-						p = -p;
-					}
-					r = e;
-					e = d;
-				}
+			// STATUS (INPUT) = 0, startup.
+			if (b[0] <= a[0]) {
+				status[0] = -1;
+				return;
 			}
+			c = 0.5 * (3.0 - Math.sqrt(5));
+			v = a[0] + c * (b[0] - a[0]);
+			w = x = v;
+			e = 0.0;
+			status[0] = 1;
+			arg[0] = x;
+			return;
+		} else if (status[0] == 1) {
 
-			// continue with parabolic interpolation
-			if (Math.abs(p) < 1e-25 || Math.abs(p) >= Math.abs(0.5 * q * r) || p <= q * (a - x) || p >= q * (b - x)) {
-				e = x >= m ? a - x : b - x;
-				d = c * e;
-			} else {
-				d = p / q;
-				u = x + d;
+			// STATUS (INPUT) = 1, return with initial function value of FX.
+			fx = value;
+			fv = fw = fx;
+		} else if (2 <= status[0]) {
 
-				// try golden section search
-				if ((u - a) < t2 || (b - u) < t2) {
-					d = (x >= m) ? -tol : tol;
-				}
-			}
-			if (Math.abs(d) < tol) {
-				u = x + (d <= 0.0 ? -tol : tol);
-			} else {
-				u = x + d;
-			}
-
-			// added a stop if budget is reached
-			if (fev[0] >= maxfev) {
-				return Double.NaN;
-			}
-
-			// update interval
-			final double fu = f.apply(u);
-			++fev[0];
+			// STATUS (INPUT) = 2 or more, update the data.
+			fu = value;
 			if (fu <= fx) {
-				if (u >= x) {
-					a = x;
+				if (x <= u) {
+					a[0] = x;
 				} else {
-					b = x;
+					b[0] = x;
 				}
 				v = w;
 				fv = fw;
@@ -132,30 +103,89 @@ public final class BrentAlgorithm extends DerivativeFreeOptimizer {
 				fw = fx;
 				x = u;
 				fx = fu;
-				goto10 = true;
 			} else {
-				if (u >= x) {
-					b = u;
+				if (u < x) {
+					a[0] = u;
 				} else {
-					a = u;
+					b[0] = u;
 				}
 				if (fu <= fw || w == x) {
 					v = w;
 					fv = fw;
 					w = u;
 					fw = fu;
-					goto10 = true;
-				} else if (fu > fv && v != x && v != w) {
-					q = -q;
-					r = e;
-					e = d;
-					goto10 = false;
-				} else {
+				} else if (fu <= fv || v == x || v == w) {
 					v = u;
 					fv = fu;
-					goto10 = true;
 				}
 			}
 		}
+
+		// Take the next step.
+		midpoint = 0.5 * (a[0] + b[0]);
+		tol1 = eps * Math.abs(x) + tol / 3.0;
+		tol2 = 2.0 * tol1;
+
+		// If the stopping criterion is satisfied, we can exit.
+		if (Math.abs(x - midpoint) <= (tol2 - 0.5 * (b[0] - a[0]))) {
+			status[0] = 0;
+			return;
+		}
+
+		// Is golden-section necessary?
+		if (Math.abs(e) <= tol1) {
+			if (midpoint <= x) {
+				e = a[0] - x;
+			} else {
+				e = b[0] - x;
+			}
+			d = c * e;
+		} else {
+
+			// Consider fitting a parabola.
+			r = (x - w) * (fx - fv);
+			q = (x - v) * (fx - fw);
+			p = (x - v) * q - (x - w) * r;
+			q = 2.0 * (q - r);
+			if (0.0 < q) {
+				p = -p;
+			}
+			q = Math.abs(q);
+			r = e;
+			e = d;
+
+			// Choose a golden-section step if the parabola is not advised.
+			if (Math.abs(0.5 * q * r) <= Math.abs(p) || p <= q * (a[0] - x) || q * (b[0] - x) <= p) {
+				if (midpoint <= x) {
+					e = a[0] - x;
+				} else {
+					e = b[0] - x;
+				}
+				d = c * e;
+			} else {
+
+				// Choose a parabolic interpolation step.
+				d = p / q;
+				u = x + d;
+				if (u - a[0] < tol2) {
+					d = RealMath.sign(tol1, midpoint - x);
+				}
+				if (b[0] - u < tol2) {
+					d = RealMath.sign(tol1, midpoint - x);
+				}
+			}
+		}
+
+		// F must not be evaluated too close to X.
+		if (tol1 <= Math.abs(d)) {
+			u = x + d;
+		}
+		if (Math.abs(d) < tol1) {
+			u = x + RealMath.sign(tol1, d);
+		}
+
+		// Request value of F(U).
+		arg[0] = u;
+		++status[0];
 	}
 }

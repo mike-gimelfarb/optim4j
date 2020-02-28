@@ -1,10 +1,13 @@
-package min4j.testbeds;
+package optim4j.testbeds;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+import opt.OptimizerSolution;
 import opt.univariate.order0.*;
+import opt.univariate.order1.CubicInterpolationAlgorithm;
+import opt.univariate.order1.SecantAlgorithm;
 
 public final class UniUnconstrStandard {
 
@@ -91,6 +94,11 @@ public final class UniUnconstrStandard {
 		return -x * Math.sin(x) + 7.916727;
 	}
 
+	public static final double dp10(double x) {
+		x = taff01(0, 10, x);
+		return -Math.sin(x) - x * Math.cos(x);
+	}
+
 	public static final double p11(double x) {
 		x = taff01(-Math.PI / 2, 2 * Math.PI, x);
 		return 2 * Math.cos(x) + Math.cos(2 * x) + 1.5;
@@ -147,8 +155,8 @@ public final class UniUnconstrStandard {
 		int success = 0;
 		for (String key : ALL_FUNCTIONS.keySet()) {
 			final Function<Double, Double> func = ALL_FUNCTIONS.get(key);
-			final PiyavskiiAlgorithm optimizer = new PiyavskiiAlgorithm(1e-6, 10000);
-			final double min = optimizer.optimize(func, 0, 1);
+			final CalvinAlgorithm optimizer = new CalvinAlgorithm(1e-14, 500);
+			final double min = optimizer.optimize(func, 0, 1).getOptimalPoint();
 			final double fmin = func.apply(min);
 			System.out.println(key + ": " + "error: " + fmin);
 			if (Math.abs(fmin - 0) < 1e-5) {
@@ -157,6 +165,16 @@ public final class UniUnconstrStandard {
 		}
 		double success_rate = 1. * success / ALL_FUNCTIONS.size();
 		System.out.println("success rate: " + success_rate);
+
+		Function<Double, Double> f = UniUnconstrStandard::p10;
+		Function<Double, Double> df = UniUnconstrStandard::dp10;
+		CalvinAlgorithm alg = new CalvinAlgorithm(1e-4, 500);
+		OptimizerSolution<Double, Double> opt = alg.optimize(f, 0, 1);
+		System.out.println("sol = " + opt.getOptimalPoint());
+		System.out.println("val = " + f.apply(opt.getOptimalPoint()));
+		System.out.println("fev = " + opt.getFEvals());
+		System.out.println("dfev = " + opt.getDFEvals());
+		System.out.println("conv = " + opt.converged());
 	}
 
 	private UniUnconstrStandard() {

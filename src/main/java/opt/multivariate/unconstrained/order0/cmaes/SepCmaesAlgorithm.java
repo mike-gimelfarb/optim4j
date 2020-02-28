@@ -41,9 +41,6 @@ import utils.Constants;
  */
 public final class SepCmaesAlgorithm extends AbstractCmaesOptimizer {
 
-	// ==========================================================================
-	// STATIC CLASSES
-	// ==========================================================================
 	/**
 	 * 
 	 * @author Michael
@@ -68,9 +65,6 @@ public final class SepCmaesAlgorithm extends AbstractCmaesOptimizer {
 		}
 	}
 
-	// ==========================================================================
-	// FIELDS
-	// ==========================================================================
 	// convergence parameters
 	protected int myFlag;
 
@@ -79,9 +73,6 @@ public final class SepCmaesAlgorithm extends AbstractCmaesOptimizer {
 	protected double ccov;
 	protected double[] diagD, C;
 
-	// ==========================================================================
-	// CONSTRUCTORS
-	// ==========================================================================
 	/**
 	 *
 	 * @param tolerance
@@ -108,9 +99,6 @@ public final class SepCmaesAlgorithm extends AbstractCmaesOptimizer {
 		myAdjustLr = applyLearningRateAdjustment;
 	}
 
-	// ==========================================================================
-	// IMPLEMENTATIONS
-	// ==========================================================================
 	@Override
 	public void initialize(final Function<? super double[], Double> func, final double[] guess) {
 		super.initialize(func, guess);
@@ -276,9 +264,6 @@ public final class SepCmaesAlgorithm extends AbstractCmaesOptimizer {
 		return false;
 	}
 
-	// ==========================================================================
-	// PUBLIC METHODS
-	// ==========================================================================
 	/**
 	 *
 	 * @return

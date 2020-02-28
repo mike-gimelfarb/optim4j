@@ -19,12 +19,13 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-package opt.multivariate.unconstrained.order0;
+package opt.multivariate;
 
 import java.util.Random;
 import java.util.function.Function;
 
 import opt.Optimizer;
+import opt.OptimizerSolution;
 import utils.Constants;
 
 /**
@@ -32,21 +33,11 @@ import utils.Constants;
  */
 public abstract class GradientFreeOptimizer extends Optimizer<double[], Double, Function<? super double[], Double>> {
 
-	// ==========================================================================
-	// STATIC FIELDS
-	// ==========================================================================
 	protected static final Random RAND = new Random();
 	protected static final double RELEPS = Constants.EPSILON;
 
-	// ==========================================================================
-	// FIELDS
-	// ==========================================================================
 	protected final double myTol;
-	protected int myEvals;
 
-	// ==========================================================================
-	// CONSTRUCTORS
-	// ==========================================================================
 	/**
 	 *
 	 * @param tolerance
@@ -55,30 +46,10 @@ public abstract class GradientFreeOptimizer extends Optimizer<double[], Double, 
 		myTol = tolerance;
 	}
 
-	// ==========================================================================
-	// ABSTRACT METHODS
-	// ==========================================================================
 	public abstract void initialize(Function<? super double[], Double> func, double[] guess);
 
 	public abstract void iterate();
 
-	public abstract double[] optimize(Function<? super double[], Double> func, double[] guess);
-
-	// ==========================================================================
-	// PUBLIC METHODS
-	// ==========================================================================
-	/**
-	 *
-	 * @return
-	 */
-	public final int countEvaluations() {
-		return myEvals;
-	}
-
-	/*
-	
-	 */
-	public final void resetCounter() {
-		myEvals = 0;
-	}
+	public abstract OptimizerSolution<double[], Double> optimize(Function<? super double[], Double> func,
+			double[] guess);
 }

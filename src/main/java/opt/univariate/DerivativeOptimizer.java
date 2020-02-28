@@ -19,11 +19,11 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-package opt.univariate.order1;
+package opt.univariate;
 
 import java.util.function.Function;
 
-import opt.univariate.UnivariateOptimizer;
+import opt.OptimizerSolution;
 import utils.Constants;
 
 /**
@@ -31,14 +31,6 @@ import utils.Constants;
  */
 public abstract class DerivativeOptimizer extends UnivariateOptimizer {
 
-	// ==========================================================================
-	// FIELDS
-	// ==========================================================================
-	protected int myDEvals;
-
-	// ==========================================================================
-	// CONSTRUCTORS
-	// ==========================================================================
 	/**
 	 *
 	 * @param absoluteTolerance
@@ -50,50 +42,29 @@ public abstract class DerivativeOptimizer extends UnivariateOptimizer {
 		super(absoluteTolerance, relativeTolerance, maxEvaluations);
 	}
 
-	// ==========================================================================
-	// ABSTRACT METHODS
-	// ==========================================================================
-	public abstract double optimize(Function<? super Double, Double> f, Function<? super Double, Double> df, double a,
-			double b);
-
-	// ==========================================================================
-	// IMPLEMENTATIONS
-	// ==========================================================================
-	@Override
-	public final void resetCounter() {
-		myEvals = myDEvals = 0;
-	}
+	public abstract OptimizerSolution<Double, Double> optimize(Function<? super Double, Double> f,
+			Function<? super Double, Double> df, double a, double b);
 
 	@Override
-	public Double optimize(final Function<? super Double, Double> f, final Double guess) {
+	public OptimizerSolution<Double, Double> optimize(final Function<? super Double, Double> f, final Double guess) {
 		throw new IllegalArgumentException("f' not provided; no numerical diff. method exists yet!");
 	}
 
-	// ==========================================================================
-	// PUBLIC METHODS
-	// ==========================================================================
-	public double optimize(final Function<? super Double, Double> f, final Function<? super Double, Double> df,
-			final Double guess) {
+	public OptimizerSolution<Double, Double> optimize(final Function<? super Double, Double> f,
+			final Function<? super Double, Double> df, final Double guess) {
 
 		// first use guess to compute a bracket [a, b] that contains a min
 		final int[] fev = new int[1];
 		final double[] brackt = bracket(f, guess, Constants.GOLDEN, myMaxEvals, fev);
-		myEvals += fev[0];
 		if (brackt == null) {
-			return Double.NaN;
+			return new OptimizerSolution<>(Double.NaN, fev[0], 0, false);
 		}
 		final double a = brackt[0];
 		final double b = brackt[1];
 
 		// perform optimization using the bracketed routine
-		return optimize(f, df, a, b);
-	}
-
-	/**
-	 *
-	 * @return
-	 */
-	public final int countDerivativeEvaluations() {
-		return myDEvals;
+		final OptimizerSolution<Double, Double> result = optimize(f, df, a, b);
+		return new OptimizerSolution<>(result.getOptimalPoint(), result.getFEvals() + fev[0], result.getDFEvals(),
+				result.converged());
 	}
 }

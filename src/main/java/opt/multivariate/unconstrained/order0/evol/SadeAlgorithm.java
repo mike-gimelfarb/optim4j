@@ -24,9 +24,9 @@ package opt.multivariate.unconstrained.order0.evol;
 import java.util.Arrays;
 import java.util.function.Function;
 
-import opt.multivariate.unconstrained.order0.GradientFreeOptimizer;
+import opt.OptimizerSolution;
+import opt.multivariate.GradientFreeOptimizer;
 import utils.BlasMath;
-import utils.Constants;
 
 /**
  * 
@@ -48,9 +48,6 @@ import utils.Constants;
  */
 public final class SadeAlgorithm extends GradientFreeOptimizer {
 
-	// ==========================================================================
-	// FIELDS
-	// ==========================================================================
 	private final int myNp; // population size, >= 4
 	private final int myLp; // learning period
 	private final int myCp; // crossover refresh period
@@ -67,10 +64,8 @@ public final class SadeAlgorithm extends GradientFreeOptimizer {
 	private double[][] pool;
 	private int genr, ihist, Fns0, Fnf0, Fns1, Fnf1;
 	private int[] ns, nf, ibw;
+	private int myEvals = 0;
 
-	// ==========================================================================
-	// CONSTRUCTORS
-	// ==========================================================================
 	/**
 	 *
 	 * @param tolerance
@@ -102,9 +97,6 @@ public final class SadeAlgorithm extends GradientFreeOptimizer {
 		this(tolerance, stdevTolerance, populationSize, 25, 5, maxEvaluations);
 	}
 
-	// ==========================================================================
-	// IMPLEMENTATIONS
-	// ==========================================================================
 	@Override
 	public final void initialize(final Function<? super double[], Double> func, final double[] guess) {
 		final double[] lo = new double[guess.length];
@@ -117,7 +109,8 @@ public final class SadeAlgorithm extends GradientFreeOptimizer {
 	}
 
 	@Override
-	public double[] optimize(final Function<? super double[], Double> func, final double[] guess) {
+	public OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> func,
+			final double[] guess) {
 		final double[] lo = new double[guess.length];
 		final double[] hi = new double[guess.length];
 		for (int i = 0; i < guess.length; ++i) {
@@ -181,7 +174,7 @@ public final class SadeAlgorithm extends GradientFreeOptimizer {
 				if (usegauss) {
 					F = RAND.nextGaussian() * mySigmaF + myMu;
 				} else {
-					F = Math.tan(Constants.PI * (RAND.nextDouble() - 0.5));
+					F = Math.tan(Math.PI * (RAND.nextDouble() - 0.5));
 				}
 			}
 
@@ -234,9 +227,6 @@ public final class SadeAlgorithm extends GradientFreeOptimizer {
 		rank();
 	}
 
-	// ==========================================================================
-	// PUBLIC METHODS
-	// ==========================================================================
 	/**
 	 *
 	 * @param func
@@ -288,13 +278,14 @@ public final class SadeAlgorithm extends GradientFreeOptimizer {
 	 * @param ub
 	 * @return
 	 */
-	public final double[] optimize(final Function<? super double[], Double> function, final double[] lb,
-			final double[] ub) {
+	public final OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> function,
+			final double[] lb, final double[] ub) {
 
 		// initialize parameters
 		initialize(function, lb, ub);
 
 		// main loop of SADE
+		boolean converged = false;
 		while (myEvals < myMaxEvals) {
 
 			// learning and solution update
@@ -322,11 +313,12 @@ public final class SadeAlgorithm extends GradientFreeOptimizer {
 
 				// test convergence in standard deviation
 				if (m2 <= (myNp - 1) * mySigmaTol * mySigmaTol) {
+					converged = true;
 					break;
 				}
 			}
 		}
-		return pool[ibw[0]];
+		return new OptimizerSolution<>(pool[ibw[0]], myEvals, 0, converged);
 	}
 
 	/**
@@ -361,9 +353,6 @@ public final class SadeAlgorithm extends GradientFreeOptimizer {
 		return ibw[3];
 	}
 
-	// ==========================================================================
-	// HELPER METHODS
-	// ==========================================================================
 	private void trial(final int D, final int i, final int ki, final double F, final double CR, final int ib,
 			final double[] out) {
 

@@ -27,7 +27,8 @@ package opt.multivariate.unconstrained.order0.direct;
 import java.util.Arrays;
 import java.util.function.Function;
 
-import opt.multivariate.unconstrained.order0.GradientFreeOptimizer;
+import opt.OptimizerSolution;
+import opt.multivariate.GradientFreeOptimizer;
 
 /**
  * 
@@ -42,24 +43,15 @@ import opt.multivariate.unconstrained.order0.GradientFreeOptimizer;
  */
 public final class DirectAlgorithm extends GradientFreeOptimizer {
 
-	// ==========================================================================
-	// STATIC FIELDS
-	// ==========================================================================
 	private static final int DEF_MAXDEEP = 600;
 	private static final int DEF_MAXDIV = 3000;
 	private static final int DEF_MAXDIM = 64;
 
-	// ==========================================================================
-	// FIELDS
-	// ==========================================================================
 	private final int maxfunc, maxiters, maxdeep, maxdiv, maxdim, method;
 	private final double[] lx, ux;
 	private int jones;
 	private double volper, sigmaper;
 
-	// ==========================================================================
-	// CONSTRUCTORS
-	// ==========================================================================
 	/**
 	 *
 	 * @param tolerance
@@ -102,9 +94,6 @@ public final class DirectAlgorithm extends GradientFreeOptimizer {
 		this(tolerance, volperParam, sigmaperParam, maxEvals, maxEvals, DEF_MAXDEEP, DEF_MAXDIV, 1, lower, upper);
 	}
 
-	// ==========================================================================
-	// IMPLEMENTATIONS
-	// ==========================================================================
 	@Override
 	public final void initialize(final Function<? super double[], Double> func, final double[] guess) {
 		// nothing to do here
@@ -116,7 +105,8 @@ public final class DirectAlgorithm extends GradientFreeOptimizer {
 	}
 
 	@Override
-	public final double[] optimize(final Function<? super double[], Double> func, final double[] guess) {
+	public final OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> func,
+			final double[] guess) {
 
 		// prepare data
 		final int n = guess.length;
@@ -127,13 +117,9 @@ public final class DirectAlgorithm extends GradientFreeOptimizer {
 
 		// call main subroutine
 		Direct(func, x, n, eps, maxf, maxT[0], fmin, lx, ux, method, Ierror, fglobal, fglper, volper, sigmaper);
-		myEvals += maxf[0];
-		return Ierror[0] > 0 ? x : null;
+		return new OptimizerSolution<>(x, maxf[0], 0, Ierror[0] > 0);
 	}
 
-	// ==========================================================================
-	// HELPER METHODS
-	// ==========================================================================
 	private void Direct(final Function<? super double[], Double> fcn, final double[] x, final int n, final double[] eps,
 			final int[] maxf, final int maxT, final double[] fmin, final double[] l, final double[] u,
 			final int algmethod, final int[] Ierror, final double fglobal, final double fglper, final double volper,

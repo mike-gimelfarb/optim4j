@@ -30,7 +30,8 @@ package opt.multivariate.unconstrained.order0.evol;
 import java.util.Arrays;
 import java.util.function.Function;
 
-import opt.multivariate.unconstrained.order0.GradientFreeOptimizer;
+import opt.OptimizerSolution;
+import opt.multivariate.GradientFreeOptimizer;
 import utils.BlasMath;
 
 /**
@@ -41,9 +42,6 @@ import utils.BlasMath;
  */
 public final class AmalgamAlgorithm extends GradientFreeOptimizer {
 
-	// ==========================================================================
-	// STATIC CLASSES
-	// ==========================================================================
 	private static final class Solution implements Comparable<Solution> {
 
 		double fx;
@@ -55,14 +53,10 @@ public final class AmalgamAlgorithm extends GradientFreeOptimizer {
 		}
 	}
 
-	// ==========================================================================
-	// FIELDS
-	// ==========================================================================
 	// problem parameters
 	private Function<? super double[], Double> myFunc;
 	private int myD;
-	private double[] myLower;
-	private double[] myUpper;
+	private double[] myLower, myUpper;
 
 	// algorithm parameters
 	private final int myMaxEvals;
@@ -71,47 +65,24 @@ public final class AmalgamAlgorithm extends GradientFreeOptimizer {
 	private final double myTau = 0.35;
 	private final int myNElitist = 1;
 
-	private double myAlphaAms;
-	private double myDeltaAms;
-	private double myEtaSigma;
-	private double myEtaShift;
-	private double myEtaDec;
-	private double myEtaInc;
-	private double myCMult;
-	private double myThetaSdr;
-	private int myNAms;
-	private int myNis;
-	private int myNisMax;
-	private int myPopSize;
-	private int mySelectSize;
-	private int myT;
+	private double myAlphaAms, myDeltaAms, myEtaSigma;
+	private double myEtaShift, myEtaDec, myEtaInc;
+	private double myCMult, myThetaSdr;
+	private int myNAms, myNis, myNisMax;
+	private int myPopSize, mySelectSize, myT, myEvals;
 
 	private Solution[] mySols;
-	private double[] myMu;
-	private double[] myMuOld;
-	private double[] myMuShift;
-	private double[] myMuShiftOld;
-	private double[] myTemp;
-	private double[] myXAvg;
-	private double[][] myCov;
-	private double[][] myChol;
+	private double[] myMu, myMuOld, myMuShift, myMuShiftOld;
+	private double[] myTemp, myXAvg;
+	private double[][] myCov, myChol;
 
 	// algorithm parameters for multiple runs
-	private final boolean myParamFree;
-	private final boolean myPrintProgress;
+	private final boolean myParamFree, myPrintProgress;
 	private final double myGlobalTolF;
-	private int myS;
-	private int myRuns;
-	private int myNBase;
-	private int myBudget;
+	private int myS, myRuns, myNBase, myBudget;
 	private double[] myBestX;
-	private double myBestF;
-	private double myBestFRun;
-	private double myBestFRunOld;
+	private double myBestF, myBestFRun, myBestFRunOld;
 
-	// ==========================================================================
-	// CONSTRUCTORS
-	// ==========================================================================
 	/**
 	 * 
 	 * @param toleranceSigmaF
@@ -147,9 +118,6 @@ public final class AmalgamAlgorithm extends GradientFreeOptimizer {
 		this(toleranceSigmaF, toleranceGlobalF, maxEvaluations, 0, useIAmalgam, true, printProgress);
 	}
 
-	// ==========================================================================
-	// IMPLEMENTATIONS
-	// ==========================================================================
 	@Override
 	public void initialize(final Function<? super double[], Double> func, final double[] guess) {
 		final double[] lo = new double[guess.length];
@@ -163,7 +131,8 @@ public final class AmalgamAlgorithm extends GradientFreeOptimizer {
 	}
 
 	@Override
-	public double[] optimize(final Function<? super double[], Double> func, final double[] guess) {
+	public OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> func,
+			final double[] guess) {
 		final double[] lo = new double[guess.length];
 		final double[] hi = new double[guess.length];
 		for (int i = 0; i < guess.length; ++i) {
@@ -236,9 +205,6 @@ public final class AmalgamAlgorithm extends GradientFreeOptimizer {
 		++myT;
 	}
 
-	// ==========================================================================
-	// PUBLIC METHODS
-	// ==========================================================================
 	/**
 	 * 
 	 * @param func
@@ -364,24 +330,23 @@ public final class AmalgamAlgorithm extends GradientFreeOptimizer {
 	 * @param upper
 	 * @return
 	 */
-	public double[] optimize(final Function<? super double[], Double> func, final double[] lower,
-			final double[] upper) {
+	public OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> func,
+			final double[] lower, final double[] upper) {
 		initialize(func, lower, upper);
 		while (true) {
 			iterate();
 			if (isConverged()) {
+				final double[] sol;
 				if (myParamFree) {
-					return myBestX;
+					sol = myBestX;
 				} else {
-					return mySols[0].x;
+					sol = mySols[0].x;
 				}
+				return new OptimizerSolution<>(sol, myEvals, 0, myEvals < myMaxEvals);
 			}
 		}
 	}
 
-	// ==========================================================================
-	// HELPER METHODS
-	// ==========================================================================
 	private void runInParallel() {
 
 		// record best values on this run
@@ -394,9 +359,10 @@ public final class AmalgamAlgorithm extends GradientFreeOptimizer {
 			final AmalgamAlgorithm algr = new AmalgamAlgorithm(myTol, 0, myBudget, myPopSize, myIamalgam, false, false);
 
 			// perform the optimization
-			final double[] optr = algr.optimize(myFunc, myLower, myUpper);
-			myEvals += algr.countEvaluations();
-			myBudget -= algr.countEvaluations();
+			final OptimizerSolution<double[], Double> sol = algr.optimize(myFunc, myLower, myUpper);
+			myEvals += sol.getFEvals();
+			myBudget -= sol.getFEvals();
+			final double[] optr = sol.getOptimalPoint();
 
 			// get the best fitness
 			final double fitr = myFunc.apply(optr);

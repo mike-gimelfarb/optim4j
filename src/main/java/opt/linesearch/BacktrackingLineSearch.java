@@ -24,7 +24,6 @@ package opt.linesearch;
 import java.util.function.Function;
 
 import utils.BlasMath;
-import utils.Pair;
 
 /**
  * A backtracking line search algorithm described in Nocedal and Wright (2006).
@@ -56,7 +55,7 @@ public final class BacktrackingLineSearch extends LineSearch {
 	}
 
 	@Override
-	public final Pair<Double, double[]> lineSearch(final Function<? super double[], Double> f,
+	public final LineSearchSolution lineSearch(final Function<? super double[], Double> f,
 			final Function<? super double[], double[]> df, final double[] x0, final double[] dir, final double[] df0,
 			final double f0, final double initial) {
 		final int D = x0.length;
@@ -68,6 +67,7 @@ public final class BacktrackingLineSearch extends LineSearch {
 		BlasMath.daxpy1(D, step, dir, 1, x0, 1, x, 1);
 		final double dy = BlasMath.ddotm(D, df0, 1, dir, 1);
 		final double normdir = BlasMath.denorm(D, dir);
+		int fevals = 0;
 
 		// main loop of backtracking line search
 		for (int i = 0; i < myMaxIters; ++i) {
@@ -75,16 +75,16 @@ public final class BacktrackingLineSearch extends LineSearch {
 			// compute new position and function value for step
 			BlasMath.daxpy1(D, step, dir, 1, x0, 1, x, 1);
 			y = f.apply(x);
-			++myEvals;
+			++fevals;
 
 			// check the approximate Wolfe condition
-			if (y <= f0 + C1 * step * dy) {
-				return new Pair<>(step, x);
+			if (y <= f0 + myC1 * step * dy) {
+				return new LineSearchSolution(step, fevals, 0, x, true);
 			}
 
 			// update step size
 			step = Math.min(step * myRho, myMaxStepSize / normdir);
 		}
-		return new Pair<>(step, x);
+		return new LineSearchSolution(step, fevals, 0, x, false);
 	}
 }

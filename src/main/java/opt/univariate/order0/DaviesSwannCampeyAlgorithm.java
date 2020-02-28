@@ -23,6 +23,9 @@ package opt.univariate.order0;
 
 import java.util.function.Function;
 
+import opt.OptimizerSolution;
+import opt.univariate.DerivativeFreeOptimizer;
+
 /**
  * 
  * REFERENCES:
@@ -32,14 +35,8 @@ import java.util.function.Function;
  */
 public final class DaviesSwannCampeyAlgorithm extends DerivativeFreeOptimizer {
 
-	// ==========================================================================
-	// FIELDS
-	// ==========================================================================
 	private final double myL;
 
-	// ==========================================================================
-	// CONSTRUCTORS
-	// ==========================================================================
 	/**
 	 *
 	 * @param tolerance
@@ -60,33 +57,29 @@ public final class DaviesSwannCampeyAlgorithm extends DerivativeFreeOptimizer {
 		this(tolerance, 0.1, maxEvaluations);
 	}
 
-	// ==========================================================================
-	// IMPLEMENTATIONS
-	// ==========================================================================
 	@Override
-	public double optimize(final Function<? super Double, Double> f, final double a, final double b) {
+	public OptimizerSolution<Double, Double> optimize(final Function<? super Double, Double> f, final double a,
+			final double b) {
 
 		// prepare work arrays
 		final int[] fev = new int[1];
+		final boolean[] converged = new boolean[1];
 
 		// call main subroutine
-		final double result = dsc(f, a, b, myL, myTol, fev, myMaxEvals);
-		myEvals += fev[0];
-		return result;
+		final double result = dsc(f, a, b, myL, myTol, fev, myMaxEvals, converged);
+		return new OptimizerSolution<>(result, fev[0], 0, converged[0]);
 	}
 
-	// ==========================================================================
-	// HELPER METHODS
-	// ==========================================================================
 	private static double dsc(final Function<? super Double, Double> f, final double a, final double b, final double K,
-			final double tol, final int[] fev, final int maxfev) {
+			final double tol, final int[] fev, final int maxfev, final boolean[] converged) {
 		final double delta1 = 0.5 * (b - a);
 		final double guess = 0.5 * (a + b);
-		return dsc1(f, guess, delta1, K, tol, fev, maxfev);
+		return dsc1(f, guess, a, b, delta1, K, tol, fev, maxfev, converged);
 	}
 
-	private static double dsc1(final Function<? super Double, Double> f, final double guess, final double delta1,
-			final double K, final double tol, final int[] fev, final int maxfev) {
+	private static double dsc1(final Function<? super Double, Double> f, final double guess, final double a,
+			final double b, final double delta1, final double K, final double tol, final int[] fev, final int maxfev,
+			final boolean[] converged) {
 
 		// step 1: initialization
 		double x0 = guess;
@@ -118,7 +111,10 @@ public final class DaviesSwannCampeyAlgorithm extends DerivativeFreeOptimizer {
 					final double num = delta * (fm1 - fp1);
 					final double den = 2.0 * (fm1 - 2.0 * f0 + fp1);
 					x0 += (num / den);
+					x0 = Math.max(x0, a);
+					x0 = Math.min(x0, b);
 					if (delta <= tol) {
+						converged[0] = true;
 						return x0;
 					} else {
 						delta *= K;
@@ -148,7 +144,7 @@ public final class DaviesSwannCampeyAlgorithm extends DerivativeFreeOptimizer {
 					twonm1 *= 2.0;
 				}
 				if (!Double.isFinite(xn)) {
-					return Double.NaN;
+					return x0;
 				}
 			}
 
@@ -168,13 +164,16 @@ public final class DaviesSwannCampeyAlgorithm extends DerivativeFreeOptimizer {
 				final double den = 2.0 * (fnm1 - 2.0 * fm + fn);
 				x0 = xm + (num / den);
 			}
+			x0 = Math.max(x0, a);
+			x0 = Math.min(x0, b);
 
 			// convergence test
 			if (twonm2 * delta <= tol) {
+				converged[0] = true;
 				return x0;
 			}
 			if (fev[0] >= maxfev) {
-				return Double.NaN;
+				return x0;
 			}
 			delta *= K;
 		}

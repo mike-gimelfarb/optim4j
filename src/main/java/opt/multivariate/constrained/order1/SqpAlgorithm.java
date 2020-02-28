@@ -50,7 +50,8 @@ package opt.multivariate.constrained.order1;
 import java.util.Arrays;
 import java.util.function.Function;
 
-import opt.multivariate.unconstrained.order1.GradientOptimizer;
+import opt.OptimizerSolution;
+import opt.multivariate.GradientOptimizer;
 import utils.BlasMath;
 import utils.IntMath;
 import utils.RealMath;
@@ -66,9 +67,6 @@ import utils.RealMath;
  */
 public final class SqpAlgorithm extends GradientOptimizer {
 
-	// ==========================================================================
-	// STATIC CLASSES
-	// ==========================================================================
 	/**
 	 *
 	 */
@@ -89,9 +87,6 @@ public final class SqpAlgorithm extends GradientOptimizer {
 		void apply(int nf, int kc, double[] x, double[] gc);
 	}
 
-	// ==========================================================================
-	// FIELDS
-	// ==========================================================================
 	// COMMON /STAT
 	private int nres, ndec, nrem, nit, nfv, nfg, nfh;
 	private final int[] nadd = new int[1];
@@ -105,10 +100,7 @@ public final class SqpAlgorithm extends GradientOptimizer {
 	private final boolean correc;
 	private final int maxevals;
 	private final double penalty, maxstep, tolc, tolg;
-
-	// ==========================================================================
-	// CONSTRUCTORS
-	// ==========================================================================
+	
 	/**
 	 *
 	 * @param tolX
@@ -159,18 +151,12 @@ public final class SqpAlgorithm extends GradientOptimizer {
 		this(tolerance, tolerance, tolerance, penaltyCoeff, maxStepSize, maxEvaluations);
 	}
 
-	// ==========================================================================
-	// IMPLEMENTATIONS
-	// ==========================================================================
 	@Override
-	public final double[] optimize(final Function<? super double[], Double> f,
+	public final OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> f,
 			final Function<? super double[], double[]> df, final double[] guess) {
 		return optimize(f, df, guess, null, null);
 	}
 
-	// ==========================================================================
-	// PUBLIC METHODS
-	// ==========================================================================
 	/**
 	 *
 	 * @param obj
@@ -181,7 +167,7 @@ public final class SqpAlgorithm extends GradientOptimizer {
 	 * @param upper
 	 * @return
 	 */
-	public final double[] optimize(final Function<? super double[], Double> obj,
+	public final OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> obj,
 			final Function<? super double[], double[]> dobj, final double[] guess, final double[] lower,
 			final double[] upper) {
 		final double[] cf = new double[1];
@@ -192,19 +178,15 @@ public final class SqpAlgorithm extends GradientOptimizer {
 		if (lower != null) {
 			Arrays.fill(ix, 3);
 		}
-		final double[] result = psqpn1(obj, dobj, null, null, 1, 0, guess, ix, lower, upper, cf, ic, cl, cu);
-		myEvals = nfv;
-		myGEvals = nfg;
-		return result;
+		final boolean[] converged = new boolean[1];
+		final double[] result = psqpn1(obj, dobj, null, null, 1, 0, guess, ix, lower, upper, cf, ic, cl, cu, converged);
+		return new OptimizerSolution<>(result, nfv, nfg, converged[0]);
 	}
 
-	// ==========================================================================
-	// HELPER METHODS
-	// ==========================================================================
 	private double[] psqpn1(final Function<? super double[], Double> f, final Function<? super double[], double[]> df,
 			final Con con, final Dcon dcon, final int nb, final int nc, final double[] guess, final int[] ix,
 			final double[] xl, final double[] xu, final double[] cf, final int[] ic, final double[] cl,
-			final double[] cu) {
+			final double[] cu, final boolean[] converged) {
 
 		// prepare variables
 		final int nf = guess.length;
@@ -219,12 +201,8 @@ public final class SqpAlgorithm extends GradientOptimizer {
 
 		// call main subroutine
 		psqpn(f, df, con, dcon, nf, nb, nc, x, ix, xl, xu, cf, ic, cl, cu, ipar, rpar, farr, gmax, cmax, 0, iterm);
-
-		if (iterm[0] == 1 || iterm[0] == 2 || iterm[0] == 3 || iterm[0] == 4 || iterm[0] == -6) {
-			return x;
-		} else {
-			return null;
-		}
+		converged[0] = iterm[0] == 1 || iterm[0] == 2 || iterm[0] == 3 || iterm[0] == 4 || iterm[0] == -6;
+		return x;
 	}
 
 	private void psqpn(final Function<? super double[], Double> obj, final Function<? super double[], double[]> dobj,

@@ -12,7 +12,7 @@
  * and makes no guarantees, expressed or implied, about its quality, reliability, 
  * or any other characteristic.
  */
-package min4j.testbeds;
+package optim4j.testbeds;
 
 import utils.RealMath;
 

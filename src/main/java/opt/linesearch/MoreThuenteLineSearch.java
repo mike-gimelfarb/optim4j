@@ -57,7 +57,6 @@ import java.util.Arrays;
 import java.util.function.Function;
 
 import utils.BlasMath;
-import utils.Pair;
 
 /**
  * A translation of the approximate line search routine by More and Thuente
@@ -109,7 +108,7 @@ public final class MoreThuenteLineSearch extends LineSearch {
 	 */
 	public MoreThuenteLineSearch(final double stepTolerance, final double minstep, final double maxstep,
 			final int maxevals) {
-		this(C1, 0.9, stepTolerance, minstep, maxstep, maxevals);
+		this(1e-4, 0.9, stepTolerance, minstep, maxstep, maxevals);
 	}
 
 	/**
@@ -122,7 +121,7 @@ public final class MoreThuenteLineSearch extends LineSearch {
 	}
 
 	@Override
-	public final Pair<Double, double[]> lineSearch(final Function<? super double[], Double> f,
+	public final LineSearchSolution lineSearch(final Function<? super double[], Double> f,
 			final Function<? super double[], double[]> df, final double[] x0, final double[] dir, final double[] df0,
 			double f0, final double initial) {
 
@@ -140,9 +139,7 @@ public final class MoreThuenteLineSearch extends LineSearch {
 		// call search
 		cvsrch(f, df, n, x0copy, fin, df0copy, dircopy, stpin, myFTol, myGTol, myXTol, myMinStep, myMaxStep, myMaxIters,
 				info, nfev, wa);
-		myEvals += nfev[0];
-		myDEvals += nfev[0];
-		return new Pair<>(stpin[0], x0copy);
+		return new LineSearchSolution(stpin[0], nfev[0], nfev[0], x0copy, info[0] == 1);
 	}
 
 	private static void cvsrch(final Function<? super double[], Double> fcn,

@@ -19,14 +19,34 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-package min4j.testbeds;
+package optim4j.testbeds;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Random;
 import java.util.function.Function;
 
+import opt.OptimizerSolution;
+import opt.multivariate.unconstrained.order0.cmaes.ActiveCmaesAlgorithm;
 import opt.multivariate.unconstrained.order0.cmaes.BiPopCmaesAlgorithm;
+import opt.multivariate.unconstrained.order0.cmaes.CholeskyCmaesAlgorithm;
+import opt.multivariate.unconstrained.order0.cmaes.CmaesAlgorithm;
+import opt.multivariate.unconstrained.order0.cmaes.IPopCmaesAlgorithm;
+import opt.multivariate.unconstrained.order0.cmaes.LmCmaesAlgorithm;
+import opt.multivariate.unconstrained.order0.cmaes.SepCmaesAlgorithm;
+import opt.multivariate.unconstrained.order0.direct.CrsAlgorithm;
+import opt.multivariate.unconstrained.order0.direct.DirectAlgorithm;
+import opt.multivariate.unconstrained.order0.direct.NelderMeadAlgorithm;
+import opt.multivariate.unconstrained.order0.direct.RosenbrockAlgorithm;
+import opt.multivariate.unconstrained.order0.evol.AdaptivePsoAlgorithm;
+import opt.multivariate.unconstrained.order0.evol.AmalgamAlgorithm;
+import opt.multivariate.unconstrained.order0.evol.CcPsoAlgorithm;
+import opt.multivariate.unconstrained.order0.evol.CsoAlgorithm;
+import opt.multivariate.unconstrained.order0.evol.DifferentialSearchAlgorithm;
+import opt.multivariate.unconstrained.order0.evol.EschAlgorithm;
+import opt.multivariate.unconstrained.order0.evol.SadeAlgorithm;
+import opt.multivariate.unconstrained.order0.quad.BobyqaAlgorithm;
+import opt.multivariate.unconstrained.order0.quad.NewuoaAlgorithm;
 import utils.BlasMath;
 import utils.RealMath;
 
@@ -625,12 +645,16 @@ public class MultiUnconstrBBOB {
 				double bestfit = Double.POSITIVE_INFINITY;
 				for (int j = -8; j <= 2; ++j) {
 					prepare(n);
-					BiPopCmaesAlgorithm alg = new BiPopCmaesAlgorithm(-1, 1e-12, 2.0, fevs, 1000, false);
+					final double[] lb = new double[n];
+					final double[] ub = new double[n];
 					final double[] guess = new double[n];
 					for (int l = 0; l < n; ++l) {
 						guess[l] = RAND.nextDouble() * 2 - 1;
+						lb[l] = -5.0;
+						ub[l] = 5.0;
 					}
-					double[] res = alg.optimize(func, guess);
+					NewuoaAlgorithm alg = new NewuoaAlgorithm(0, 2.0, fevs);
+					double[] res = alg.optimize(func, guess).getOptimalPoint();
 					if (res != null) {
 						double fit = func.apply(res);
 						double ferr = Math.abs(fit - 0.0);
@@ -639,10 +663,10 @@ public class MultiUnconstrBBOB {
 						if (ferr <= Math.pow(10, j)) {
 							++passed;
 						} else {
-							System.out.println(key + " err " + ferr + " > " + Math.pow(10, j));
+							// System.out.println(key + " err " + ferr + " > " + Math.pow(10, j));
 						}
 					} else {
-						System.out.println(key + " err " + "null" + " > " + Math.pow(10, j));
+						// System.out.println(key + " err " + "null" + " > " + Math.pow(10, j));
 					}
 				}
 			}

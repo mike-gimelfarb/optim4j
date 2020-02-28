@@ -27,7 +27,8 @@ package opt.multivariate.unconstrained.order0.direct;
 import java.util.Arrays;
 import java.util.function.Function;
 
-import opt.multivariate.unconstrained.order0.GradientFreeOptimizer;
+import opt.OptimizerSolution;
+import opt.multivariate.GradientFreeOptimizer;
 import utils.BlasMath;
 import utils.Constants;
 import utils.RealMath;
@@ -41,9 +42,6 @@ import utils.RealMath;
  */
 public final class PraxisAlgorithm extends GradientFreeOptimizer {
 
-	// ==========================================================================
-	// FIELDS
-	// ==========================================================================
 	private final double H0;
 
 	// GLOBAL
@@ -55,9 +53,6 @@ public final class PraxisAlgorithm extends GradientFreeOptimizer {
 	private double[] q0, q1, tmp;
 	private double qa, qb, qc, qd0, qd1, qf1;
 
-	// ==========================================================================
-	// CONSTRUCTORS
-	// ==========================================================================
 	/**
 	 *
 	 * @param tolerance
@@ -68,9 +63,6 @@ public final class PraxisAlgorithm extends GradientFreeOptimizer {
 		H0 = maxStepSize;
 	}
 
-	// ==========================================================================
-	// IMPLEMENTATIONS
-	// ==========================================================================
 	@Override
 	public final void initialize(final Function<? super double[], Double> func, final double[] guess) {
 		// nothing to do here
@@ -82,20 +74,19 @@ public final class PraxisAlgorithm extends GradientFreeOptimizer {
 	}
 
 	@Override
-	public final double[] optimize(final Function<? super double[], Double> func, final double[] guess) {
+	public final OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> func,
+			final double[] guess) {
+
 		// prepare variables
 		final int n = guess.length;
 		final double[] x = Arrays.copyOf(guess, n);
 
 		// call main subroutine
+		// TODO: check convergence
 		praxis(myTol, Constants.EPSILON, H0, n, x, func);
-		myEvals = nf;
-		return x;
+		return new OptimizerSolution<>(x, nf, 0, false);
 	}
 
-	// ==========================================================================
-	// HELPER METHODS
-	// ==========================================================================
 	private double praxis(final double t0, final double machep, final double h0, final int n, final double[] x,
 			final Function<? super double[], Double> f) {
 

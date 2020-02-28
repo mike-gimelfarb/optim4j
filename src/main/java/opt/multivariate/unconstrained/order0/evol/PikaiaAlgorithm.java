@@ -29,7 +29,8 @@ package opt.multivariate.unconstrained.order0.evol;
 import java.util.Arrays;
 import java.util.function.Function;
 
-import opt.multivariate.unconstrained.order0.GradientFreeOptimizer;
+import opt.OptimizerSolution;
+import opt.multivariate.GradientFreeOptimizer;
 import utils.RealMath;
 
 /**
@@ -40,25 +41,15 @@ import utils.RealMath;
  */
 public class PikaiaAlgorithm extends GradientFreeOptimizer {
 
-	// ==========================================================================
-	// STATIC CLASSES
-	// ==========================================================================
 	@FunctionalInterface
 	private interface FF {
 
 		double ff(int n, double[] x);
 	}
 
-	// ==========================================================================
-	// STATIC FIELDS
-	// ==========================================================================
 	private static final double[] DFAULT = { 100, 500, 5, 0.85, 2, 0.005, 0.0005, 0.25, 1, 1, 1, 0 };
-
 	private static final int NMAX = 32, PMAX = 128, DMAX = 6;
 
-	// ==========================================================================
-	// FIELDS
-	// ==========================================================================
 	// Local variables
 	private final int[] np = new int[1], nd = new int[1], ngen = new int[1], imut = new int[1], irep = new int[1],
 			ielite = new int[1], ivrb = new int[1], ip1 = new int[1], ip2 = new int[1], nnew = new int[1],
@@ -74,10 +65,8 @@ public class PikaiaAlgorithm extends GradientFreeOptimizer {
 	private FF ff;
 	private int n;
 	private double[] ctrl;
+	private int myEvals = 0;
 
-	// ==========================================================================
-	// CONSTRUCTORS
-	// ==========================================================================
 	/**
 	 *
 	 * @param popSize
@@ -133,9 +122,6 @@ public class PikaiaAlgorithm extends GradientFreeOptimizer {
 		ctrl[12 - 1] = 0;
 	}
 
-	// ==========================================================================
-	// IMPLEMENTATIONS
-	// ==========================================================================
 	@Override
 	public final void initialize(final Function<? super double[], Double> func, final double[] guess) {
 
@@ -220,24 +206,23 @@ public class PikaiaAlgorithm extends GradientFreeOptimizer {
 	}
 
 	@Override
-	public double[] optimize(final Function<? super double[], Double> func, final double[] guess) {
+	public OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> func,
+			final double[] guess) {
 		initialize(func, guess);
 
 		// Main Generation Loop
 		for (ig = 1; ig <= ngen[0]; ++ig) {
 			iterate();
 			if (status[0] != 0) {
-				return null;
+				break;
 			}
 		}
 
 		// Return best phenotype and its fitness
-		return Arrays.copyOf(oldph[ifit[np[0] - 1] - 1], n);
+		// TODO: check convergence
+		return new OptimizerSolution<>(Arrays.copyOf(oldph[ifit[np[0] - 1] - 1], n), myEvals, 0, false);
 	}
 
-	// ==========================================================================
-	// HELPER METHODS
-	// ==========================================================================
 	private static void setctl(final double[] ctrl, final int n, final int[] np, final int[] ngen, final int[] nd,
 			final double[] pcross, final double[] pmutmn, final double[] pmutmx, final double[] pmut, final int[] imut,
 			final double[] fdif, final int[] irep, final int[] ielite, final int[] ivrb, final int[] status) {

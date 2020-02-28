@@ -24,9 +24,9 @@ package opt.multivariate.unconstrained.order0.evol;
 import java.util.Arrays;
 import java.util.function.Function;
 
-import opt.multivariate.unconstrained.order0.GradientFreeOptimizer;
+import opt.OptimizerSolution;
+import opt.multivariate.GradientFreeOptimizer;
 import utils.BlasMath;
-import utils.RealMath;
 
 /**
  * 
@@ -38,9 +38,6 @@ import utils.RealMath;
  */
 public final class AdaptivePsoAlgorithm extends GradientFreeOptimizer {
 
-	// ==========================================================================
-	// STATIC CLASSES
-	// ==========================================================================
 	private final class Particle {
 
 		// local positional properties
@@ -98,12 +95,8 @@ public final class AdaptivePsoAlgorithm extends GradientFreeOptimizer {
 		}
 	}
 
-	// ==========================================================================
-	// FIELDS
-	// ==========================================================================
 	// algorithm parameters - specified by user or fixed
-	private final double mySigmaMin = 0.1;
-	private final double mySigmaMax = 1.0;
+	private final double mySigmaMin = 0.1, mySigmaMax = 1.0;
 	private final double mySigmaTol;
 	private final boolean myCorrectInBox;
 	private final int myMaxEvals;
@@ -111,9 +104,7 @@ public final class AdaptivePsoAlgorithm extends GradientFreeOptimizer {
 
 	// algorithm parameters - adaptive
 	private double myW, myC1, myC2;
-	private int myIter;
-	private int myState;
-	private int myMaxIters;
+	private int myIter, myState, myMaxIters, myEvals;
 
 	// swarm objects
 	private Particle[] mySwarm;
@@ -124,13 +115,9 @@ public final class AdaptivePsoAlgorithm extends GradientFreeOptimizer {
 
 	// problem parameters
 	private Function<? super double[], Double> myFunc;
-	private double[] myLower;
-	private double[] myUpper;
+	private double[] myLower, myUpper;
 	private int myD;
 
-	// ==========================================================================
-	// CONSTRUCTORS
-	// ==========================================================================
 	/**
 	 *
 	 * @param tolerance
@@ -160,9 +147,6 @@ public final class AdaptivePsoAlgorithm extends GradientFreeOptimizer {
 		this(tolerance, stdevTolerance, maxEvals, swarmSize, true);
 	}
 
-	// ==========================================================================
-	// IMPLEMENTATIONS
-	// ==========================================================================
 	@Override
 	public void initialize(final Function<? super double[], Double> func, final double[] guess) {
 		final double[] lo = new double[guess.length];
@@ -175,7 +159,8 @@ public final class AdaptivePsoAlgorithm extends GradientFreeOptimizer {
 	}
 
 	@Override
-	public double[] optimize(final Function<? super double[], Double> func, final double[] guess) {
+	public OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> func,
+			final double[] guess) {
 		final double[] lo = new double[guess.length];
 		final double[] hi = new double[guess.length];
 		for (int i = 0; i < guess.length; ++i) {
@@ -206,9 +191,6 @@ public final class AdaptivePsoAlgorithm extends GradientFreeOptimizer {
 		++myIter;
 	}
 
-	// ==========================================================================
-	// PUBLIC METHODS
-	// ==========================================================================
 	/**
 	 *
 	 * @param func
@@ -223,12 +205,13 @@ public final class AdaptivePsoAlgorithm extends GradientFreeOptimizer {
 		myD = lower.length;
 		myLower = lower;
 		myUpper = upper;
+		myEvals = 0;
 
 		// initialize parameters
 		myW = 0.9;
 		myC1 = myC2 = 2.0;
 		myIter = myState = 0;
-		myMaxIters = RealMath.roundInt(myMaxEvals / (1.0 + mySwarmSize));
+		myMaxIters = (int) Math.round(myMaxEvals / (1.0 + mySwarmSize));
 
 		// initialize swarm
 		mySwarm = new Particle[mySwarmSize];
@@ -244,6 +227,7 @@ public final class AdaptivePsoAlgorithm extends GradientFreeOptimizer {
 				pos[j] = myLower[j] + (myUpper[j] - myLower[j]) * r1;
 			}
 			mySwarm[i] = new Particle(pos, vel);
+			++myEvals;
 
 			// update best and worst positions
 			if (mySwarm[i].myFit < myGBestFit) {
@@ -269,14 +253,15 @@ public final class AdaptivePsoAlgorithm extends GradientFreeOptimizer {
 	 * @param ub
 	 * @return
 	 */
-	public final double[] optimize(final Function<? super double[], Double> func, final double[] lb,
-			final double[] ub) {
+	public final OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> func,
+			final double[] lb, final double[] ub) {
 
 		// initialize parameters
 		initialize(func, lb, ub);
 
 		// main iteration loop over generations
-		while (myIter < myMaxIters) {
+		boolean converged = false;
+		while (myIter < myMaxIters && myEvals < myMaxEvals) {
 
 			// perform a single generation
 			iterate();
@@ -303,16 +288,14 @@ public final class AdaptivePsoAlgorithm extends GradientFreeOptimizer {
 
 				// test convergence in standard deviation
 				if (m2 <= (mySwarmSize - 1) * mySigmaTol * mySigmaTol) {
+					converged = true;
 					break;
 				}
 			}
 		}
-		return myGBest;
+		return new OptimizerSolution<>(myGBest, myEvals, 0, converged);
 	}
 
-	// ==========================================================================
-	// HELPER METHODS
-	// ==========================================================================
 	private void updateGlobalBest(final double[] p, final int it, final int itmax) {
 
 		// this subprocedure is based on Figure 7

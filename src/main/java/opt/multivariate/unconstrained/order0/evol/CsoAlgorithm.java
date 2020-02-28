@@ -24,7 +24,8 @@ package opt.multivariate.unconstrained.order0.evol;
 import java.util.Arrays;
 import java.util.function.Function;
 
-import opt.multivariate.unconstrained.order0.GradientFreeOptimizer;
+import opt.OptimizerSolution;
+import opt.multivariate.GradientFreeOptimizer;
 import utils.BlasMath;
 
 /**
@@ -44,9 +45,6 @@ import utils.BlasMath;
  */
 public final class CsoAlgorithm extends GradientFreeOptimizer {
 
-	// ==========================================================================
-	// STATIC CLASSES
-	// ==========================================================================
 	private final class Particle {
 
 		// local positional properties
@@ -113,30 +111,19 @@ public final class CsoAlgorithm extends GradientFreeOptimizer {
 		}
 	}
 
-	// ==========================================================================
-	// FIELDS
-	// ==========================================================================
 	// model parameters
-	private final boolean myUseRingTopology;
-	private final boolean myCorrectInBox;
-	private final double myPhi;
-	private final double mySigmaTol;
-	private final int mySize;
-	private final int myMaxEvals;
+	private final boolean myUseRingTopology, myCorrectInBox;
+	private final double myPhi, mySigmaTol;
+	private final int mySize, myMaxEvals;
 	private final Particle[] mySwarm;
 
 	// problem parameters
 	private Function<? super double[], Double> myFunc;
 	private int myD;
-	private double[] myMean;
-	private double[] myLower;
-	private double[] myUpper;
-	private Particle myBest;
-	private Particle myWorst;
+	private double[] myMean, myLower, myUpper;
+	private Particle myBest, myWorst;
+	private int myEvals = 0;
 
-	// ==========================================================================
-	// CONSTRUCTORS
-	// ==========================================================================
 	/**
 	 *
 	 * @param swarmSize
@@ -198,9 +185,6 @@ public final class CsoAlgorithm extends GradientFreeOptimizer {
 		return 0.5 * (phimin + phimax);
 	}
 
-	// ==========================================================================
-	// IMPLEMENTATIONS
-	// ==========================================================================
 	@Override
 	public final void initialize(final Function<? super double[], Double> func, final double[] guess) {
 		final double[] lo = new double[guess.length];
@@ -213,7 +197,8 @@ public final class CsoAlgorithm extends GradientFreeOptimizer {
 	}
 
 	@Override
-	public final double[] optimize(final Function<? super double[], Double> func, final double[] guess) {
+	public final OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> func,
+			final double[] guess) {
 		final double[] lo = new double[guess.length];
 		final double[] hi = new double[guess.length];
 		for (int i = 0; i < guess.length; ++i) {
@@ -267,9 +252,6 @@ public final class CsoAlgorithm extends GradientFreeOptimizer {
 		}
 	}
 
-	// ==========================================================================
-	// PUBLIC METHODS
-	// ==========================================================================
 	/**
 	 *
 	 * @param func
@@ -334,13 +316,14 @@ public final class CsoAlgorithm extends GradientFreeOptimizer {
 	 * @param ub
 	 * @return
 	 */
-	public final double[] optimize(final Function<? super double[], Double> func, final double[] lb,
-			final double[] ub) {
+	public final OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> func,
+			final double[] lb, final double[] ub) {
 
 		// initialize parameters
 		initialize(func, lb, ub);
 
 		// main iteration loop over generations
+		boolean converged = false;
 		while (myEvals < myMaxEvals) {
 
 			// perform a single generation
@@ -368,11 +351,12 @@ public final class CsoAlgorithm extends GradientFreeOptimizer {
 
 				// test convergence in standard deviation
 				if (m2 <= (mySize - 1) * mySigmaTol * mySigmaTol) {
+					converged = true;
 					break;
 				}
 			}
 		}
-		return myBest == null ? null : myBest.myPos;
+		return new OptimizerSolution<>(myBest == null ? null : myBest.myPos, myEvals, 0, myBest != null && converged);
 	}
 
 	@SafeVarargs

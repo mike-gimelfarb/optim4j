@@ -23,9 +23,9 @@ package opt.multivariate.unconstrained.order0.quad;
 import java.util.Arrays;
 import java.util.function.Function;
 
-import opt.multivariate.unconstrained.order0.GradientFreeOptimizer;
+import opt.OptimizerSolution;
+import opt.multivariate.GradientFreeOptimizer;
 import utils.BlasMath;
-import utils.Constants;
 import utils.RealMath;
 
 /**
@@ -38,16 +38,10 @@ import utils.RealMath;
  */
 public final class NewuoaAlgorithm extends GradientFreeOptimizer {
 
-	// ==========================================================================
-	// FIELDS
-	// ==========================================================================
 	private final Function<Integer, Integer> mySize;
 	private final double myRho0;
 	private final int myMaxFev;
 
-	// ==========================================================================
-	// CONSTRUCTORS
-	// ==========================================================================
 	/**
 	 *
 	 * @param tolerance
@@ -73,9 +67,6 @@ public final class NewuoaAlgorithm extends GradientFreeOptimizer {
 		this(tolerance, initialStep, maxEvaluations, d -> 2 * d + 1);
 	}
 
-	// ==========================================================================
-	// IMPLEMENTATIONS
-	// ==========================================================================
 	@Override
 	public final void initialize(final Function<? super double[], Double> func, final double[] guess) {
 		// nothing to do here
@@ -87,7 +78,8 @@ public final class NewuoaAlgorithm extends GradientFreeOptimizer {
 	}
 
 	@Override
-	public final double[] optimize(final Function<? super double[], Double> func, final double[] guess) {
+	public final OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> func,
+			final double[] guess) {
 
 		// prepare data
 		final int n = guess.length;
@@ -96,14 +88,11 @@ public final class NewuoaAlgorithm extends GradientFreeOptimizer {
 		double[] x = Arrays.copyOf(guess, n);
 
 		// call main subroutine
+		// TODO: check convergence
 		x = newuoa(func, n, npt, x, myRho0, myTol, myMaxFev, fev);
-		myEvals = fev[0];
-		return x;
+		return new OptimizerSolution<>(x, fev[0], 0, false);
 	}
 
-	// ==========================================================================
-	// HELPER METHODS
-	// ==========================================================================
 	private static double[] newuoa(final Function<? super double[], Double> calfun, final int n, final int npt,
 			final double[] x, final double rhobeg, final double rhoend, final int maxfun, final int[] fev) {
 
@@ -770,7 +759,7 @@ public final class NewuoaAlgorithm extends GradientFreeOptimizer {
 		int i, ip, isave, iu, iterc, j, jc, k, ksav, nw;
 
 		// Set some constants
-		final double HALF = 0.5, ONE = 1.0, QUART = 0.25, TWO = 2.0, ZERO = 0.0, TWOPI = 2.0 * Constants.PI;
+		final double HALF = 0.5, ONE = 1.0, QUART = 0.25, TWO = 2.0, ZERO = 0.0, TWOPI = 2.0 * Math.PI;
 		final int nptm = npt - n - 1;
 
 		// Store the first NPT elements of the KNEW-th column of H in W(N+1)
@@ -1082,7 +1071,7 @@ public final class NewuoaAlgorithm extends GradientFreeOptimizer {
 				temp, tempa = 0.0, tempb = 0.0, step, sum;
 
 		// Set some constants
-		final double HALF = 0.5, ZERO = 0.0, ONE = 1.0, TWOPI = 2.0 * Constants.PI, delsq = delta * delta;
+		final double HALF = 0.5, ZERO = 0.0, ONE = 1.0, TWOPI = 2.0 * Math.PI, delsq = delta * delta;
 		final int nptm = npt - n - 1;
 
 		// Set the first NPT components of HCOL to the leading elements of the
@@ -1249,7 +1238,7 @@ public final class NewuoaAlgorithm extends GradientFreeOptimizer {
 				tempa = 0.0, tempb = 0.0;
 		int i, ih, iterc, itermax, itersw, isave, iu, j, k;
 
-		final double HALF = 0.5, ZERO = 0.0, TWOPI = 2.0 * Constants.PI, delsq = delta * delta;
+		final double HALF = 0.5, ZERO = 0.0, TWOPI = 2.0 * Math.PI, delsq = delta * delta;
 		iterc = 0;
 		itermax = n;
 		itersw = itermax;

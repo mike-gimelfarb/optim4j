@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.function.Function;
 
 import utils.BlasMath;
-import utils.Pair;
 
 /**
  * A translation of the code from the Julia package, implementing the line
@@ -66,17 +65,16 @@ public final class HagerZhangLineSearch extends LineSearch {
 	}
 
 	@Override
-	public final Pair<Double, double[]> lineSearch(final Function<? super double[], Double> f,
+	public final LineSearchSolution lineSearch(final Function<? super double[], Double> f,
 			final Function<? super double[], double[]> df, final double[] x0, final double[] dir, final double[] df0,
 			final double f0, final double initial) {
 
 		// prepare variables
 		final int[] fev = new int[1];
+		final int[] dfev = new int[1];
 
 		// call main subroutine
-		final Pair<Double, double[]> result = hagerzhang(f, df, x0, dir, df0, f0, initial, myTol, myMaxIters, fev);
-		myEvals += fev[0];
-		return result;
+		return hagerzhang(f, df, x0, dir, df0, f0, initial, myTol, myMaxIters, fev, dfev);
 	}
 
 	/**
@@ -97,7 +95,7 @@ public final class HagerZhangLineSearch extends LineSearch {
 	 * @param quadstep
 	 * @return
 	 */
-	public final Pair<Double, double[]> lineSearch(final Function<? super double[], Double> f,
+	public final LineSearchSolution lineSearch(final Function<? super double[], Double> f,
 			final Function<? super double[], double[]> df, final double[] x0, final double[] dir, final double[] df0,
 			final double f0, final double psi0, final double psi1, final double psi2, final double epsk,
 			final int maxit, final int k, final double pstep, final boolean quadstep) {
@@ -105,6 +103,7 @@ public final class HagerZhangLineSearch extends LineSearch {
 		// prepare variables
 		final int n = x0.length;
 		final int[] fev = new int[1];
+		final int[] dfev = new int[1];
 
 		// initialize the step size
 		final double xnorm = BlasMath.denorm(n, x0);
@@ -149,15 +148,13 @@ public final class HagerZhangLineSearch extends LineSearch {
 		}
 
 		// call main subroutine
-		final Pair<Double, double[]> result = hagerzhang(f, df, x0, dir, df0, f0, c, epsk, maxit, fev);
-		myEvals += fev[0];
-		myDEvals += fev[0] - 1;
-		return result;
+		return hagerzhang(f, df, x0, dir, df0, f0, c, epsk, maxit, fev, dfev);
 	}
 
-	private static Pair<Double, double[]> hagerzhang(final Function<? super double[], Double> f,
+	private static LineSearchSolution hagerzhang(final Function<? super double[], Double> f,
 			final Function<? super double[], double[]> df, final double[] x0, final double[] dir, final double[] df0,
-			final double f0, final double initial, final double eps, final int maxit, final int[] fev) {
+			final double f0, final double initial, final double eps, final int maxit, final int[] fev,
+			final int[] dfev) {
 
 		// prepare variables
 		final int n = x0.length;
@@ -169,17 +166,18 @@ public final class HagerZhangLineSearch extends LineSearch {
 		lsr.add(new LineStep(0.0, dphi0, phi0));
 
 		// call main subroutine
+		// TODO: check convergence
 		final double stepf = hagerzhang(lsr, n, dfarr, x0, dir, wa, initial, false, 0.1, 0.9, Double.POSITIVE_INFINITY,
-				5.0, eps, 0.66, maxit, 0.1, 10000, f, df, fev);
+				5.0, eps, 0.66, maxit, 0.1, 10000, f, df, fev, dfev);
 		BlasMath.daxpy1(n, stepf, dir, 1, x0, 1, wa, 1);
-		return new Pair<>(stepf, wa);
+		return new LineSearchSolution(stepf, fev[0], dfev[0], wa, true);
 	}
 
 	private static double hagerzhang(final List<LineStep> lsr, final int n, final double[] df, final double[] x,
 			final double[] d, final double[] wa, double c, boolean canbreak, final double delta, final double sigma,
 			double stepmax, final double rho, final double eps, final double gamma, final int lsmax, final double psi3,
 			final int itfmax, final Function<? super double[], Double> func,
-			final Function<? super double[], double[]> dfunc, final int[] fev) {
+			final Function<? super double[], double[]> dfunc, final int[] fev, final int[] dfev) {
 
 		double phi0 = lsr.get(1 - 1).value;
 		double dphi0 = lsr.get(1 - 1).slope;
@@ -188,6 +186,7 @@ public final class HagerZhangLineSearch extends LineSearch {
 		double phic = val[0];
 		double dphic = val[1];
 		++fev[0];
+		++dfev[0];
 		int itf = 1;
 		while (!(Double.isFinite(phic) && Double.isFinite(dphic)) && itf < itfmax) {
 			canbreak = false;
@@ -197,6 +196,7 @@ public final class HagerZhangLineSearch extends LineSearch {
 			phic = val[0];
 			dphic = val[1];
 			++fev[0];
+			++dfev[0];
 		}
 		if (!(Double.isFinite(phic) && Double.isFinite(dphic))) {
 			return 0.0;
@@ -223,7 +223,7 @@ public final class HagerZhangLineSearch extends LineSearch {
 			} else if (lsr.get(lsr.size() - 1).value > philim) {
 				ib = lsr.size();
 				ia = ib - 1;
-				final int[] iab = bisect(lsr, n, df, x, d, wa, ia, ib, philim, func, dfunc, fev);
+				final int[] iab = bisect(lsr, n, df, x, d, wa, ia, ib, philim, func, dfunc, fev, dfev);
 				ia = iab[0];
 				ib = iab[1];
 				isbrak = true;
@@ -240,6 +240,7 @@ public final class HagerZhangLineSearch extends LineSearch {
 				phic = val[0];
 				dphic = val[1];
 				++fev[0];
+				++dfev[0];
 				itf = 1;
 				while (!(Double.isFinite(phic) && Double.isFinite(dphic)) && c > nextFloat(cold) && itf < itfmax) {
 					stepmax = c;
@@ -249,6 +250,7 @@ public final class HagerZhangLineSearch extends LineSearch {
 					phic = val[0];
 					dphic = val[1];
 					++fev[0];
+					++dfev[0];
 				}
 				if (!(Double.isFinite(phic) && Double.isFinite(dphic))) {
 					return cold;
@@ -265,7 +267,7 @@ public final class HagerZhangLineSearch extends LineSearch {
 			if (b - a <= Math.ulp(b)) {
 				return a;
 			}
-			final int[] sec = secant2(lsr, n, df, x, d, wa, ia, ib, philim, delta, sigma, func, dfunc, fev);
+			final int[] sec = secant2(lsr, n, df, x, d, wa, ia, ib, philim, delta, sigma, func, dfunc, fev, dfev);
 			boolean iswolfe = sec[0] == 1;
 			int iA = sec[1];
 			int iB = sec[2];
@@ -287,8 +289,9 @@ public final class HagerZhangLineSearch extends LineSearch {
 				phic = val[0];
 				dphic = val[1];
 				++fev[0];
+				++dfev[0];
 				lsr.add(new LineStep(c, dphic, phic));
-				final int[] iab = update(lsr, n, df, x, d, wa, iA, iB, lsr.size(), philim, func, dfunc, fev);
+				final int[] iab = update(lsr, n, df, x, d, wa, iA, iB, lsr.size(), philim, func, dfunc, fev, dfev);
 				ia = iab[0];
 				ib = iab[1];
 			}
@@ -300,8 +303,7 @@ public final class HagerZhangLineSearch extends LineSearch {
 	private static int[] secant2(final List<LineStep> lsr, final int n, final double[] df, final double[] x,
 			final double[] d, final double[] wa, final int ia, final int ib, final double philim, final double delta,
 			final double sigma, final Function<? super double[], Double> func,
-			final Function<? super double[], double[]> dfunc, final int[] fev) {
-
+			final Function<? super double[], double[]> dfunc, final int[] fev, final int[] dfev) {
 		double phi0 = lsr.get(1 - 1).value;
 		double dphi0 = lsr.get(1 - 1).slope;
 		double a = lsr.get(ia - 1).step;
@@ -313,12 +315,13 @@ public final class HagerZhangLineSearch extends LineSearch {
 		double phic = val[0];
 		double dphic = val[1];
 		++fev[0];
+		++dfev[0];
 		lsr.add(new LineStep(c, dphic, phic));
 		int ic = lsr.size();
 		if (satisfiesWolfe(c, phic, dphic, phi0, dphi0, philim, delta, sigma)) {
 			return new int[] { 1, ic, ic };
 		}
-		int[] AB = update(lsr, n, df, x, d, wa, ia, ib, ic, philim, func, dfunc, fev);
+		int[] AB = update(lsr, n, df, x, d, wa, ia, ib, ic, philim, func, dfunc, fev, dfev);
 		int iA = AB[0];
 		int iB = AB[1];
 		a = lsr.get(iA - 1).step;
@@ -333,12 +336,13 @@ public final class HagerZhangLineSearch extends LineSearch {
 			phic = val[0];
 			dphic = val[1];
 			++fev[0];
+			++dfev[0];
 			lsr.add(new LineStep(c, dphic, phic));
 			ic = lsr.size();
 			if (satisfiesWolfe(c, phic, dphic, phi0, dphi0, philim, delta, sigma)) {
 				return new int[] { 1, ic, ic };
 			}
-			AB = update(lsr, n, df, x, d, wa, iA, iB, ic, philim, func, dfunc, fev);
+			AB = update(lsr, n, df, x, d, wa, iA, iB, ic, philim, func, dfunc, fev, dfev);
 			iA = AB[0];
 			iB = AB[1];
 		}
@@ -347,7 +351,6 @@ public final class HagerZhangLineSearch extends LineSearch {
 
 	private static boolean satisfiesWolfe(final double c, final double phic, final double dphic, final double phi0,
 			final double dphi0, final double philm, final double delta, final double sigma) {
-
 		final boolean wolfe1 = delta * dphi0 >= (phic - phi0) / c && dphic >= sigma * dphi0;
 		final boolean wolfe2 = (2.0 * delta - 1.0) * dphi0 >= dphic && dphic >= sigma * dphi0 && phic <= philm;
 		return wolfe1 || wolfe2;
@@ -356,7 +359,7 @@ public final class HagerZhangLineSearch extends LineSearch {
 	private static int[] update(final List<LineStep> lsr, final int n, final double[] df, final double[] x,
 			final double[] d, final double[] wa, final int ia, final int ib, final int ic, final double philim,
 			final Function<? super double[], Double> func, final Function<? super double[], double[]> dfunc,
-			final int[] fev) {
+			final int[] fev, final int[] dfev) {
 		double a = lsr.get(ia - 1).step;
 		double b = lsr.get(ib - 1).step;
 		double c = lsr.get(ic - 1).step;
@@ -369,14 +372,14 @@ public final class HagerZhangLineSearch extends LineSearch {
 		} else if (phic <= philim) {
 			return new int[] { ic, ib };
 		} else {
-			return bisect(lsr, n, df, x, d, wa, ia, ic, philim, func, dfunc, fev);
+			return bisect(lsr, n, df, x, d, wa, ia, ic, philim, func, dfunc, fev, dfev);
 		}
 	}
 
 	private static int[] bisect(final List<LineStep> lsr, final int n, final double[] df, final double[] x,
 			final double[] d, final double[] wa, int ia, int ib, final double philim,
 			final Function<? super double[], Double> func, final Function<? super double[], double[]> dfunc,
-			final int[] fev) {
+			final int[] fev, final int[] dfev) {
 		double a = lsr.get(ia - 1).step;
 		double b = lsr.get(ib - 1).step;
 		while (b - a > Math.ulp(b)) {
@@ -385,6 +388,7 @@ public final class HagerZhangLineSearch extends LineSearch {
 			final double phid = val[0];
 			final double gphi = val[1];
 			++fev[0];
+			++dfev[0];
 			lsr.add(new LineStep(dd, gphi, phid));
 			final int id = lsr.size();
 			if (gphi >= 0.0) {

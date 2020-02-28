@@ -44,9 +44,6 @@ import utils.BlasMath;
  */
 public class LmCmaesAlgorithm extends AbstractCmaesOptimizer {
 
-	// ==========================================================================
-	// STATIC CLASSES
-	// ==========================================================================
 	/**
 	 * 
 	 * @author Michael
@@ -61,16 +58,9 @@ public class LmCmaesAlgorithm extends AbstractCmaesOptimizer {
 		}
 	}
 
-	// ==========================================================================
-	// STATIC FIELDS
-	// ==========================================================================
 	public static final Function<Integer, Integer> SMALL_MEMORY = d -> 4 + (int) Math.log(3.0 * d);
-
 	public static final Function<Integer, Integer> LARGE_MEMORY = d -> (int) (2.0 * Math.sqrt(d));
 
-	// ==========================================================================
-	// FIELDS
-	// ==========================================================================
 	// algorithm parameters
 	private final Function<Integer, Integer> myMemorySizeFunction;
 	private final boolean myUseNewMethod;
@@ -85,9 +75,6 @@ public class LmCmaesAlgorithm extends AbstractCmaesOptimizer {
 	private double[][] pcmat, vmat;
 	private IntDoublePair[] mixed;
 
-	// ==========================================================================
-	// CONSTRUCTORS
-	// ==========================================================================
 	/**
 	 * 
 	 * @param tolerance
@@ -157,9 +144,6 @@ public class LmCmaesAlgorithm extends AbstractCmaesOptimizer {
 		this(tolerance, initialSigma, maxEvaluations, LARGE_MEMORY);
 	}
 
-	// ==========================================================================
-	// IMPLEMENTATIONS
-	// ==========================================================================
 	@Override
 	public void initialize(final Function<? super double[], Double> func, final double[] guess) {
 
@@ -374,9 +358,6 @@ public class LmCmaesAlgorithm extends AbstractCmaesOptimizer {
 		sigma *= Math.exp(s / damps);
 	}
 
-	// ==========================================================================
-	// HELPER METHODS
-	// ==========================================================================
 	private static void Ainvz(final int n, int jlen, final double c, final int[] jarr, final double[] d,
 			final double[] Av, final double[][] v) {
 

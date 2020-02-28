@@ -19,7 +19,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-package min4j.testbeds;
+package optim4j.testbeds;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -337,7 +337,7 @@ public final class MultiUnconstrStandard {
 					for (int l = 0; l < n; ++l) {
 						guess[l] = RAND.nextDouble() * 2 - 1;
 					}
-					double[] res = alg.optimize(func, guess);
+					double[] res = alg.optimize(func, guess).getOptimalPoint();
 					if (res != null) {
 						double fit = func.apply(res);
 						double ferr = Math.abs(fit - 0.0);

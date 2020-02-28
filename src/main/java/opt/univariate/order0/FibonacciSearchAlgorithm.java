@@ -23,6 +23,8 @@ package opt.univariate.order0;
 
 import java.util.function.Function;
 
+import opt.OptimizerSolution;
+import opt.univariate.DerivativeFreeOptimizer;
 import utils.Constants;
 import utils.RealMath;
 
@@ -31,9 +33,6 @@ import utils.RealMath;
  */
 public final class FibonacciSearchAlgorithm extends DerivativeFreeOptimizer {
 
-	// ==========================================================================
-	// CONSTRUCTORS
-	// ==========================================================================
 	/**
 	 *
 	 * @param absoluteTolerance
@@ -45,37 +44,34 @@ public final class FibonacciSearchAlgorithm extends DerivativeFreeOptimizer {
 		super(absoluteTolerance, relativeTolerance, maxEvaluations);
 	}
 
-	// ==========================================================================
-	// IMPLEMENTATIONS
-	// ==========================================================================
 	@Override
-	public final double optimize(final Function<? super Double, Double> f, final double a, final double b) {
+	public final OptimizerSolution<Double, Double> optimize(final Function<? super Double, Double> f, final double a,
+			final double b) {
 
 		// prepare variables
 		final int[] fev = new int[1];
+		final boolean[] converged = new boolean[1];
 
 		// call main subroutine
-		final double result = fibsearch(f, a, b, myTol, myRelTol, myMaxEvals, fev);
-		myEvals = fev[0];
-		return result;
+		final double result = fibsearch(f, a, b, myTol, myRelTol, myMaxEvals, fev, converged);
+		return new OptimizerSolution<>(result, fev[0], 0, converged[0]);
 	}
 
-	// ==========================================================================
-	// HELPER METHODS
-	// ==========================================================================
 	private static double fibsearch(final Function<? super Double, Double> f, final double a, final double b,
-			final double abstol, final double reltol, final int maxfev, final int[] fev) {
+			final double abstol, final double reltol, final int maxfev, final int[] fev, final boolean[] converged) {
 
 		// find the smallest n such that 1/F(n) < tolerance / (b - a)
 		final double adjtol = abstol / (b - a);
-		double fib1 = 1.0;
-		double fib2 = 1.0;
+		double fib1 = 1.0, fib2 = 1.0;
 		int n = 2;
 		while (1.0 / fib2 >= adjtol) {
 			final double fib3 = fib1 + fib2;
 			fib1 = fib2;
 			fib2 = fib3;
 			++n;
+			if (n > maxfev) {
+				return Double.NaN;
+			}
 		}
 
 		// evaluate initial constants
@@ -124,12 +120,13 @@ public final class FibonacciSearchAlgorithm extends DerivativeFreeOptimizer {
 			final double mid = 0.5 * (x1 + x4);
 			final double tol = reltol * Math.abs(mid) + abstol;
 			if (Math.abs(x4 - x1) <= tol) {
+				converged[0] = true;
 				break;
 			}
 
 			// check budget
 			if (fev[0] >= maxfev) {
-				return Double.NaN;
+				break;
 			}
 		}
 		return 0.5 * (x1 + x4);

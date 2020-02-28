@@ -27,7 +27,8 @@ package opt.multivariate.constrained.order1;
 import java.util.Arrays;
 import java.util.function.Function;
 
-import opt.multivariate.unconstrained.order1.GradientOptimizer;
+import opt.OptimizerSolution;
+import opt.multivariate.GradientOptimizer;
 import utils.BlasMath;
 import utils.RealMath;
 
@@ -42,15 +43,9 @@ import utils.RealMath;
  */
 public final class ShorAlgorithm extends GradientOptimizer {
 
-	// ==========================================================================
-	// FIELDS
-	// ==========================================================================
 	private final double myTolF, myDilation, myGradH;
 	private final int myMaxEvals;
 
-	// ==========================================================================
-	// CONSTRUCTORS
-	// ==========================================================================
 	/**
 	 *
 	 * @param toleranceX
@@ -78,11 +73,8 @@ public final class ShorAlgorithm extends GradientOptimizer {
 		this(toleranceX, toleranceF, 2.5, 1.0e-11, maxEvals);
 	}
 
-	// ==========================================================================
-	// IMPLEMENTATIONS
-	// ==========================================================================
 	@Override
-	public final double[] optimize(final Function<? super double[], Double> fun,
+	public final OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> fun,
 			final Function<? super double[], double[]> dfun, final double[] guess) {
 
 		// prepare variables
@@ -100,13 +92,12 @@ public final class ShorAlgorithm extends GradientOptimizer {
 
 		// call main subroutine
 		solvopt(n, x, f, fun, true, dfun, options, false, null, false, null);
-		myEvals += options[10 - 1];
-		myGEvals += options[11 - 1];
-		return options[9 - 1] > 0 ? x : null;
+		return new OptimizerSolution<>(x, (int) options[10 - 1], (int) options[11 - 1], options[9 - 1] > 0);
 	}
 
 	@Override
-	public final double[] optimize(final Function<? super double[], Double> func, final double[] guess) {
+	public final OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> func,
+			final double[] guess) {
 
 		// prepare variables
 		final int n = guess.length;
@@ -123,13 +114,9 @@ public final class ShorAlgorithm extends GradientOptimizer {
 
 		// call main subroutine
 		solvopt(n, x, f, func, false, null, options, false, null, false, null);
-		myEvals += options[10 - 1];
-		return options[9 - 1] > 0 ? x : null;
+		return new OptimizerSolution<>(x, (int) options[10 - 1], 0, options[9 - 1] > 0);
 	}
 
-	// ==========================================================================
-	// HELPER METHODS
-	// ==========================================================================
 	private static void solvopt(final int n, final double[] x, final double[] f,
 			final Function<? super double[], Double> fun, final boolean flg,
 			final Function<? super double[], double[]> grad, final double[] options, final boolean flfc,

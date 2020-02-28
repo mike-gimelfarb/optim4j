@@ -27,6 +27,7 @@ package opt.multivariate.constrained.lp;
 import java.util.Arrays;
 
 import opt.Optimizer;
+import opt.OptimizerSolution;
 import utils.Constants;
 import utils.RealMath;
 
@@ -43,7 +44,6 @@ import utils.RealMath;
 public final class RealSimplexAlgorithm extends Optimizer<double[], Double, RealLinearProgram> {
 
 	private final int myMaxIters;
-	private int myIters;
 
 	/**
 	 *
@@ -54,7 +54,7 @@ public final class RealSimplexAlgorithm extends Optimizer<double[], Double, Real
 	}
 
 	@Override
-	public final double[] optimize(final RealLinearProgram lp, final double[] guess) {
+	public final OptimizerSolution<double[], Double> optimize(final RealLinearProgram lp, final double[] guess) {
 
 		// prepare variables
 		final double[][] a = lp.mySimplex.getA();
@@ -64,6 +64,7 @@ public final class RealSimplexAlgorithm extends Optimizer<double[], Double, Real
 		final int numge = lp.mySimplex.myNumGe;
 		final double[] rerr = new double[1];
 		final int[] iter = new int[1];
+		final boolean[] converged = new boolean[1];
 
 		// the subroutine does a max problem, so take negative of cost
 		// for the min problem, e.g. min c*x <--> max -c*x
@@ -72,28 +73,12 @@ public final class RealSimplexAlgorithm extends Optimizer<double[], Double, Real
 		}
 
 		// call main subroutine
-		final double[] result = smplx(a, b, c, iter, myMaxIters, numle, numge, rerr);
-		myIters += iter[0];
-		return result;
-	}
-
-	/**
-	 *
-	 * @return
-	 */
-	public final int countIterations() {
-		return myIters;
-	}
-
-	/**
-	 *
-	 */
-	public final void resetCounters() {
-		myIters = 0;
+		final double[] result = smplx(a, b, c, iter, myMaxIters, numle, numge, rerr, converged);
+		return new OptimizerSolution<>(result, iter[0], 0, converged[0]);
 	}
 
 	private static double[] smplx(final double[][] a, final double[] b0, final double[] c, final int[] iter,
-			final int mxiter, final int numle, final int numge, final double[] rerr) {
+			final int mxiter, final int numle, final int numge, final double[] rerr, final boolean[] converged) {
 
 		// prepare variables
 		final int ka = a.length;
@@ -109,11 +94,8 @@ public final class RealSimplexAlgorithm extends Optimizer<double[], Double, Real
 
 		// call main subroutine
 		smplx(a, b0, c1, ka, m, n0, ind, ibasis, x, z, iter, mxiter, numle, numge, bi, rerr);
-		if (ind[0] == 0 || ind[0] == 6) {
-			return Arrays.copyOf(x, n0);
-		} else {
-			return null;
-		}
+		converged[0] = ind[0] == 0 || ind[0] == 6;
+		return Arrays.copyOf(x, n0);
 	}
 
 	private static void smplx(final double[][] a, final double[] b0, final double[] c, final int ka, final int m,

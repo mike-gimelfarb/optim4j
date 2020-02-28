@@ -23,6 +23,7 @@ package opt.multivariate.constrained.order1;
 import java.util.Arrays;
 import java.util.function.Function;
 
+import opt.OptimizerSolution;
 import utils.BlasMath;
 import utils.IntMath;
 import utils.RealMath;
@@ -42,23 +43,13 @@ import utils.RealMath;
  */
 public final class TolminAlgorithm {
 
-	// ==========================================================================
-	// STATIC CLASSES
-	// ==========================================================================
 	private interface Fg {
 
 		double fgcalc(int n, double[] x, double[] g);
 	}
-
-	// ==========================================================================
-	// FIELDS
-	// ==========================================================================
 	private final double[] fsave = new double[1];
 	private final double myTol;
 
-	// ==========================================================================
-	// CONSTRUCTORS
-	// ==========================================================================
 	/**
 	 *
 	 * @param tolerance
@@ -67,9 +58,6 @@ public final class TolminAlgorithm {
 		myTol = tolerance;
 	}
 
-	// ==========================================================================
-	// PUBLIC METHODS
-	// ==========================================================================
 	/**
 	 *
 	 * @param func
@@ -82,7 +70,7 @@ public final class TolminAlgorithm {
 	 * @param guess
 	 * @return
 	 */
-	public final double[] optimize(final Function<? super double[], Double> func,
+	public final OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> func,
 			final Function<? super double[], double[]> dfunc, final int meq, final double[][] a, final double[] b,
 			final double[] xl, final double[] xu, final double[] guess) {
 
@@ -101,13 +89,11 @@ public final class TolminAlgorithm {
 		};
 
 		// call main subroutine
+		// TODO: fix evaluation counter
 		getmin(fg, n, m, meq, a, b, xl, xu, x, myTol, iact, nact, par, 0, info);
-		return info[0] == 1 ? x : null;
+		return new OptimizerSolution<>(x, 0, 0, info[0] == 1);
 	}
 
-	// ==========================================================================
-	// HELPER METHODS
-	// ==========================================================================
 	private void getmin(final Fg fg, final int n, final int m, final int meq, final double[][] a, final double[] b,
 			final double[] xl, final double[] xu, final double[] x, final double acc, final int[] iact,
 			final int[] nact, final double[] par, final int iprint, final int[] info) {

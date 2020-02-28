@@ -24,7 +24,8 @@ package opt.multivariate.unconstrained.order0.cmaes;
 import java.util.Arrays;
 import java.util.function.Function;
 
-import opt.multivariate.unconstrained.order0.GradientFreeOptimizer;
+import opt.OptimizerSolution;
+import opt.multivariate.GradientFreeOptimizer;
 import opt.multivariate.unconstrained.order0.cmaes.AbstractCmaesOptimizer.AbstractCmaesFactory;
 
 /**
@@ -53,9 +54,6 @@ import opt.multivariate.unconstrained.order0.cmaes.AbstractCmaesOptimizer.Abstra
  */
 public final class BiPopCmaesAlgorithm extends GradientFreeOptimizer {
 
-	// ==========================================================================
-	// FIELDS
-	// ==========================================================================
 	// algorithm parameters
 	private final int myBudgetFactor = 2;
 	private final int myMaxEvals, myMaxRuns;
@@ -67,7 +65,7 @@ public final class BiPopCmaesAlgorithm extends GradientFreeOptimizer {
 	private int myLambdal, myLambdas, myLambda, myLambdaRef;
 	private int myBudgetl, myBudgets;
 	private int myIl, myIs, myIteration;
-	private int myEvalsref, myLastRegime, myCurrentRegime, myLastBestRegime;
+	private int myEvalsref, myLastRegime, myCurrentRegime, myLastBestRegime, myEvals;
 	private double mySigmal, mySigma;
 	private double myFx, myFxold, myFxBest;
 	private double[] myX, myXGuess, myX0, myXBest;
@@ -77,9 +75,6 @@ public final class BiPopCmaesAlgorithm extends GradientFreeOptimizer {
 	private Function<? super double[], Double> myFunc;
 	private int myD;
 
-	// ==========================================================================
-	// CONSTRUCTORS
-	// ==========================================================================
 	/**
 	 *
 	 * @param tolerance
@@ -141,9 +136,6 @@ public final class BiPopCmaesAlgorithm extends GradientFreeOptimizer {
 		this(tolerance, cmaesTolerance, sigma0, maxEvaluations, 9, printProgress);
 	}
 
-	// ==========================================================================
-	// IMPLEMENTATIONS
-	// ==========================================================================
 	@Override
 	public final void initialize(final Function<? super double[], Double> func, final double[] guess) {
 
@@ -169,11 +161,12 @@ public final class BiPopCmaesAlgorithm extends GradientFreeOptimizer {
 		myX0 = Arrays.copyOf(myXGuess, myD);
 
 		// first default run with small population size
-		myX = myCmaes.optimize(func, myX0);
+		final OptimizerSolution<double[], Double> sol = myCmaes.optimize(func, myX0);
+		myX = sol.getOptimalPoint();
 		myFx = func.apply(myX);
 
 		// initialize counters - note we do first restart with first regime
-		myEvals = myCmaes.countEvaluations() + 1;
+		myEvals = sol.getFEvals() + 1;
 		myBudgetl = myBudgets = 0;
 		myIteration = myIl = myIs = 0;
 		myLastRegime = myCurrentRegime = myLastBestRegime = 0;
@@ -258,30 +251,31 @@ public final class BiPopCmaesAlgorithm extends GradientFreeOptimizer {
 	}
 
 	@Override
-	public double[] optimize(final Function<? super double[], Double> func, final double[] guess) {
+	public OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> func,
+			final double[] guess) {
 		initialize(func, guess);
+		boolean converged = false;
 		while (true) {
 			iterate();
 
 			// check if reached max number of restarts or evals
 			if (myIl >= myMaxRuns || myEvals >= myMaxEvals) {
-				return myXBest;
+				break;
 			}
 
 			// check for convergence
 			if (myLastRegime == 0 && myFxold != myFx) {
 				final double ftol = RELEPS * 0.5 * Math.abs(myFx + myFxold);
 				if (Math.abs(myFx - myFxold) <= myTol + ftol) {
-					return myXBest;
+					converged = true;
+					break;
 				}
 				myFxold = myFx;
 			}
 		}
+		return new OptimizerSolution<>(myXBest, myEvals, 0, converged);
 	}
 
-	// ==========================================================================
-	// PUBLIC METHODS
-	// ==========================================================================
 	/**
 	 * 
 	 */
@@ -305,12 +299,13 @@ public final class BiPopCmaesAlgorithm extends GradientFreeOptimizer {
 		myCmaes = myCmaesFactory.createCmaStrategy(myCmaesTol, myLambdal, mySigma, myEvalsref);
 
 		// run the CMAES with increasing population size
-		myX = myCmaes.optimize(myFunc, myX0);
+		final OptimizerSolution<double[], Double> sol = myCmaes.optimize(myFunc, myX0);
+		myX = sol.getOptimalPoint();
 		myFx = myFunc.apply(myX);
 
 		// increment counters and adjust budget
-		myEvals += myCmaes.countEvaluations() + 1;
-		myBudgetl += myCmaes.countEvaluations() + 1;
+		myEvals += sol.getFEvals() + 1;
+		myBudgetl += sol.getFEvals() + 1;
 		++myIl;
 		myLastRegime = 0;
 	}
@@ -341,12 +336,13 @@ public final class BiPopCmaesAlgorithm extends GradientFreeOptimizer {
 		myCmaes = myCmaesFactory.createCmaStrategy(myCmaesTol, myLambda, mySigma, myEvalsref);
 
 		// run the CMAES with small population size
-		myX = myCmaes.optimize(myFunc, myX0);
+		final OptimizerSolution<double[], Double> sol = myCmaes.optimize(myFunc, myX0);
+		myX = sol.getOptimalPoint();
 		myFx = myFunc.apply(myX);
 
 		// increment counters and adjust budget
-		myEvals += myCmaes.countEvaluations() + 1;
-		myBudgets += myCmaes.countEvaluations() + 1;
+		myEvals += sol.getFEvals() + 1;
+		myBudgets += sol.getFEvals() + 1;
 		++myIs;
 		myLastRegime = 1;
 	}

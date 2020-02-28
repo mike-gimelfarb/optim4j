@@ -23,6 +23,8 @@ package opt.univariate.order1;
 
 import java.util.function.Function;
 
+import opt.OptimizerSolution;
+import opt.univariate.DerivativeOptimizer;
 import utils.Constants;
 
 /**
@@ -35,9 +37,6 @@ import utils.Constants;
  */
 public final class CubicInterpolationAlgorithm extends DerivativeOptimizer {
 
-	// ==========================================================================
-	// CONSTRUCTORS
-	// ==========================================================================
 	/**
 	 *
 	 * @param absoluteTolerance
@@ -49,85 +48,72 @@ public final class CubicInterpolationAlgorithm extends DerivativeOptimizer {
 		super(absoluteTolerance, relativeTolerance, maxEvaluations);
 	}
 
-	// ==========================================================================
-	// IMPLEMENTATIONS
-	// ==========================================================================
 	@Override
-	public final double optimize(final Function<? super Double, Double> f, final Function<? super Double, Double> df,
-			final double a, final double b) {
+	public final OptimizerSolution<Double, Double> optimize(final Function<? super Double, Double> f,
+			final Function<? super Double, Double> df, final double a, final double b) {
 
 		// prepare variables
 		final int[] fev = new int[1];
-		final int[] dfev = new int[1];
+		final boolean[] converged = new boolean[1];
 
 		// call main subroutine
-		final double result = hybridcubic(f, df, a, b, myTol, myRelTol, myMaxEvals, fev, dfev);
-		myEvals += fev[0];
-		myDEvals += dfev[0];
-		return result;
+		final double result = hybridcubic(f, df, a, b, myTol, myRelTol, myMaxEvals, fev, converged);
+		return new OptimizerSolution<>(result, fev[0], fev[0], converged[0]);
 	}
 
-	// ==========================================================================
-	// HELPER METHODS
-	// ==========================================================================
 	private static double hybridcubic(final Function<? super Double, Double> func,
 			final Function<? super Double, Double> dfunc, double a, double b, final double tau, final double reltol,
-			final int maxfev, final int[] fev, final int[] dfev) {
+			final int maxfev, final int[] fev, final boolean[] converged) {
 
 		// first convert the guess to a bracket
-		fev[0] = dfev[0] = 0;
 		double el, c, fc, dfc;
 		double fa = func.apply(a);
 		double dfa = dfunc.apply(a);
-		++fev[0];
-		++dfev[0];
+		fev[0] = 1;
 
 		while (true) {
 
-			// step 1
-			// check the convergence
+			// step 1 check convergence
 			double mid = 0.5 * (a + b);
 			double xtol = tau + reltol * Math.abs(mid);
 			if (Math.abs(b - a) <= xtol) {
+				converged[0] = true;
 				return mid;
 			}
 
 			// check the budget
 			if (fev[0] >= maxfev) {
-				return Double.NaN;
+				return mid;
 			}
 
 			// interpolation step
 			el = 2.0 * Math.abs(b - a);
 			double gamma = cubic(a, fa, dfa, b, func.apply(b), dfunc.apply(b));
 			++fev[0];
-			++dfev[0];
 			c = step(a, b, gamma, tau);
 			fc = func.apply(c);
 			dfc = dfunc.apply(c);
 			++fev[0];
-			++dfev[0];
 			double[] updt = update(a, fa, dfa, b, c, fc, dfc);
 			a = updt[0];
 			b = updt[1];
 			fa = func.apply(a);
 			dfa = dfunc.apply(a);
 			++fev[0];
-			++dfev[0];
 
 			while (true) {
 
-				// step 2
-				// check convergence
+				// step 2 check convergence
 				mid = 0.5 * (a + b);
 				xtol = tau + reltol * Math.abs(mid);
 				if (Math.abs(b - a) <= xtol) {
+					converged[0] = true;
 					return mid;
 				}
 
 				// check budget
 				if (fev[0] >= maxfev) {
-					return Double.NaN;
+					return mid;
 				}
 
 				el /= 2.0;
@@ -146,32 +132,27 @@ public final class CubicInterpolationAlgorithm extends DerivativeOptimizer {
 						fc = func.apply(c);
 						dfc = dfunc.apply(c);
 						++fev[0];
-						++dfev[0];
 						updt = update(a, fa, dfa, b, c, fc, dfc);
 						a = updt[0];
 						b = updt[1];
 						fa = func.apply(a);
 						dfa = dfunc.apply(a);
 						++fev[0];
-						++dfev[0];
 					}
 				}
 			}
 
-			// step 5
-			// bisection step
+			// step 5 bisection step
 			c = 0.5 * (a + b);
 			fc = func.apply(c);
 			dfc = dfunc.apply(c);
 			++fev[0];
-			++dfev[0];
 			updt = update(a, fa, dfa, b, c, fc, dfc);
 			a = updt[0];
 			b = updt[1];
 			fa = func.apply(a);
 			dfa = dfunc.apply(a);
 			++fev[0];
-			++dfev[0];
 		}
 	}
 

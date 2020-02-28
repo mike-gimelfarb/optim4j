@@ -23,14 +23,14 @@ package opt.univariate.order1;
 
 import java.util.function.Function;
 
+import opt.OptimizerSolution;
+import opt.univariate.DerivativeOptimizer;
+
 /**
  * TODO: find which paper this is based on!
  */
 public final class SecantAlgorithm extends DerivativeOptimizer {
 
-	// ==========================================================================
-	// CONSTRUCTORS
-	// ==========================================================================
 	/**
 	 *
 	 *
@@ -42,40 +42,29 @@ public final class SecantAlgorithm extends DerivativeOptimizer {
 		super(absoluteTolerance, relativeTolerance, maxEvaluations);
 	}
 
-	// ==========================================================================
-	// IMPLEMENTATIONS
-	// ==========================================================================
 	@Override
-	public final double optimize(final Function<? super Double, Double> f, final Function<? super Double, Double> df,
-			final double a, final double b) {
+	public final OptimizerSolution<Double, Double> optimize(final Function<? super Double, Double> f,
+			final Function<? super Double, Double> df, final double a, final double b) {
 
 		// prepare variables
-		final int[] fev = new int[1];
 		final int[] dfev = new int[1];
+		final boolean[] converged = new boolean[1];
 
 		// call main subroutine
-		final double result = secantMin(df, a, b, myTol, myRelTol, myMaxEvals, fev, dfev);
-		myEvals += fev[0];
-		myDEvals += dfev[0];
-		return result;
+		final double result = secantMin(df, a, b, myTol, myRelTol, myMaxEvals, dfev, converged);
+		return new OptimizerSolution<>(result, 0, dfev[0], converged[0]);
 	}
 
-	// ==========================================================================
-	// HELPER METHODS
-	// ==========================================================================
 	private static double secantMin(final Function<? super Double, Double> dfunc, double a, double b, final double tol,
-			final double reltol, final int maxfev, final int[] fev, final int[] dfev) {
-		fev[0] = dfev[0] = 0;
+			final double reltol, final int maxfev, final int[] dfev, final boolean[] converged) {
 
 		// generate two points
 		double dfb = dfunc.apply(b);
-		++dfev[0];
 		double x0 = a + (b - a) / 3.0;
 		double df0 = dfunc.apply(x0);
-		++dfev[0];
 		double x1 = a + 2.0 * (b - a) / 3.0;
 		double df1 = dfunc.apply(x1);
-		++dfev[0];
+		dfev[0] = 3;
 		boolean secant = false;
 
 		// main loop of secant method for f'
@@ -87,6 +76,7 @@ public final class SecantAlgorithm extends DerivativeOptimizer {
 			if (df1 == 0.0 || df1 == -0.0) {
 
 				// first-order condition is satisfied
+				converged[0] = true;
 				return x1;
 			}
 
@@ -111,10 +101,9 @@ public final class SecantAlgorithm extends DerivativeOptimizer {
 				}
 			}
 
-			// check for convergence
 			// test for budget
 			if (dfev[0] >= maxfev) {
-				return Double.NaN;
+				return x1;
 			}
 
 			// test sufficient reduction in the size of the bracket
@@ -122,6 +111,7 @@ public final class SecantAlgorithm extends DerivativeOptimizer {
 			final double df2 = dfunc.apply(x2);
 			++dfev[0];
 			if (Math.abs(b - a) <= xtol) {
+				converged[0] = true;
 				return x2;
 			}
 
@@ -129,6 +119,7 @@ public final class SecantAlgorithm extends DerivativeOptimizer {
 			if (secant1 && secant) {
 				xtol = tol + reltol * Math.abs(x2);
 				if (Math.abs(x2 - x1) <= xtol && Math.abs(df2) <= tol) {
+					converged[0] = true;
 					return x2;
 				}
 			}

@@ -44,9 +44,6 @@ import utils.RealMath;
  */
 public class CmaesAlgorithm extends AbstractCmaesOptimizer {
 
-	// ==========================================================================
-	// STATIC CLASSES
-	// ==========================================================================
 	/**
 	 * 
 	 * @author Michael
@@ -61,9 +58,6 @@ public class CmaesAlgorithm extends AbstractCmaesOptimizer {
 		}
 	}
 
-	// ==========================================================================
-	// FIELDS
-	// ==========================================================================
 	// convergence parameters
 	protected int myFlag;
 
@@ -73,9 +67,6 @@ public class CmaesAlgorithm extends AbstractCmaesOptimizer {
 	protected double[] diagD;
 	protected double[][] B, C, invsqrtC;
 
-	// ==========================================================================
-	// CONSTRUCTORS
-	// ==========================================================================
 	/**
 	 *
 	 * @param tolerance
@@ -107,9 +98,6 @@ public class CmaesAlgorithm extends AbstractCmaesOptimizer {
 		super(tolerance, initialSigma);
 	}
 
-	// ==========================================================================
-	// IMPLEMENTATIONS
-	// ==========================================================================
 	@Override
 	public void initialize(final Function<? super double[], Double> func, final double[] guess) {
 		super.initialize(func, guess);
@@ -288,9 +276,6 @@ public class CmaesAlgorithm extends AbstractCmaesOptimizer {
 		return false;
 	}
 
-	// ==========================================================================
-	// PUBLIC METHODS
-	// ==========================================================================
 	/**
 	 *
 	 * @return
@@ -359,9 +344,6 @@ public class CmaesAlgorithm extends AbstractCmaesOptimizer {
 		}
 	}
 
-	// ==========================================================================
-	// HELPER METHODS
-	// ==========================================================================
 	/**
 	 * This include code translated from the JAMA package. The code is released into
 	 * the public domain, but contains the following license information.
@@ -474,27 +456,22 @@ public class CmaesAlgorithm extends AbstractCmaesOptimizer {
 
 	// Symmetric tridiagonal QL algorithm, taken from JAMA package.
 	protected static final void tql2(int n, double[] d, double[] e, double[][] V) {
-
-		// This is derived from the Algol procedures tql2, by
-		// Bowdler, Martin, Reinsch, and Wilkinson, Handbook for
-		// Auto. Comp., Vol.ii-Linear Algebra, and the corresponding
-		// Fortran subroutine in EISPACK.
 		System.arraycopy(e, 1, e, 0, n - 1);
 		e[n - 1] = 0.0;
-
-		double f = 0.0;
-		double tst1 = 0.0;
-		double eps = BlasMath.D1MACH[3 - 1];
+		double f = 0.0, tst1 = 0.0;
+		double eps = Math.pow(2.0, -52.0);
 		for (int l = 0; l < n; l++) {
 
 			// Find small subdiagonal element
 			tst1 = Math.max(tst1, Math.abs(d[l]) + Math.abs(e[l]));
 			int m = l;
-			while (m < n) {
+			for (m = l; m < n; m++) {
 				if (Math.abs(e[m]) <= eps * tst1) {
 					break;
 				}
-				m++;
+			}
+			if (m >= n) {
+				break;
 			}
 
 			// If m == l, d[l] is an eigenvalue, otherwise, iterate.
@@ -505,9 +482,7 @@ public class CmaesAlgorithm extends AbstractCmaesOptimizer {
 					double g = d[l];
 					double p = (d[l + 1] - g) / (2.0 * e[l]);
 					double r = RealMath.hypot(p, 1.0);
-					if (p < 0) {
-						r = -r;
-					}
+					r = RealMath.sign(r, p);
 					d[l] = e[l] / (p + r);
 					d[l + 1] = e[l] * (p + r);
 					double dl1 = d[l + 1];
@@ -519,12 +494,9 @@ public class CmaesAlgorithm extends AbstractCmaesOptimizer {
 
 					// Implicit QL transformation.
 					p = d[m];
-					double c = 1.0;
-					double c2 = c;
-					double c3 = c;
+					double c = 1.0, c2 = c, c3 = c;
 					double el1 = e[l + 1];
-					double s = 0.0;
-					double s2 = 0.0;
+					double s = 0.0, s2 = 0.0;
 					for (int i = m - 1; i >= l; i--) {
 						c3 = c2;
 						c2 = c;
@@ -552,7 +524,7 @@ public class CmaesAlgorithm extends AbstractCmaesOptimizer {
 					// Check for convergence.
 				} while (Math.abs(e[l]) > eps * tst1);
 			}
-			d[l] = d[l] + f;
+			d[l] += f;
 			e[l] = 0.0;
 		}
 
@@ -562,15 +534,11 @@ public class CmaesAlgorithm extends AbstractCmaesOptimizer {
 			double p = d[i];
 			for (int j = i + 1; j < n; j++) {
 				if (d[j] < p) {
-
-					// NH find smallest k>i
 					k = j;
 					p = d[j];
 				}
 			}
 			if (k != i) {
-
-				// swap k and i
 				d[k] = d[i];
 				d[i] = p;
 				for (int j = 0; j < n; j++) {

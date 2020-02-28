@@ -82,7 +82,6 @@ public abstract class UnivariateOptimizer extends Optimizer<Double, Double, Func
 	// ==========================================================================
 	// FIELDS
 	// ==========================================================================
-	protected int myEvals;
 	protected int myMaxEvals;
 	protected double myTol, myRelTol;
 
@@ -105,21 +104,6 @@ public abstract class UnivariateOptimizer extends Optimizer<Double, Double, Func
 	// ==========================================================================
 	// PUBLIC METHODS
 	// ==========================================================================
-	/**
-	 *
-	 * @return
-	 */
-	public final int countEvaluations() {
-		return myEvals;
-	}
-
-	/**
-	 *
-	 */
-	public void resetCounter() {
-		myEvals = 0;
-	}
-
 	/**
 	 *
 	 * @param newTolerance

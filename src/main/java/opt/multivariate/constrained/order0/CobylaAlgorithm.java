@@ -23,6 +23,7 @@ package opt.multivariate.constrained.order0;
 import java.util.Arrays;
 import java.util.function.Function;
 
+import opt.OptimizerSolution;
 import utils.BlasMath;
 
 /**
@@ -48,16 +49,9 @@ import utils.BlasMath;
  */
 public final class CobylaAlgorithm {
 
-	// ==========================================================================
-	// FIELDS
-	// ==========================================================================
 	private final double myTol, myRho0;
 	private final int myMaxEvals;
-	private int myEvals;
 
-	// ==========================================================================
-	// CONSTRUCTORS
-	// ==========================================================================
 	/**
 	 *
 	 * @param tolerance
@@ -68,13 +62,9 @@ public final class CobylaAlgorithm {
 		myTol = tolerance;
 		myRho0 = initialStep;
 		myMaxEvals = maxEvaluations;
-		myEvals = 0;
 	}
 
-	// ==========================================================================
-	// PUBLIC METHODS
-	// ==========================================================================
-	public final double[] optimize(final Function<? super double[], Double> func,
+	public final OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> func,
 			final Function<? super double[], double[]> constr, final int m, final double[] guess) {
 
 		// prepare variables
@@ -83,14 +73,11 @@ public final class CobylaAlgorithm {
 		final int[] maxfun = { myMaxEvals };
 
 		// call main subroutine
+		// TODO: check convergence
 		cobyla(func, constr, n, m, x, myRho0, myTol, maxfun);
-		myEvals += maxfun[0];
-		return x;
+		return new OptimizerSolution<>(x, maxfun[0], 0, false);
 	}
 
-	// ==========================================================================
-	// HELPER METHODS
-	// ==========================================================================
 	private static void cobyla(final Function<? super double[], Double> func,
 			final Function<? super double[], double[]> constr, final int n, final int m, final double[] x,
 			final double rhobeg, final double rhoend, final int[] maxfun) {

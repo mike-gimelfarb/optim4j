@@ -26,8 +26,8 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.function.Function;
 
-import opt.multivariate.unconstrained.order0.GradientFreeOptimizer;
-import utils.Constants;
+import opt.OptimizerSolution;
+import opt.multivariate.GradientFreeOptimizer;
 
 /**
  * 
@@ -38,36 +38,26 @@ import utils.Constants;
  */
 public final class EschAlgorithm extends GradientFreeOptimizer {
 
-	// ==========================================================================
-	// STATIC CLASSES
-	// ==========================================================================
 	private static class Individual {
 
 		public double[] parameters;
 		public double fitness;
 	}
 
-	// ==========================================================================
-	// FIELDS
-	// ==========================================================================
 	// problem parameters
 	private Function<? super double[], Double> myFunc;
 	private int myD;
-	private double[] myLo, myHi;
-	private double[] myGuess;
+	private double[] myLo, myHi, myGuess;
 	private Comparator<Individual> myComparer;
 
 	// algorithm parameters
-	private final int myMaxEvals;
-	private final int np, no;
+	private final int myMaxEvals, np, no;
 	private double[] vetor;
 
 	// algorithm memory
 	private Individual[] esparents, esoffsprings, estotal;
+	private int myEvals = 0;
 
-	// ==========================================================================
-	// CONSTRUCTORS
-	// ==========================================================================
 	/**
 	 * 
 	 * @param tolerance
@@ -81,9 +71,6 @@ public final class EschAlgorithm extends GradientFreeOptimizer {
 		no = numOffspring;
 	}
 
-	// ==========================================================================
-	// IMPLEMENTATIONS
-	// ==========================================================================
 	@Override
 	public void initialize(final Function<? super double[], Double> func, final double[] guess) {
 		final double[] lo = new double[guess.length];
@@ -153,7 +140,8 @@ public final class EschAlgorithm extends GradientFreeOptimizer {
 	}
 
 	@Override
-	public double[] optimize(final Function<? super double[], Double> func, final double[] guess) {
+	public OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> func,
+			final double[] guess) {
 		final double[] lo = new double[guess.length];
 		final double[] hi = new double[guess.length];
 		for (int i = 0; i < guess.length; ++i) {
@@ -163,9 +151,6 @@ public final class EschAlgorithm extends GradientFreeOptimizer {
 		return optimize(func, guess, lo, hi);
 	}
 
-	// ==========================================================================
-	// PUBLIC METHODS
-	// ==========================================================================
 	/**
 	 * 
 	 * @param f
@@ -184,6 +169,7 @@ public final class EschAlgorithm extends GradientFreeOptimizer {
 		myGuess = guess;
 		myD = myGuess.length;
 		myComparer = EschAlgorithm::compare;
+		myEvals = 0;
 
 		/*********************************
 		 * controlling the population size
@@ -254,18 +240,16 @@ public final class EschAlgorithm extends GradientFreeOptimizer {
 	 * @param ub
 	 * @return
 	 */
-	public double[] optimize(final Function<? super double[], Double> func, final double[] guess, final double[] lb,
-			final double[] ub) {
+	public OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> func,
+			final double[] guess, final double[] lb, final double[] ub) {
 		initialize(func, guess, lb, ub);
 		while (myEvals < myMaxEvals) {
 			iterate();
 		}
-		return esparents[0].parameters;
+		// TODO: check convergence
+		return new OptimizerSolution<>(esparents[0].parameters, myEvals, 0, false);
 	}
 
-	// ==========================================================================
-	// HELPER METHODS
-	// ==========================================================================
 	private static int compare(final Individual a, final Individual b) {
 		return Double.compare(a.fitness, b.fitness);
 	}
@@ -282,7 +266,7 @@ public final class EschAlgorithm extends GradientFreeOptimizer {
 		limit_sup = mi + band * 0.5;
 		do {
 			na_unif = Math.random();
-			cauchy_mit = t * Math.tan((na_unif - 0.5) * Constants.PI) + mi;
+			cauchy_mit = t * Math.tan((na_unif - 0.5) * Math.PI) + mi;
 		} while (cauchy_mit < limit_inf || cauchy_mit > limit_sup);
 		if (cauchy_mit < 0.0) {
 			cauchy_mit = -cauchy_mit;

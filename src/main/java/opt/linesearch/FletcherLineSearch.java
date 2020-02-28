@@ -24,7 +24,6 @@ package opt.linesearch;
 import java.util.function.Function;
 
 import utils.BlasMath;
-import utils.Pair;
 
 /**
  * An inexact line search method introduced in Fletcher (1987) and described in
@@ -51,26 +50,19 @@ public final class FletcherLineSearch extends LineSearch {
 	}
 
 	@Override
-	public final Pair<Double, double[]> lineSearch(final Function<? super double[], Double> f,
+	public final LineSearchSolution lineSearch(final Function<? super double[], Double> f,
 			final Function<? super double[], double[]> df, final double[] x0, final double[] dir, final double[] df0,
 			double f0, final double initial) {
-		final double rhoscal = 0.1;
-		final double sig = 0.7;
-		final double tau = 0.1;
-		final double chi = 0.75;
-		final double eps2 = myTol;
-		final int mhat = myMaxIters;
-		final int n = x0.length;
+		final double rhoscal = 0.1, sig = 0.7, tau = 0.1, chi = 0.75, eps2 = myTol;
+		final int mhat = myMaxIters, n = x0.length;
 		final double[] wa = new double[n];
 
 		// INITIALIZE TEMPORARY ALGORITHM VARIABLES
-		double alfa0 = initial;
-		double alfal = 0.0;
-		double alfau = 1e99;
+		double alfa0 = initial, alfal = 0.0, alfau = 1e99;
 		double fl = f0;
 		double flp = BlasMath.ddotm(n, df0, 1, dir, 1);
-		int mit = 0;
-		int dmit = 0;
+		int mit = 0, dmit = 0;
+		boolean converged = false;
 
 		// MAIN LOOP OF THE LINE SEARCH PROCEDURE STARTS HERE
 		while (true) {
@@ -106,7 +98,7 @@ public final class FletcherLineSearch extends LineSearch {
 				++dmit;
 
 				// PERFORM EXTRAPOLATION
-				if (f0p < sig * flp && Math.abs(fl - f0) > eps2 && mit < mhat) {
+				if (f0p < sig * flp && Math.abs(fl - f0) > eps2) {
 					double dalfa0 = (alfa0 - alfal) * f0p / (flp - f0p);
 					if (dalfa0 < tau * (alfa0 - alfal)) {
 						dalfa0 = tau * (alfa0 - alfal);
@@ -120,14 +112,16 @@ public final class FletcherLineSearch extends LineSearch {
 					fl = f0;
 					flp = f0p;
 				} else {
+					converged = true;
+					break;
+				}
+				if (mit >= mhat) {
 					break;
 				}
 			}
 		}
 
 		// RETURN RESULT
-		myEvals += mit;
-		myDEvals += dmit;
-		return new Pair<>(alfa0, wa);
+		return new LineSearchSolution(alfa0, mit, dmit, wa, converged);
 	}
 }

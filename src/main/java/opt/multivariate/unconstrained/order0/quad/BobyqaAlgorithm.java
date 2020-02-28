@@ -23,7 +23,8 @@ package opt.multivariate.unconstrained.order0.quad;
 import java.util.Arrays;
 import java.util.function.Function;
 
-import opt.multivariate.unconstrained.order0.GradientFreeOptimizer;
+import opt.OptimizerSolution;
+import opt.multivariate.GradientFreeOptimizer;
 import utils.BlasMath;
 import utils.IntMath;
 import utils.RealMath;
@@ -38,16 +39,10 @@ import utils.RealMath;
  */
 public final class BobyqaAlgorithm extends GradientFreeOptimizer {
 
-	// ==========================================================================
-	// FIELDS
-	// ==========================================================================
 	private final Function<? super Integer, Integer> mySize;
 	private final double myRho0;
 	private final int myMaxFEvals;
 
-	// ==========================================================================
-	// CONSTRUCTORS
-	// ==========================================================================
 	/**
 	 *
 	 * @param tolerance
@@ -73,9 +68,6 @@ public final class BobyqaAlgorithm extends GradientFreeOptimizer {
 		this(tolerance, initialStep, maxEvaluations, d -> 2 * d + 1);
 	}
 
-	// ==========================================================================
-	// IMPLEMENTATIONS
-	// ==========================================================================
 	@Override
 	public final void initialize(final Function<? super double[], Double> function, final double[] guess) {
 		// nothing to do here
@@ -87,7 +79,8 @@ public final class BobyqaAlgorithm extends GradientFreeOptimizer {
 	}
 
 	@Override
-	public final double[] optimize(final Function<? super double[], Double> func, final double[] guess) {
+	public final OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> func,
+			final double[] guess) {
 
 		// prepare variables
 		final int n = guess.length;
@@ -102,9 +95,6 @@ public final class BobyqaAlgorithm extends GradientFreeOptimizer {
 		return optimize(func, guess, lower, upper);
 	}
 
-	// ==========================================================================
-	// PUBLIC METHODS
-	// ==========================================================================
 	/**
 	 *
 	 * @param func
@@ -113,8 +103,8 @@ public final class BobyqaAlgorithm extends GradientFreeOptimizer {
 	 * @param upper
 	 * @return
 	 */
-	public final double[] optimize(final Function<? super double[], Double> func, final double[] guess,
-			final double[] lower, final double[] upper) {
+	public final OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> func,
+			final double[] guess, final double[] lower, final double[] upper) {
 
 		// prepare variables
 		final int d = guess.length;
@@ -122,14 +112,11 @@ public final class BobyqaAlgorithm extends GradientFreeOptimizer {
 		final int[] nf = new int[1];
 
 		// call main subroutine
+		// TODO: check convergence
 		final double[] result = bobyqa(func, guess, lower, upper, npt, myRho0, myTol, myMaxFEvals, nf);
-		myEvals += nf[0];
-		return result;
+		return new OptimizerSolution<>(result, nf[0], 0, false);
 	}
 
-	// ==========================================================================
-	// HELPER METHODS
-	// ==========================================================================
 	private static double[] bobyqa(final Function<? super double[], Double> func, final double[] guess,
 			final double[] xl, final double[] xu, final int npt, final double rhobeg, final double rhoend,
 			final int maxfun, final int[] nf) {

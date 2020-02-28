@@ -44,9 +44,6 @@ import utils.BlasMath;
  */
 public class ActiveCmaesAlgorithm extends CmaesAlgorithm {
 
-	// ==========================================================================
-	// STATIC CLASSES
-	// ==========================================================================
 	/**
 	 * 
 	 * @author Michael
@@ -61,9 +58,6 @@ public class ActiveCmaesAlgorithm extends CmaesAlgorithm {
 		}
 	}
 
-	// ==========================================================================
-	// FIELDS
-	// ==========================================================================
 	// additional algorithm parameters
 	private final double myAlphaCov;
 
@@ -71,9 +65,6 @@ public class ActiveCmaesAlgorithm extends CmaesAlgorithm {
 	private double cm, cneg, alphaold;
 	private double[] ycoeff;
 
-	// ==========================================================================
-	// CONSTRUCTORS
-	// ==========================================================================
 	/**
 	 * 
 	 * @param tolerance
@@ -121,9 +112,6 @@ public class ActiveCmaesAlgorithm extends CmaesAlgorithm {
 		myAlphaCov = 2.0;
 	}
 
-	// ==========================================================================
-	// IMPLEMENTATIONS
-	// ==========================================================================
 	@Override
 	public void initialize(final Function<? super double[], Double> func, final double[] guess) {
 		super.initialize(func, guess);

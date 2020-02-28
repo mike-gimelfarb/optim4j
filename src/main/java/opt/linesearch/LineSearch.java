@@ -24,18 +24,27 @@ package opt.linesearch;
 import java.util.function.Function;
 
 import opt.Optimizer;
-import utils.Pair;
 
 /**
  * An abstract algorithm for performing a line search.
  */
 public abstract class LineSearch extends Optimizer<Double, Double, LineSearchProblem> {
 
-	protected static final double C1 = 1e-4;
-
 	protected final double myTol;
 	protected final int myMaxIters;
-	protected int myEvals, myDEvals;
+	protected final double myC1;
+
+	/**
+	 *
+	 * @param tolerance
+	 * @param maxIterations
+	 * @param c1
+	 */
+	public LineSearch(final double tolerance, final int maxIterations, final double c1) {
+		myTol = tolerance;
+		myMaxIters = maxIterations;
+		myC1 = c1;
+	}
 
 	/**
 	 *
@@ -43,8 +52,7 @@ public abstract class LineSearch extends Optimizer<Double, Double, LineSearchPro
 	 * @param maxIterations
 	 */
 	public LineSearch(final double tolerance, final int maxIterations) {
-		myTol = tolerance;
-		myMaxIters = maxIterations;
+		this(tolerance, maxIterations, 1e-4);
 	}
 
 	/**
@@ -58,43 +66,18 @@ public abstract class LineSearch extends Optimizer<Double, Double, LineSearchPro
 	 * @param initial
 	 * @return
 	 */
-	public abstract Pair<Double, double[]> lineSearch(Function<? super double[], Double> f,
+	public abstract LineSearchSolution lineSearch(Function<? super double[], Double> f,
 			Function<? super double[], double[]> df, double[] x0, double[] dir, double[] df0, double f0,
 			double initial);
 
 	@Override
-	public Double optimize(final LineSearchProblem problem, final Double guess) {
+	public LineSearchSolution optimize(final LineSearchProblem problem, final Double guess) {
 		final Function<double[], Double> f = problem.myFunc;
 		final Function<double[], double[]> df = problem.myDFunc;
 		final double[] x0 = problem.myX0;
 		final double[] dir = problem.myD;
 		final double[] df0 = df.apply(x0);
 		final double f0 = f.apply(x0);
-		++myEvals;
-		++myDEvals;
-		return lineSearch(f, df, x0, dir, df0, f0, guess).first();
-	}
-
-	/**
-	 *
-	 * @return
-	 */
-	public final int countEvaluations() {
-		return myEvals;
-	}
-
-	/**
-	 *
-	 * @return
-	 */
-	public final int countGradientEvaluations() {
-		return myDEvals;
-	}
-
-	/**
-	 *
-	 */
-	public final void resetCounter() {
-		myEvals = myDEvals = 0;
+		return lineSearch(f, df, x0, dir, df0, f0, guess);
 	}
 }

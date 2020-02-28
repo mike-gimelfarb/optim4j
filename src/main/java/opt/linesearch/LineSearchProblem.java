@@ -40,8 +40,8 @@ public final class LineSearchProblem implements Function<Double, Double> {
 	protected final Function<double[], Double> myFunc;
 	protected final Function<double[], double[]> myDFunc;
 	protected final double[] myX0, myD;
-	private final int myN;
 	private final double[] myTemp;
+	private final int myN;
 
 	/**
 	 *

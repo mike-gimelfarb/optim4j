@@ -25,7 +25,8 @@ import java.util.Arrays;
 import java.util.TreeSet;
 import java.util.function.Function;
 
-import opt.multivariate.unconstrained.order0.GradientFreeOptimizer;
+import opt.OptimizerSolution;
+import opt.multivariate.GradientFreeOptimizer;
 import utils.BlasMath;
 
 /**
@@ -40,9 +41,6 @@ import utils.BlasMath;
  */
 public final class CrsAlgorithm extends GradientFreeOptimizer {
 
-	// ==========================================================================
-	// STATIC METHODS
-	// ==========================================================================
 	private static final class RbNode implements Comparable<RbNode> {
 
 		int i_ps;
@@ -68,8 +66,7 @@ public final class CrsAlgorithm extends GradientFreeOptimizer {
 	private static final class CrsData {
 
 		int n;
-		double[] lb;
-		double[] ub;
+		double[] lb, ub;
 		Function<? super double[], Double> f;
 		int evals;
 
@@ -81,19 +78,13 @@ public final class CrsAlgorithm extends GradientFreeOptimizer {
 		TreeSet<RbNode> t;
 	}
 
-	// ==========================================================================
-	// FIELDS
-	// ==========================================================================
 	// algorithm parameters
 	private final double myTolF;
-	private final int myMaxEvals;
-	private final int myPopSize;
-	private final int myMaxMutations;
+	private final int myMaxEvals, myPopSize, myMaxMutations;
 
 	// problem parameters
 	private Function<? super double[], Double> myFunc;
-	private double[] myLower;
-	private double[] myUpper;
+	private double[] myLower, myUpper;
 	private int n;
 
 	// algorithm memory and changing variables
@@ -102,9 +93,6 @@ public final class CrsAlgorithm extends GradientFreeOptimizer {
 	private double[] x;
 	private boolean done;
 
-	// ==========================================================================
-	// CONSTRUCTORS
-	// ==========================================================================
 	/**
 	 * 
 	 * @param toleranceX
@@ -132,9 +120,6 @@ public final class CrsAlgorithm extends GradientFreeOptimizer {
 		this(toleranceX, toleranceF, maxEvaluations, 0, 1);
 	}
 
-	// ==========================================================================
-	// IMPLEMENTATIONS
-	// ==========================================================================
 	@Override
 	public final void initialize(final Function<? super double[], Double> func, final double[] guess) {
 		final double[] lo = new double[guess.length];
@@ -147,7 +132,8 @@ public final class CrsAlgorithm extends GradientFreeOptimizer {
 	}
 
 	@Override
-	public double[] optimize(final Function<? super double[], Double> func, final double[] guess) {
+	public OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> func,
+			final double[] guess) {
 		final double[] lo = new double[guess.length];
 		final double[] hi = new double[guess.length];
 		for (int i = 0; i < guess.length; ++i) {
@@ -181,9 +167,6 @@ public final class CrsAlgorithm extends GradientFreeOptimizer {
 		}
 	}
 
-	// ==========================================================================
-	// PUBLIC METHODS
-	// ==========================================================================
 	/**
 	 * 
 	 * @param func
@@ -218,19 +201,16 @@ public final class CrsAlgorithm extends GradientFreeOptimizer {
 	 * @param ub
 	 * @param guess
 	 */
-	public double[] optimize(final Function<? super double[], Double> func, final double[] lb, final double[] ub,
-			final double[] guess) {
+	public OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> func,
+			final double[] lb, final double[] ub, final double[] guess) {
 		initialize(func, lb, ub, guess);
 		while (!done) {
 			iterate();
 		}
-		myEvals += data.evals;
-		return Arrays.copyOf(x, n);
+		// TODO: check convergence
+		return new OptimizerSolution<>(Arrays.copyOf(x, n), data.evals, 0, false);
 	}
 
-	// ==========================================================================
-	// HELPER METHODS
-	// ==========================================================================
 	private static void random_trial(final CrsData d, final RbNode best) {
 		final int n = d.n;
 

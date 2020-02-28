@@ -27,7 +27,8 @@ package opt.multivariate.unconstrained.order0.evol;
 import java.util.Arrays;
 import java.util.function.Function;
 
-import opt.multivariate.unconstrained.order0.GradientFreeOptimizer;
+import opt.OptimizerSolution;
+import opt.multivariate.GradientFreeOptimizer;
 import utils.BlasMath;
 
 //%
@@ -66,33 +67,23 @@ import utils.BlasMath;
  */
 public final class DifferentialSearchAlgorithm extends GradientFreeOptimizer {
 
-	// ==========================================================================
-	// FIELDS
-	// ==========================================================================
 	// algorithm parameters
-	private final int mySwarmSize;
-	private final int myMaxEvals;
+	private final int mySwarmSize, myMaxEvals;
 	private final int[] myMethods;
 	private final double mySigmaTol;
 
 	// problem parameters
 	private Function<? super double[], Double> myFunc;
 	private int myD;
-	private double[] myLower;
-	private double[] myUpper;
+	private double[] myLower, myUpper;
 
 	// storage and temporaries
 	private Integer[] jind;
 	private int[][] map;
-	private double[][] superorganism;
-	private double[][] stopover;
-	private double[][] direction;
-	private double[] fit_super;
-	private double[] fit_stopover;
+	private double[][] superorganism, stopover, direction;
+	private double[] fit_super, fit_stopover;
+	private int myEvals;
 
-	// ==========================================================================
-	// CONSTRUCTORS
-	// ==========================================================================
 	/**
 	 *
 	 * @param tolerance
@@ -122,9 +113,6 @@ public final class DifferentialSearchAlgorithm extends GradientFreeOptimizer {
 		this(tolerance, stdevTolerance, maxEvaluations, swarmSize, new int[] { 1, 2, 3, 4 });
 	}
 
-	// ==========================================================================
-	// IMPLEMENTATIONS
-	// ==========================================================================
 	@Override
 	public void initialize(final Function<? super double[], Double> func, final double[] guess) {
 		final double[] lo = new double[guess.length];
@@ -185,7 +173,8 @@ public final class DifferentialSearchAlgorithm extends GradientFreeOptimizer {
 	}
 
 	@Override
-	public double[] optimize(final Function<? super double[], Double> func, final double[] guess) {
+	public OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> func,
+			final double[] guess) {
 		final double[] lo = new double[guess.length];
 		final double[] hi = new double[guess.length];
 		for (int i = 0; i < guess.length; ++i) {
@@ -195,9 +184,6 @@ public final class DifferentialSearchAlgorithm extends GradientFreeOptimizer {
 		return optimize(func, lo, hi);
 	}
 
-	// ==========================================================================
-	// PUBLIC METHODS
-	// ==========================================================================
 	/**
 	 *
 	 * @param func
@@ -211,6 +197,7 @@ public final class DifferentialSearchAlgorithm extends GradientFreeOptimizer {
 		myD = lower.length;
 		myLower = lower;
 		myUpper = upper;
+		myEvals = 0;
 
 		// generate initial individuals, clans and superorganism.
 		superorganism = generate_pop(mySwarmSize, myD, lower, upper);
@@ -239,15 +226,15 @@ public final class DifferentialSearchAlgorithm extends GradientFreeOptimizer {
 	 * @param upper
 	 * @return
 	 */
-	public double[] optimize(final Function<? super double[], Double> func, final double[] lower,
-			final double[] upper) {
+	public OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> func,
+			final double[] lower, final double[] upper) {
 
 		// initialization of swarm
 		initialize(func, lower, upper);
 
 		// main loop
-		final int fev = myEvals;
-		while (myEvals - fev < myMaxEvals) {
+		boolean converged = false;
+		while (myEvals < myMaxEvals) {
 
 			// perform iteration
 			iterate();
@@ -278,6 +265,7 @@ public final class DifferentialSearchAlgorithm extends GradientFreeOptimizer {
 
 				// test convergence in standard deviation
 				if (m2 <= (mySwarmSize - 1) * mySigmaTol * mySigmaTol) {
+					converged = true;
 					break;
 				}
 			}
@@ -285,12 +273,10 @@ public final class DifferentialSearchAlgorithm extends GradientFreeOptimizer {
 
 		// update results
 		final int imin = argmin(mySwarmSize, fit_super);
-		return superorganism[imin];
+		final double[] sol = superorganism[imin];
+		return new OptimizerSolution<>(sol, myEvals, 0, converged);
 	}
 
-	// ==========================================================================
-	// HELPER METHODS
-	// ==========================================================================
 	private static double[][] generate_dir(final double[][] direction, final int method, final double[][] superorganism,
 			final int size, final double[] fit, final Integer[] jind) {
 		switch (method) {

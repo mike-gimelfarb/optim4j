@@ -25,26 +25,19 @@ import java.util.Arrays;
 import java.util.Random;
 import java.util.function.Function;
 
+import opt.OptimizerSolution;
+import opt.univariate.DerivativeFreeOptimizer;
+
 /**
  *
  */
 public final class GaussianEdaAlgorithm extends DerivativeFreeOptimizer {
 
-	// ==========================================================================
-	// STATIC FIELDS
-	// ==========================================================================
 	private static final Random RAND = new Random();
 
-	// ==========================================================================
-	// FIELDS
-	// ==========================================================================
-	private final int myNp; // the population size
-	private final int myNb; // the size of the "elite" group
+	private final int myNp, myNb; // the size of the population, "elite" group
 	private final int myMaxEvals; // maximum number of function evaluations
 
-	// ==========================================================================
-	// CONSTRUCTORS
-	// ==========================================================================
 	/**
 	 *
 	 * @param tolerance
@@ -70,26 +63,22 @@ public final class GaussianEdaAlgorithm extends DerivativeFreeOptimizer {
 		this(tolerance, popSize, popSize / 2, maxEvaluations);
 	}
 
-	// ==========================================================================
-	// IMPLEMENTATIONS
-	// ==========================================================================
 	@Override
-	public final double optimize(final Function<? super Double, Double> func, final double a, final double b) {
+	public final OptimizerSolution<Double, Double> optimize(final Function<? super Double, Double> func, final double a,
+			final double b) {
 
 		// prepare variables
 		final int[] fev = new int[1];
+		final boolean[] converged = new boolean[1];
 
 		// call main subroutine
-		final double result = eda(func, a, b, myTol, myMaxEvals, myNp, myNb, fev);
-		myEvals = fev[0];
-		return result;
+		final double result = eda(func, a, b, myTol, myMaxEvals, myNp, myNb, fev, converged);
+		return new OptimizerSolution<>(result, fev[0], 0, converged[0]);
 	}
 
-	// ==========================================================================
-	// HELPER METHODS
-	// ==========================================================================
 	private static double eda(final Function<? super Double, Double> func, final double a, final double b,
-			final double tol, final int maxfev, final int np, final int nb, final int[] fev) {
+			final double tol, final int maxfev, final int np, final int nb, final int[] fev,
+			final boolean[] converged) {
 
 		// prepare the population by randomization in [lb, ub]
 		final double[][] pool = new double[np][2];
@@ -103,7 +92,7 @@ public final class GaussianEdaAlgorithm extends DerivativeFreeOptimizer {
 		Arrays.sort(pool, (u, v) -> Double.compare(u[1], v[1]));
 
 		// main loop of EDA
-		while (fev[0] < maxfev) {
+		while (fev[0] + np - nb <= maxfev) {
 
 			// compute both the mean and variance of the model distribution
 			double mu = 0.0;
@@ -137,9 +126,10 @@ public final class GaussianEdaAlgorithm extends DerivativeFreeOptimizer {
 
 			// check convergence based on the standard deviation
 			if (sigma <= tol) {
+				converged[0] = true;
 				return pool[0][0];
 			}
 		}
-		return Double.NaN;
+		return pool[0][0];
 	}
 }

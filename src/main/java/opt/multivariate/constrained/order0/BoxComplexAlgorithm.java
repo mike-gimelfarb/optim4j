@@ -26,6 +26,8 @@ import java.util.Random;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import opt.OptimizerSolution;
+
 /**
  * An algorithm for minimization of a general function subject to general
  * nonlinear constraints that define a convex set. without derivative
@@ -132,7 +134,7 @@ public final class BoxComplexAlgorithm {
 	 * @param guess
 	 * @return
 	 */
-	public final double[] optimize(final Function<? super double[], Double> objective,
+	public final OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> objective,
 			final Predicate<? super double[]> feasibleRegion, final double[] lowerBound, final double[] upperBound,
 			final double[] guess) {
 
@@ -140,6 +142,7 @@ public final class BoxComplexAlgorithm {
 		initialize(objective, feasibleRegion, lowerBound, upperBound, guess);
 
 		// main loop of optimization
+		boolean converged = false;
 		while (true) {
 
 			// check budget
@@ -152,11 +155,12 @@ public final class BoxComplexAlgorithm {
 
 			// check convergence
 			if (isConverged()) {
+				converged = true;
 				break;
 			}
 		}
 		final int imin = argmin(myN, myValue);
-		return myPts[imin];
+		return new OptimizerSolution<>(myPts[imin], myFEvals, myGEvals, converged);
 	}
 
 	/**
@@ -319,22 +323,6 @@ public final class BoxComplexAlgorithm {
 		}
 		System.arraycopy(myXReflect, 0, xhigh, 0, myN);
 		myValue[imax] = freflect;
-	}
-
-	/**
-	 *
-	 * @return
-	 */
-	public final int countFunctionEvaluations() {
-		return myFEvals;
-	}
-
-	/**
-	 *
-	 * @return
-	 */
-	public final int countConstraintEvaluations() {
-		return myGEvals;
 	}
 
 	private boolean isConverged() {

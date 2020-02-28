@@ -56,6 +56,7 @@ package opt.multivariate.unconstrained.leastsquares;
 import java.util.Arrays;
 import java.util.function.Function;
 
+import opt.OptimizerSolution;
 import utils.BlasMath;
 import utils.RealMath;
 
@@ -65,23 +66,14 @@ import utils.RealMath;
  */
 public final class LevenbergMarquardtAlgorithm extends LeastSquaresOptimizer {
 
-	// ==========================================================================
-	// STATIC CLASSES
-	// ==========================================================================
 	@FunctionalInterface
 	private interface Fcn {
 
 		void fcn(int[] iflag, int m, int n, double[] x, double[] fvec, double[][] fjac, int ldfjac);
 	}
 
-	// ==========================================================================
-	// FIELDS
-	// ==========================================================================
 	private final int myMaxEvals;
 
-	// ==========================================================================
-	// CONSTRUCTORS
-	// ==========================================================================
 	/**
 	 *
 	 * @param tolerance
@@ -92,11 +84,9 @@ public final class LevenbergMarquardtAlgorithm extends LeastSquaresOptimizer {
 		myMaxEvals = maxEvaluations;
 	}
 
-	// ==========================================================================
-	// IMPLEMENTATIONS
-	// ==========================================================================
 	@Override
-	public final double[] optimize(final Function<? super double[], double[]> func, final double[] guess) {
+	public final OptimizerSolution<double[], double[]> optimize(final Function<? super double[], double[]> func,
+			final double[] guess) {
 
 		// prepare variables
 		final int[] info = new int[1];
@@ -105,16 +95,9 @@ public final class LevenbergMarquardtAlgorithm extends LeastSquaresOptimizer {
 
 		// call main subroutine
 		final double[] result = dnlse1(func, guess, myTol, myTol, myTol, myMaxEvals, 0.0, 100.0, info, nfev, njev);
-		if (info[0] >= 1 && info[0] <= 4) {
-			return result;
-		} else {
-			return null;
-		}
+		return new OptimizerSolution<>(result, nfev[0], njev[0], info[0] >= 1 && info[0] <= 4);
 	}
 
-	// ==========================================================================
-	// PUBLIC METHODS
-	// ==========================================================================
 	/**
 	 *
 	 * @param func
@@ -122,7 +105,7 @@ public final class LevenbergMarquardtAlgorithm extends LeastSquaresOptimizer {
 	 * @param guess
 	 * @return
 	 */
-	public final double[] optimize(final Function<double[], double[]> func,
+	public final OptimizerSolution<double[], double[]> optimize(final Function<double[], double[]> func,
 			final Function<double[], double[][]> jacobian, final double[] guess) {
 
 		// prepare variables
@@ -133,16 +116,9 @@ public final class LevenbergMarquardtAlgorithm extends LeastSquaresOptimizer {
 		// call main subroutine
 		final double[] result = dnlse2(func, jacobian, guess, myTol, myTol, myTol, myMaxEvals, 0.0, 100.0, info, nfev,
 				njev);
-		if (info[0] >= 1 && info[0] <= 4) {
-			return result;
-		} else {
-			return null;
-		}
+		return new OptimizerSolution<>(result, nfev[0], njev[0], info[0] >= 1 && info[0] <= 4);
 	}
 
-	// ==========================================================================
-	// HELPER METHODS
-	// ==========================================================================
 	private static double[] dnlse1(final Function<? super double[], double[]> func, final double[] x, final double ftol,
 			final double xtol, final double gtol, final int maxfev, final double epsfcn, final double factor,
 			final int[] info, final int[] nfev, final int[] njev) {
@@ -835,7 +811,7 @@ public final class LevenbergMarquardtAlgorithm extends LeastSquaresOptimizer {
 			Arrays.fill(err, 0, m, zero);
 			for (j = 1; j <= n; ++j) {
 				temp = Math.abs(x[j - 1]);
-				if (temp == zero) {
+				if (temp <= zero) {
 					temp = one;
 				}
 				for (i = 1; i <= m; ++i) {
@@ -863,7 +839,7 @@ public final class LevenbergMarquardtAlgorithm extends LeastSquaresOptimizer {
 			// MODE = 1
 			for (j = 1; j <= n; ++j) {
 				temp = eps * Math.abs(x[j - 1]);
-				if (temp == zero) {
+				if (temp <= zero) {
 					temp = eps;
 				}
 				xp[j - 1] = x[j - 1] + temp;
@@ -885,7 +861,7 @@ public final class LevenbergMarquardtAlgorithm extends LeastSquaresOptimizer {
 		for (j = 1; j <= n; ++j) {
 			temp = x[j - 1];
 			h = eps * Math.abs(temp);
-			if (h == zero) {
+			if (h <= zero) {
 				h = eps;
 			}
 			x[j - 1] = temp + h;

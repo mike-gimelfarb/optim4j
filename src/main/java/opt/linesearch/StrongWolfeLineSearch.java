@@ -24,7 +24,6 @@ package opt.linesearch;
 import java.util.function.Function;
 
 import utils.BlasMath;
-import utils.Pair;
 
 /**
  * An independent implementation of the line search based on the Strong Wolfe
@@ -57,7 +56,7 @@ public final class StrongWolfeLineSearch extends LineSearch {
 	}
 
 	@Override
-	public final Pair<Double, double[]> lineSearch(final Function<? super double[], Double> f,
+	public final LineSearchSolution lineSearch(final Function<? super double[], Double> f,
 			final Function<? super double[], double[]> df, final double[] x0, final double[] dir, final double[] df0,
 			final double f0, final double initial) {
 		final int D = x0.length;
@@ -65,12 +64,13 @@ public final class StrongWolfeLineSearch extends LineSearch {
 
 		// compute dphi(0)/da
 		double dphi0 = BlasMath.ddotm(D, df0, 1, dir, 1);
-		double a0 = 0.0;
-		double a1 = initial;
-		double y0 = f0;
-		double dy0 = dphi0;
+		double a0 = 0.0, a1 = initial;
+		double y0 = f0, dy0 = dphi0;
 		double step = a0;
 		boolean first = true;
+		final int[] fevals = new int[1];
+		final int[] dfevals = new int[1];
+		boolean converged = false;
 
 		// main loop of line search
 		while (true) {
@@ -80,12 +80,13 @@ public final class StrongWolfeLineSearch extends LineSearch {
 			final double[] df1 = df.apply(wa);
 			final double y1 = f.apply(wa);
 			final double dy1 = BlasMath.ddotm(D, df1, 1, dir, 1);
-			++myEvals;
-			++myDEvals;
+			++fevals[0];
+			++dfevals[0];
 
 			// check sufficient condition
-			if (y1 > f0 + C1 * a1 * dphi0 || (y1 >= y0 && !first)) {
-				step = zoom(f, df, a0, a1, y0, y1, dy0, f0, dphi0, wa, x0, dir, D);
+			if (y1 > f0 + myC1 * a1 * dphi0 || (y1 >= y0 && !first)) {
+				step = zoom(f, df, a0, a1, y0, y1, dy0, f0, dphi0, wa, x0, dir, D, fevals, dfevals);
+				converged = true;
 				break;
 			}
 
@@ -97,7 +98,7 @@ public final class StrongWolfeLineSearch extends LineSearch {
 
 			// check if we passed the minimum
 			if (dy1 >= 0.0) {
-				step = zoom(f, df, a1, a0, y1, y0, dy1, f0, dphi0, wa, x0, dir, D);
+				step = zoom(f, df, a1, a0, y1, y0, dy1, f0, dphi0, wa, x0, dir, D, fevals, dfevals);
 				break;
 			}
 
@@ -112,17 +113,16 @@ public final class StrongWolfeLineSearch extends LineSearch {
 
 		// compute the final posititon
 		BlasMath.daxpy1(D, step, dir, 1, x0, 1, wa, 1);
-		return new Pair<>(step, wa);
+		return new LineSearchSolution(step, fevals[0], dfevals[0], wa, converged);
 	}
 
 	private double zoom(final Function<? super double[], Double> f, final Function<? super double[], double[]> df,
 			double alo, double ahi, double ylo, double yhi, double dylo, final double phi0, final double dphi0,
-			final double[] wa, final double[] x0, final double[] dir, final int D) {
+			final double[] wa, final double[] x0, final double[] dir, final int D, final int[] fevals,
+			final int[] dfevals) {
 
 		// initialize
-		double atry = 0.0;
-		double ar = 0.0;
-		double yr = phi0;
+		double atry = 0.0, ar = 0.0, yr = phi0;
 
 		// updating portion of zoom algorithm in Nocedal and Wright (3.3)
 		for (int i = 0; i < myMaxIters; ++i) {
@@ -158,10 +158,10 @@ public final class StrongWolfeLineSearch extends LineSearch {
 			// compute new point
 			BlasMath.daxpy1(D, atry, dir, 1, x0, 1, wa, 1);
 			final double ytry = f.apply(wa);
-			++myEvals;
+			++fevals[0];
 
 			// check wolfe conditions
-			if (ytry > phi0 + C1 * atry * dphi0 || ytry >= ylo) {
+			if (ytry > phi0 + myC1 * atry * dphi0 || ytry >= ylo) {
 				ar = ahi;
 				yr = yhi;
 				ahi = atry;
@@ -170,7 +170,7 @@ public final class StrongWolfeLineSearch extends LineSearch {
 
 				// check descent condition
 				final double dytry = BlasMath.ddotm(D, df.apply(wa), 1, dir, 1);
-				++myDEvals;
+				++fevals[0];
 				if (Math.abs(dytry) <= -myC2 * dphi0) {
 					break;
 				} else {

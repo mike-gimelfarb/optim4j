@@ -24,7 +24,8 @@ package opt.multivariate.unconstrained.order0.direct;
 import java.util.Arrays;
 import java.util.function.Function;
 
-import opt.multivariate.unconstrained.order0.GradientFreeOptimizer;
+import opt.OptimizerSolution;
+import opt.multivariate.GradientFreeOptimizer;
 import utils.BlasMath;
 
 /**
@@ -47,15 +48,9 @@ import utils.BlasMath;
  */
 public final class RosenbrockAlgorithm extends GradientFreeOptimizer {
 
-	// ==========================================================================
-	// FIELDS
-	// ==========================================================================
 	private final double myRho, myStep0;
 	private final int myMaxEvals;
 
-	// ==========================================================================
-	// CONSTRUCTORS
-	// ==========================================================================
 	/**
 	 *
 	 * @param tolerance
@@ -81,9 +76,6 @@ public final class RosenbrockAlgorithm extends GradientFreeOptimizer {
 		this(tolerance, initialStepSize, 0.1, maxEvaluations);
 	}
 
-	// ==========================================================================
-	// IMPLEMENTATIONS
-	// ==========================================================================
 	@Override
 	public void initialize(final Function<? super double[], Double> func, final double[] guess) {
 		// nothing to do here
@@ -95,7 +87,8 @@ public final class RosenbrockAlgorithm extends GradientFreeOptimizer {
 	}
 
 	@Override
-	public double[] optimize(final Function<? super double[], Double> func, final double[] guess) {
+	public OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> func,
+			final double[] guess) {
 
 		// prepare variables
 		final int n = guess.length;
@@ -106,13 +99,9 @@ public final class RosenbrockAlgorithm extends GradientFreeOptimizer {
 
 		// call main subroutine
 		dsc(func, n, x0, myStep0, myRho, myTol, myMaxEvals, x1, fun, ierr);
-		myEvals += fun[0];
-		return ierr[0] == 0 ? x1 : null;
+		return new OptimizerSolution<>(x1, fun[0], 0, ierr[0] == 0);
 	}
 
-	// ==========================================================================
-	// HELPER METHODS
-	// ==========================================================================
 	private static void dsc(final Function<? super double[], Double> func, final int n, final double[] x0,
 			final double step0, final double rho, final double eps, final int maxfev, final double[] x1,
 			final int[] fev, final int[] ierr) {

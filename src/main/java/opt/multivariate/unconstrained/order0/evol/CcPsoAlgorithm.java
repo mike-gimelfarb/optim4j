@@ -23,9 +23,9 @@ package opt.multivariate.unconstrained.order0.evol;
 
 import java.util.function.Function;
 
-import opt.multivariate.unconstrained.order0.GradientFreeOptimizer;
+import opt.OptimizerSolution;
+import opt.multivariate.GradientFreeOptimizer;
 import utils.BlasMath;
-import utils.Constants;
 
 /**
  * 
@@ -37,34 +37,23 @@ import utils.Constants;
  */
 public class CcPsoAlgorithm extends GradientFreeOptimizer {
 
-	// ==========================================================================
-	// FIELDS
-	// ==========================================================================
 	// function properties
 	private Function<? super double[], Double> myFunc;
-	private double[] myLower;
-	private double[] myUpper;
+	private double[] myLower, myUpper;
 	private int myD;
+	private int myEvals;
 
 	// algorithm parameters
 	private final boolean myApplyBoundsConstr;
-	private final int myMaxEvals;
-	private final int mySwarmSize;
+	private final int myMaxEvals, mySwarmSize;
 	private final double mySigmaTol;
-	private int mySwarmCount;
-	private int myGenr;
-	private int myCompsPerSwarm;
-	private int myIs;
+	private int mySwarmCount, myGenr, myCompsPerSwarm, myIs;
 	private int[] myS;
 
 	// temporary storage for the swarm
 	private int[][] myK;
-	private double[][] myPos;
-	private double[][] myPersBestPos;
-	private double[][] myPersBestFit;
-	private double[][] myLocalBestPos;
-	private double[] mySwarmBestPos;
-	private double[] myBestPos;
+	private double[][] myPos, myPersBestPos, myPersBestFit, myLocalBestPos;
+	private double[] mySwarmBestPos, myBestPos;
 	private double myBestFit;
 	private double[] myWork;
 	private boolean[][] mySampledCauchy;
@@ -78,9 +67,6 @@ public class CcPsoAlgorithm extends GradientFreeOptimizer {
 	private int myCSucc, myCFail, myGSucc, myGFail;
 	private double myF;
 
-	// ==========================================================================
-	// CONSTRUCTORS
-	// ==========================================================================
 	/**
 	 * 
 	 * 
@@ -129,9 +115,6 @@ public class CcPsoAlgorithm extends GradientFreeOptimizer {
 		this(tolerance, stdevTolerance, maxEvaluations, particlesPerSwarm, partitionSizes, true);
 	}
 
-	// ==========================================================================
-	// IMPLEMENTATIONS
-	// ==========================================================================
 	@Override
 	public void initialize(final Function<? super double[], Double> func, final double[] guess) {
 		final double[] lo = new double[guess.length];
@@ -169,7 +152,8 @@ public class CcPsoAlgorithm extends GradientFreeOptimizer {
 	}
 
 	@Override
-	public double[] optimize(final Function<? super double[], Double> func, final double[] guess) {
+	public OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> func,
+			final double[] guess) {
 		final double[] lo = new double[guess.length];
 		final double[] hi = new double[guess.length];
 		for (int i = 0; i < guess.length; ++i) {
@@ -179,9 +163,6 @@ public class CcPsoAlgorithm extends GradientFreeOptimizer {
 		return optimize(func, lo, hi);
 	}
 
-	// ==========================================================================
-	// PUBLIC METHODS
-	// ==========================================================================
 	/**
 	 * 
 	 * @param func
@@ -225,13 +206,14 @@ public class CcPsoAlgorithm extends GradientFreeOptimizer {
 	 * @param upper
 	 * @return
 	 */
-	public double[] optimize(final Function<? super double[], Double> func, final double[] lower,
-			final double[] upper) {
+	public OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> func,
+			final double[] lower, final double[] upper) {
 
 		// initialization
 		initialize(func, lower, upper);
 
 		// main loop
+		boolean converged = false;
 		for (myGenr = 0; myGenr < Integer.MAX_VALUE; ++myGenr) {
 			iterate();
 
@@ -257,8 +239,7 @@ public class CcPsoAlgorithm extends GradientFreeOptimizer {
 
 				// compute standard deviation of swarm radiuses
 				int count = 0;
-				double mean = 0.0;
-				double m2 = 0.0;
+				double mean = 0.0, m2 = 0.0;
 				for (final double[] pt : myPersBestPos) {
 					final double x = BlasMath.denorm(myD, pt);
 					++count;
@@ -270,16 +251,14 @@ public class CcPsoAlgorithm extends GradientFreeOptimizer {
 
 				// test convergence in standard deviation
 				if (m2 <= (mySwarmSize - 1) * mySigmaTol * mySigmaTol) {
+					converged = true;
 					break;
 				}
 			}
 		}
-		return myBestPos;
+		return new OptimizerSolution<>(myBestPos, myEvals, 0, converged);
 	}
 
-	// ==========================================================================
-	// HELPER METHODS
-	// ==========================================================================
 	private void randomizeComponents() {
 
 		// sample an s at random, the number of components per swarm
@@ -474,7 +453,7 @@ public class CcPsoAlgorithm extends GradientFreeOptimizer {
 	}
 
 	private static double cauchy() {
-		return Math.tan(Constants.PI * (RAND.nextDouble() - 0.5));
+		return Math.tan(Math.PI * (RAND.nextDouble() - 0.5));
 	}
 
 	private static final void shuffle(final int... arr) {

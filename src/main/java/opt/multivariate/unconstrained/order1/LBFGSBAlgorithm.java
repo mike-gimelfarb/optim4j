@@ -21,6 +21,8 @@ package opt.multivariate.unconstrained.order1;
 import java.util.Arrays;
 import java.util.function.Function;
 
+import opt.OptimizerSolution;
+import opt.multivariate.GradientOptimizer;
 import utils.BlasMath;
 import utils.Constants;
 
@@ -30,14 +32,8 @@ import utils.Constants;
  */
 public final class LBFGSBAlgorithm extends GradientOptimizer {
 
-	// ==========================================================================
-	// FIELDS
-	// ==========================================================================
 	private final int mySize;
 
-	// ==========================================================================
-	// CONSTRUCTORS
-	// ==========================================================================
 	/**
 	 *
 	 * @param tolerance
@@ -48,11 +44,8 @@ public final class LBFGSBAlgorithm extends GradientOptimizer {
 		mySize = memorySize;
 	}
 
-	// ==========================================================================
-	// IMPLEMENTATIONS
-	// ==========================================================================
 	@Override
-	public final double[] optimize(final Function<? super double[], Double> f,
+	public final OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> f,
 			final Function<? super double[], double[]> df, final double[] guess) {
 
 		// prepare variables
@@ -68,13 +61,10 @@ public final class LBFGSBAlgorithm extends GradientOptimizer {
 
 		// call main subroutine
 		final double[] result = lbfgsb(f, df, guess, l, u, nbd, mySize, 10.0, myTol, fev);
-		myEvals += fev[0];
-		return result;
+		// TODO: check convergence
+		return new OptimizerSolution<>(result, fev[0], fev[0], false);
 	}
 
-	// ==========================================================================
-	// PUBLIC METHODS
-	// ==========================================================================
 	/**
 	 *
 	 * @param f
@@ -84,7 +74,7 @@ public final class LBFGSBAlgorithm extends GradientOptimizer {
 	 * @param ub
 	 * @return
 	 */
-	public final double[] optimize(final Function<? super double[], Double> f,
+	public final OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> f,
 			final Function<? super double[], double[]> df, final double[] guess, final double[] lb, final double[] ub) {
 
 		// prepare variables
@@ -95,15 +85,11 @@ public final class LBFGSBAlgorithm extends GradientOptimizer {
 		final int[] fev = new int[1];
 
 		// call main subroutine
+		// TODO: check convergence
 		final double[] result = lbfgsb(f, df, guess, lb, ub, nbd, mySize, 10.0, myTol, fev);
-		myEvals += fev[0];
-		myGEvals += fev[0];
-		return result;
+		return new OptimizerSolution<>(result, fev[0], fev[0], false);
 	}
 
-	// ==========================================================================
-	// HELPER METHODS
-	// ==========================================================================
 	private static double[] lbfgsb(final Function<? super double[], Double> func,
 			final Function<? super double[], double[]> dfunc, final double[] guess, final double[] l, final double[] u,
 			final int[] nbd, final int m, final double factr, final double pgtol, final int[] fev) {

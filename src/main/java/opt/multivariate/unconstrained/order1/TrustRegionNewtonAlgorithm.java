@@ -31,6 +31,8 @@ package opt.multivariate.unconstrained.order1;
 
 import java.util.function.Function;
 
+import opt.OptimizerSolution;
+import opt.multivariate.GradientOptimizer;
 import utils.BlasMath;
 
 /**
@@ -48,9 +50,6 @@ import utils.BlasMath;
  */
 public final class TrustRegionNewtonAlgorithm extends GradientOptimizer {
 
-	// ==========================================================================
-	// FIELDS
-	// ==========================================================================
 	private final double myE1 = 0.25;
 	private final double myE2 = 0.25;
 	private final double myE3 = 0.75;
@@ -59,9 +58,6 @@ public final class TrustRegionNewtonAlgorithm extends GradientOptimizer {
 	private final double myDeltaM, myDelta0;
 	private final int myMaxEvals;
 
-	// ==========================================================================
-	// CONSTRUCTORS
-	// ==========================================================================
 	/**
 	 *
 	 * @param tolerance
@@ -77,28 +73,21 @@ public final class TrustRegionNewtonAlgorithm extends GradientOptimizer {
 		myMaxEvals = maxEvaluations;
 	}
 
-	// ==========================================================================
-	// IMPLEMENTATIONS
-	// ==========================================================================
 	@Override
-	public final double[] optimize(final Function<? super double[], Double> f,
+	public final OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> f,
 			final Function<? super double[], double[]> df, final double[] guess) {
 
 		// prepare work arrays
 		final int[] fev = new int[1];
 		final int[] dfev = new int[1];
+		final boolean[] converged = new boolean[1];
 
 		// call main subroutine
 		final double[] result = trust(f, df, null, guess.length, guess, 1, myDelta0, myDeltaM, myE1, myE2, myE3, myT1,
-				myT2, myTol, fev, dfev, myMaxEvals);
-		myEvals += fev[0];
-		myGEvals += dfev[0];
-		return result;
+				myT2, myTol, fev, dfev, myMaxEvals, converged);
+		return new OptimizerSolution<>(result, fev[0], dfev[0], converged[0]);
 	}
 
-	// ==========================================================================
-	// PUBLIC METHODS
-	// ==========================================================================
 	/**
 	 *
 	 * @param f
@@ -107,30 +96,26 @@ public final class TrustRegionNewtonAlgorithm extends GradientOptimizer {
 	 * @param guess
 	 * @return
 	 */
-	public final double[] optimize(final Function<? super double[], Double> f,
+	public final OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> f,
 			final Function<? super double[], double[]> df, final Function<? super double[], double[][]> hess,
 			final double[] guess) {
 
 		// prepare work arrays
 		final int[] fev = new int[1];
 		final int[] dfev = new int[1];
+		final boolean[] converged = new boolean[1];
 
 		// call main subroutine
 		final double[] result = trust(f, df, hess, guess.length, guess, 0, myDelta0, myDeltaM, myE1, myE2, myE3, myT1,
-				myT2, myTol, fev, dfev, myMaxEvals);
-		myEvals += fev[0];
-		myGEvals += dfev[0];
-		return result;
+				myT2, myTol, fev, dfev, myMaxEvals, converged);
+		return new OptimizerSolution<>(result, fev[0], dfev[0], converged[0]);
 	}
 
-	// ==========================================================================
-	// HELPER METHODS
-	// ==========================================================================
 	private static double[] trust(final Function<? super double[], Double> f,
 			final Function<? super double[], double[]> df, final Function<? super double[], double[][]> d2f,
 			final int n, final double[] x0, final int mode, final double delta0, final double delmax, final double e1,
 			final double e2, final double e3, final double t1, final double t2, final double tol, final int[] fev,
-			final int[] dfev, final int maxfev) {
+			final int[] dfev, final int maxfev, final boolean[] converged) {
 
 		// INITIALIZE POSITION, GRADIENT AND WORK ARRAYS
 		final double[] x = x0;
@@ -181,7 +166,7 @@ public final class TrustRegionNewtonAlgorithm extends GradientOptimizer {
 			final double y1 = f.apply(x1);
 			++fev[0];
 			if (fev[0] > maxfev) {
-				break;
+				return x;
 			}
 
 			// COMPUTE THE PREDICTION REDUCTION UNDER THE QUADRATIC MODEL,
@@ -192,7 +177,7 @@ public final class TrustRegionNewtonAlgorithm extends GradientOptimizer {
 			final double pbp = BlasMath.ddotm(n, p, 1, b, 1);
 			final double prered = -gp - 0.5 * pbp;
 			if (prered == 0.0 || prered == -0.0) {
-				break;
+				return x;
 			}
 			final double rho = actred / prered;
 
@@ -247,16 +232,16 @@ public final class TrustRegionNewtonAlgorithm extends GradientOptimizer {
 				// HOLDS. ALSO LEAVE IF THE GRADIENT CANNOT BE COMPUTED
 				final double ng = BlasMath.denorm(n, g1);
 				if (ng != ng) {
-					break;
+					return x;
 				} else {
 					final double nx = BlasMath.denorm(n, x1);
 					if (ng <= tol * Math.max(1.0, nx)) {
+						converged[0] = true;
 						return x;
 					}
 				}
 			}
 		}
-		return null;
 	}
 
 	// from pytron

@@ -19,35 +19,40 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-package utils;
+package opt.linesearch;
+
+import opt.OptimizerSolution;
 
 /**
+ * 
  *
+ * @param <X>
+ * @param <Y>
  */
-public final class IntMath {
+public class LineSearchSolution extends OptimizerSolution<Double, Double> {
+
+	protected final double[] myX;
 
 	/**
-	 *
-	 * @param n
-	 * @return
-	 */
-	public static final int abs(final int n) {
-		final int mask = n >> 31;
-		return (n + mask) ^ mask;
-	}
-
-	/**
-	 *
+	 * 
+	 * @param sol
+	 * @param step
+	 * @param fevals
+	 * @param dfevals
 	 * @param x
-	 * @param y
-	 * @return
+	 * @param converged
 	 */
-	public static final int average(final int x, final int y) {
-
-		// Hacker's delight 2-5 (3)
-		return (x & y) + ((x ^ y) >> 1);
+	public LineSearchSolution(final Double sol, final int fevals, final int dfevals, final double[] x,
+			final boolean converged) {
+		super(sol, fevals, dfevals, converged);
+		myX = x;
 	}
 
-	private IntMath() {
+	/**
+	 * 
+	 * @return
+	 */
+	public double[] getX() {
+		return myX;
 	}
 }

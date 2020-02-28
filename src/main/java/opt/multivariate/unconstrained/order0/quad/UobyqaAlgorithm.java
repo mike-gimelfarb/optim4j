@@ -23,7 +23,8 @@ package opt.multivariate.unconstrained.order0.quad;
 import java.util.Arrays;
 import java.util.function.Function;
 
-import opt.multivariate.unconstrained.order0.GradientFreeOptimizer;
+import opt.OptimizerSolution;
+import opt.multivariate.GradientFreeOptimizer;
 import utils.BlasMath;
 import utils.RealMath;
 
@@ -36,15 +37,9 @@ import utils.RealMath;
  */
 public final class UobyqaAlgorithm extends GradientFreeOptimizer {
 
-	// ==========================================================================
-	// FIELDS
-	// ==========================================================================
 	private final double myRho0;
 	private final int myMaxFev;
 
-	// ==========================================================================
-	// CONSTRUCTORS
-	// ==========================================================================
 	/**
 	 *
 	 * @param tolerance
@@ -57,9 +52,6 @@ public final class UobyqaAlgorithm extends GradientFreeOptimizer {
 		myMaxFev = maxEvaluations;
 	}
 
-	// ==========================================================================
-	// IMPLEMENTATIONS
-	// ==========================================================================
 	@Override
 	public final void initialize(final Function<? super double[], Double> func, final double[] guess) {
 		// nothing to do here
@@ -71,7 +63,8 @@ public final class UobyqaAlgorithm extends GradientFreeOptimizer {
 	}
 
 	@Override
-	public final double[] optimize(final Function<? super double[], Double> func, final double[] guess) {
+	public final OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> func,
+			final double[] guess) {
 
 		// prepare variables
 		final int n = guess.length;
@@ -79,14 +72,11 @@ public final class UobyqaAlgorithm extends GradientFreeOptimizer {
 		final int[] fev = new int[1];
 
 		// call main subroutine
+		// TODO: check convergence
 		uobyqa1(func, n, x, myMaxFev, myRho0, myTol, fev);
-		myEvals += fev[0];
-		return x;
+		return new OptimizerSolution<>(x, fev[0], 0, false);
 	}
 
-	// ==========================================================================
-	// HELPER METHODS
-	// ==========================================================================
 	private static void uobyqa1(final Function<? super double[], Double> func, final int n, final double[] x,
 			final int maxfev, final double rhobeg, final double rhoend, final int[] fev) {
 		final int iprint = 0, npt = (n * n + 3 * n + 2) / 2;
@@ -94,7 +84,6 @@ public final class UobyqaAlgorithm extends GradientFreeOptimizer {
 		final double[] xbase = new double[n], xopt = new double[n], xnew = new double[n], pq = new double[npt],
 				g = new double[n], d = new double[n], vlag = new double[npt], w = new double[Math.max(6 * n, npt)];
 		fev[0] = 0;
-
 		uobyqb(func, n, x, rhobeg, rhoend, iprint, maxfev, npt, xbase, xopt, xnew, xpt, pq, pl, h, g, d, vlag, w, fev);
 	}
 

@@ -24,7 +24,8 @@ package opt.multivariate.unconstrained.order0.cmaes;
 import java.util.Arrays;
 import java.util.function.Function;
 
-import opt.multivariate.unconstrained.order0.GradientFreeOptimizer;
+import opt.OptimizerSolution;
+import opt.multivariate.GradientFreeOptimizer;
 import utils.BlasMath;
 
 /**
@@ -33,9 +34,6 @@ import utils.BlasMath;
  */
 public abstract class AbstractCmaesOptimizer extends GradientFreeOptimizer {
 
-	// ==========================================================================
-	// STATIC CLASSES
-	// ==========================================================================
 	/**
 	 * 
 	 * @author Michael
@@ -97,9 +95,6 @@ public abstract class AbstractCmaesOptimizer extends GradientFreeOptimizer {
 		}
 	}
 
-	// ==========================================================================
-	// FIELDS
-	// ==========================================================================
 	// domain properties
 	protected Function<? super double[], Double> myFunc;
 	protected int D;
@@ -120,13 +115,10 @@ public abstract class AbstractCmaesOptimizer extends GradientFreeOptimizer {
 	protected double[] xmean, xold, weights, artmp, pc, ps;
 
 	// history
-	protected int myHistoryLength, ik;
+	protected int myHistoryLength, ik, myEvals;
 	protected double myHistoryBestFit, myHistoryWorstFit;
 	protected FitnessHistory myHistoryBest, myHistoryKth;
 
-	// ==========================================================================
-	// CONSTRUCTORS
-	// ==========================================================================
 	/**
 	 *
 	 * @param tolerance
@@ -169,9 +161,6 @@ public abstract class AbstractCmaesOptimizer extends GradientFreeOptimizer {
 		myAdaptivePop = myAdaptiveIters = true;
 	}
 
-	// ==========================================================================
-	// ABSTRACT METHODS
-	// ==========================================================================
 	/**
 	 * 
 	 */
@@ -188,15 +177,13 @@ public abstract class AbstractCmaesOptimizer extends GradientFreeOptimizer {
 	 */
 	public abstract boolean converged();
 
-	// ==========================================================================
-	// IMPLEMENTATIONS
-	// ==========================================================================
 	@Override
 	public void initialize(final Function<? super double[], Double> func, final double[] guess) {
 
 		// initialize domain
 		myFunc = func;
 		D = guess.length;
+		myEvals = 0;
 
 		// adaptive initialization of population size
 		if (myAdaptivePop) {
@@ -270,20 +257,20 @@ public abstract class AbstractCmaesOptimizer extends GradientFreeOptimizer {
 	}
 
 	@Override
-	public double[] optimize(final Function<? super double[], Double> func, final double[] guess) {
+	public OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> func,
+			final double[] guess) {
 		initialize(func, guess);
+		boolean converged = false;
 		while (myEvals < myMaxEvals) {
 			iterate();
 			if (converged()) {
+				converged = true;
 				break;
 			}
 		}
-		return getBestSolution();
+		return new OptimizerSolution<>(getBestSolution(), myEvals, 0, converged);
 	}
 
-	// ==========================================================================
-	// PUBLIC METHODS
-	// ==========================================================================
 	/**
 	 * 
 	 */

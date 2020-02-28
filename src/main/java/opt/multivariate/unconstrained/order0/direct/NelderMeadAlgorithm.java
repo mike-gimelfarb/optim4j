@@ -10,7 +10,8 @@ package opt.multivariate.unconstrained.order0.direct;
 import java.util.Arrays;
 import java.util.function.Function;
 
-import opt.multivariate.unconstrained.order0.GradientFreeOptimizer;
+import opt.OptimizerSolution;
+import opt.multivariate.GradientFreeOptimizer;
 
 /**
  * A translation of the Nelder Mead algorithm by R. O'Neill (1979) for
@@ -35,14 +36,10 @@ import opt.multivariate.unconstrained.order0.GradientFreeOptimizer;
  */
 public final class NelderMeadAlgorithm extends GradientFreeOptimizer {
 
-	// ==========================================================================
-	// FIELDS
-	// ==========================================================================
 	// algorithm constants
 	private final double eps = 0.001;
 	private final boolean myAdaptive;
-	private final int myCheckEvery;
-	private final int myMaxEvals;
+	private final int myCheckEvery, myMaxEvals;
 	private final double myRadius;
 
 	// problem parameters
@@ -57,9 +54,6 @@ public final class NelderMeadAlgorithm extends GradientFreeOptimizer {
 	private double[][] p;
 	private double[] p2star, pbar, pstar, y, xmin, step;
 
-	// ==========================================================================
-	// CONSTRUCTORS
-	// ==========================================================================
 	/**
 	 *
 	 * @param tolerance
@@ -89,9 +83,6 @@ public final class NelderMeadAlgorithm extends GradientFreeOptimizer {
 		this(tolerance, initialRadius, checkEvery, maxEvaluations, true);
 	}
 
-	// ==========================================================================
-	// IMPLEMENTATIONS
-	// ==========================================================================
 	@Override
 	public void initialize(final Function<? super double[], Double> func, final double[] guess) {
 
@@ -269,24 +260,17 @@ public final class NelderMeadAlgorithm extends GradientFreeOptimizer {
 	}
 
 	@Override
-	public double[] optimize(final Function<? super double[], Double> func, final double[] guess) {
+	public OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> func,
+			final double[] guess) {
 
 		// prepare variables
 		initialize(func, guess);
 
 		// call main subroutine
 		final int ifault = nelmin();
-		myEvals += icount;
-		if (ifault == 0) {
-			return xmin;
-		} else {
-			return null;
-		}
+		return new OptimizerSolution<>(xmin, icount, 0, ifault == 0);
 	}
 
-	// ==========================================================================
-	// HELPER METHODS
-	// ==========================================================================
 	private int nelmin() {
 
 		// Initial or restarted loop.

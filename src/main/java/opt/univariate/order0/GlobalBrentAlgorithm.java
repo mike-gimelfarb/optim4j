@@ -8,6 +8,8 @@ package opt.univariate.order0;
 
 import java.util.function.Function;
 
+import opt.OptimizerSolution;
+import opt.univariate.DerivativeFreeOptimizer;
 import utils.Constants;
 
 /**
@@ -19,14 +21,8 @@ import utils.Constants;
  */
 public final class GlobalBrentAlgorithm extends DerivativeFreeOptimizer {
 
-	// ==========================================================================
-	// FIELDS
-	// ==========================================================================
 	private double myM;
 
-	// ==========================================================================
-	// CONSTRUCTORS
-	// ==========================================================================
 	/**
 	 *
 	 * @param tolerance
@@ -38,20 +34,16 @@ public final class GlobalBrentAlgorithm extends DerivativeFreeOptimizer {
 		myM = boundOnD2f;
 	}
 
-	// ==========================================================================
-	// IMPLEMENTATIONS
-	// ==========================================================================
 	@Override
-	public final double optimize(final Function<? super Double, Double> f, final double a, final double b) {
+	public final OptimizerSolution<Double, Double> optimize(final Function<? super Double, Double> f, final double a,
+			final double b) {
 		final int[] fev = new int[1];
-		final double result = gbrent(f, myM, a, b, myTol, myMaxEvals, fev);
-		myEvals = fev[0];
-		return result;
+		final boolean[] converged = new boolean[1];
+
+		final double result = gbrent(f, myM, a, b, myTol, myMaxEvals, fev, converged);
+		return new OptimizerSolution<>(result, fev[0], 0, converged[0]);
 	}
 
-	// ==========================================================================
-	// PUBLIC METHODS
-	// ==========================================================================
 	/**
 	 *
 	 * @param bound
@@ -60,11 +52,8 @@ public final class GlobalBrentAlgorithm extends DerivativeFreeOptimizer {
 		myM = bound;
 	}
 
-	// ==========================================================================
-	// HELPER METHODS
-	// ==========================================================================
 	private static double gbrent(final Function<? super Double, Double> f, final double boundOnD2f, double a, double b,
-			final double tol, final int maxfev, final int[] fev) {
+			final double tol, final int maxfev, final int[] fev, final boolean[] converged) {
 		final double m2 = 0.5 * (1.0 + 16.0 * Constants.EPSILON) * boundOnD2f;
 		double a0 = b, a2 = a, a3, c = b, d0, d1, d2, h = 9.0 / 11.0, p, q, qs, r, s, sc = 0.0, x = a0, y0 = f.apply(b),
 				y1, y2 = f.apply(a), y = y2, y3, yb = y0, z0, z1, z2;
@@ -116,7 +105,7 @@ public final class GlobalBrentAlgorithm extends DerivativeFreeOptimizer {
 				r = (b - a) * 1.0e-5 * k;
 				goto40 = true;
 				if (fev[0] >= maxfev) {
-					return Double.NaN;
+					return x;
 				}
 			} while (r < z2);
 
@@ -156,12 +145,13 @@ public final class GlobalBrentAlgorithm extends DerivativeFreeOptimizer {
 						a3 = 0.5 * (a2 + a3);
 						h *= 0.9;
 						if (fev[0] >= maxfev) {
-							return Double.NaN;
+							return x;
 						}
 					}
 				}
 			}
 			if (a3 >= b) {
+				converged[0] = true;
 				return x;
 			} else {
 				a0 = sc;
@@ -171,7 +161,8 @@ public final class GlobalBrentAlgorithm extends DerivativeFreeOptimizer {
 				y1 = y2;
 				y2 = y3;
 				if (fev[0] >= maxfev) {
-					return Double.NaN;
+					converged[0] = false;
+					return x;
 				}
 			}
 		}

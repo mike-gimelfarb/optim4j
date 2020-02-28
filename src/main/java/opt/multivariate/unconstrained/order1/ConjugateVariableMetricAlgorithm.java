@@ -50,6 +50,8 @@ package opt.multivariate.unconstrained.order1;
 import java.util.Arrays;
 import java.util.function.Function;
 
+import opt.OptimizerSolution;
+import opt.multivariate.GradientOptimizer;
 import utils.BlasMath;
 import utils.IntMath;
 import utils.RealMath;
@@ -65,9 +67,6 @@ import utils.RealMath;
  */
 public final class ConjugateVariableMetricAlgorithm extends GradientOptimizer {
 
-	// ==========================================================================
-	// STATIC CLASSES
-	// ==========================================================================
 	private interface Obj {
 
 		double obj(int nf, double[] x);
@@ -78,21 +77,13 @@ public final class ConjugateVariableMetricAlgorithm extends GradientOptimizer {
 		void dobj(int nf, double[] x, double[] gf);
 	}
 
-	// ==========================================================================
-	// FIELDS
-	// ==========================================================================
 	private final int[] nit = new int[1];
-	private int nfv, nfg;
-
-	private int mtyp, mode, mes1, mes2, mes3;
+	private int nfv, nfg, mtyp, mode, mes1, mes2, mes3;
 	private double rl, fl, pl, ru, fu, pu;
 
 	private final double tolx, tolf, toldf, tolg, maxStep;
 	private final int maxEvals, maxUpdt;
 
-	// ==========================================================================
-	// CONSTRUCTORS
-	// ==========================================================================
 	/**
 	 *
 	 * @param tolX
@@ -127,11 +118,8 @@ public final class ConjugateVariableMetricAlgorithm extends GradientOptimizer {
 		this(tolerance, tolerance, tolerance, tolerance, maxStepSize, maxEvaluations, maxMetricUpdates);
 	}
 
-	// ==========================================================================
-	// IMPLEMENTATIONS
-	// ==========================================================================
 	@Override
-	public final double[] optimize(final Function<? super double[], Double> func,
+	public final OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> func,
 			final Function<? super double[], double[]> dfunc, final double[] guess) {
 
 		// prepare functions
@@ -143,7 +131,7 @@ public final class ConjugateVariableMetricAlgorithm extends GradientOptimizer {
 		// prepare other variables
 		final int[] nf = { guess.length };
 		final double[] x = Arrays.copyOf(guess, nf[0]);
-		final int[] ipar = { MAX_ITERS, maxEvals, 0, 0, 0, 0, maxUpdt };
+		final int[] ipar = { 1000000, maxEvals, 0, 0, 0, 0, maxUpdt };
 		final double[] rpar = { maxStep, tolx, toldf, tolf, tolg, 0.0, 0.0, 0.0, 0.0 };
 		final double[] f = { func.apply(x) };
 		final double[] gmax = { 0.0 };
@@ -152,18 +140,10 @@ public final class ConjugateVariableMetricAlgorithm extends GradientOptimizer {
 
 		// call main subroutine
 		plicu(obj, dobj, nf, x, ipar, rpar, f, gmax, iprnt, iterm);
-		myEvals += nfv;
-		myGEvals += nfg;
-		if (iterm[0] == 1 || iterm[0] == 2 || iterm[0] == 3 || iterm[0] == 4 || iterm[0] == 6) {
-			return x;
-		} else {
-			return null;
-		}
+		final boolean converged = iterm[0] == 1 || iterm[0] == 2 || iterm[0] == 3 || iterm[0] == 4 || iterm[0] == 6;
+		return new OptimizerSolution<>(x, nfv, nfg, converged);
 	}
 
-	// ==========================================================================
-	// HELPER METHODS
-	// ==========================================================================
 	private void plicu(final Obj obj, final DObj dobj, final int[] nf, final double[] x, final int[] ipar,
 			final double[] rpar, final double[] f, final double[] gmax, final int iprnt, final int[] iterm) {
 		int mf, nb;

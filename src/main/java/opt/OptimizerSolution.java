@@ -19,35 +19,65 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-package utils;
+package opt;
 
 /**
+ * 
  *
+ * @param <X>
+ * @param <Y>
  */
-public final class IntMath {
+public class OptimizerSolution<X, Y> {
+
+	protected final X mySol;
+	protected int myFEvals;
+	protected int myDEvals;
+	protected final boolean myConverged;
 
 	/**
-	 *
-	 * @param n
-	 * @return
+	 * 
+	 * @param sol
+	 * @param value
+	 * @param fevals
+	 * @param dfevals
+	 * @param converged
 	 */
-	public static final int abs(final int n) {
-		final int mask = n >> 31;
-		return (n + mask) ^ mask;
+	public OptimizerSolution(final X sol, final int fevals, final int dfevals, final boolean converged) {
+		mySol = sol;
+		myFEvals = fevals;
+		myDEvals = dfevals;
+		myConverged = converged;
 	}
 
 	/**
-	 *
-	 * @param x
-	 * @param y
+	 * 
 	 * @return
 	 */
-	public static final int average(final int x, final int y) {
-
-		// Hacker's delight 2-5 (3)
-		return (x & y) + ((x ^ y) >> 1);
+	public X getOptimalPoint() {
+		return mySol;
 	}
 
-	private IntMath() {
+	/**
+	 * 
+	 * @return
+	 */
+	public int getFEvals() {
+		return myFEvals;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public int getDFEvals() {
+		return myDEvals;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean converged() {
+		return myConverged;
 	}
 }

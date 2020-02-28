@@ -24,7 +24,8 @@ package opt.multivariate.unconstrained.order0.cmaes;
 import java.util.Arrays;
 import java.util.function.Function;
 
-import opt.multivariate.unconstrained.order0.GradientFreeOptimizer;
+import opt.OptimizerSolution;
+import opt.multivariate.GradientFreeOptimizer;
 import opt.multivariate.unconstrained.order0.cmaes.AbstractCmaesOptimizer.AbstractCmaesFactory;
 
 /**
@@ -56,16 +57,13 @@ import opt.multivariate.unconstrained.order0.cmaes.AbstractCmaesOptimizer.Abstra
  */
 public final class IPopCmaesAlgorithm extends GradientFreeOptimizer {
 
-	// ==========================================================================
-	// FIELDS
-	// ==========================================================================
 	private final double myCmaesTol, mySigmaRef, mySigmaDec;
 	private final int myMaxEvals;
 	private final boolean myPrint;
 	private final boolean myAdaptiveMaxLambda;
 	private final AbstractCmaesFactory myCmaesFactory;
 
-	private int myLambda, myMaxLambda, myMaxEv, myIt;
+	private int myLambda, myMaxLambda, myMaxEv, myIt, myEvals;
 	private double mySigma, myFxBest, myFx, myFxOld;
 	private double[] myXBest, myX, myXStart, myXGuess;
 	private AbstractCmaesOptimizer myCmaes;
@@ -73,9 +71,6 @@ public final class IPopCmaesAlgorithm extends GradientFreeOptimizer {
 	private Function<? super double[], Double> myFunc;
 	private int myD;
 
-	// ==========================================================================
-	// CONSTRUCTORS
-	// ==========================================================================
 	/**
 	 *
 	 * @param tolerance
@@ -144,9 +139,6 @@ public final class IPopCmaesAlgorithm extends GradientFreeOptimizer {
 				new ActiveCmaesAlgorithm.ActiveCmaesFactory(), 1.6);
 	}
 
-	// ==========================================================================
-	// IMPLEMENTATIONS
-	// ==========================================================================
 	@Override
 	public final void initialize(final Function<? super double[], Double> func, final double[] guess) {
 
@@ -175,11 +167,12 @@ public final class IPopCmaesAlgorithm extends GradientFreeOptimizer {
 		myXStart = Arrays.copyOf(myXGuess, myD);
 
 		// run initial CMAES algorithm
-		myX = myCmaes.optimize(myFunc, myXStart);
+		final OptimizerSolution<double[], Double> sol = myCmaes.optimize(myFunc, myXStart);
+		myX = sol.getOptimalPoint();
 		myFx = myFunc.apply(myX);
 
 		// initialize counters
-		myEvals = myCmaes.countEvaluations() + 1;
+		myEvals = sol.getFEvals() + 1;
 		myIt = 1;
 
 		// initialize best points
@@ -223,11 +216,12 @@ public final class IPopCmaesAlgorithm extends GradientFreeOptimizer {
 		myCmaes = myCmaesFactory.createCmaStrategy(myCmaesTol, myLambda, mySigma, myMaxEv);
 
 		// run CMAES again
-		myX = myCmaes.optimize(myFunc, myXStart);
+		final OptimizerSolution<double[], Double> sol = myCmaes.optimize(myFunc, myXStart);
+		myX = sol.getOptimalPoint();
 		myFx = myFunc.apply(myX);
 
 		// increment counters
-		myEvals += myCmaes.countEvaluations() + 1;
+		myEvals += sol.getFEvals() + 1;
 		++myIt;
 
 		// update best point
@@ -245,8 +239,10 @@ public final class IPopCmaesAlgorithm extends GradientFreeOptimizer {
 	}
 
 	@Override
-	public double[] optimize(final Function<? super double[], Double> func, final double[] guess) {
+	public OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> func,
+			final double[] guess) {
 		initialize(func, guess);
+		boolean converged = false;
 		while (myEvals < myMaxEvals) {
 			iterate();
 
@@ -254,10 +250,11 @@ public final class IPopCmaesAlgorithm extends GradientFreeOptimizer {
 			if (myFx != myFxOld) {
 				final double ftol = RELEPS * 0.5 * Math.abs(myFx + myFxOld);
 				if (Math.abs(myFx - myFxOld) <= myTol + ftol) {
+					converged = true;
 					break;
 				}
 			}
 		}
-		return myXBest;
+		return new OptimizerSolution<>(myXBest, myEvals, 0, converged);
 	}
 }

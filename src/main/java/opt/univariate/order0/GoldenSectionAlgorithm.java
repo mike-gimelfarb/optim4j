@@ -23,6 +23,8 @@ package opt.univariate.order0;
 
 import java.util.function.Function;
 
+import opt.OptimizerSolution;
+import opt.univariate.DerivativeFreeOptimizer;
 import utils.Constants;
 
 /**
@@ -30,9 +32,6 @@ import utils.Constants;
  */
 public final class GoldenSectionAlgorithm extends DerivativeFreeOptimizer {
 
-	// ==========================================================================
-	// CONSTRUCTORS
-	// ==========================================================================
 	/**
 	 *
 	 * @param absoluteTolerance
@@ -44,26 +43,21 @@ public final class GoldenSectionAlgorithm extends DerivativeFreeOptimizer {
 		super(absoluteTolerance, relativeTolerance, maxEvaluations);
 	}
 
-	// ==========================================================================
-	// IMPLEMENTATIONS
-	// ==========================================================================
 	@Override
-	public final double optimize(final Function<? super Double, Double> f, final double a, final double b) {
+	public final OptimizerSolution<Double, Double> optimize(final Function<? super Double, Double> f, final double a,
+			final double b) {
 
 		// prepare variables
 		final int[] fev = new int[1];
+		final boolean[] converged = new boolean[1];
 
 		// call main subroutine
-		final double result = gssearch(f, a, b, myRelTol, myTol, myMaxEvals, fev);
-		myEvals = fev[0];
-		return result;
+		final double result = gssearch(f, a, b, myRelTol, myTol, myMaxEvals, fev, converged);
+		return new OptimizerSolution<>(result, fev[0], 0, converged[0]);
 	}
 
-	// ==========================================================================
-	// HELPER METHODS
-	// ==========================================================================
 	private static double gssearch(final Function<? super Double, Double> f, final double a, final double b,
-			final double rtol, final double atol, final int mfev, final int[] fev) {
+			final double rtol, final double atol, final int mfev, final int[] fev, final boolean[] converged) {
 
 		// INITIALIZE CONSTANTS
 		final double GOLD = Constants.GOLDEN;
@@ -81,6 +75,7 @@ public final class GoldenSectionAlgorithm extends DerivativeFreeOptimizer {
 			final double mid = 0.5 * (c + d);
 			final double tol = rtol * Math.abs(mid) + atol;
 			if (Math.abs(c - d) <= tol) {
+				converged[0] = true;
 				return mid;
 			}
 
@@ -101,6 +96,6 @@ public final class GoldenSectionAlgorithm extends DerivativeFreeOptimizer {
 		}
 
 		// COULD NOT CONVERGE
-		return Double.NaN;
+		return 0.5 * (c + d);
 	}
 }

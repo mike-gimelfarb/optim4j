@@ -39,9 +39,6 @@ import utils.BlasMath;
  */
 public final class CholeskyCmaesAlgorithm extends AbstractCmaesOptimizer {
 
-	// ==========================================================================
-	// STATIC CLASSES
-	// ==========================================================================
 	/**
 	 * 
 	 * @author Michael
@@ -56,17 +53,11 @@ public final class CholeskyCmaesAlgorithm extends AbstractCmaesOptimizer {
 		}
 	}
 
-	// ==========================================================================
-	// FIELDS
-	// ==========================================================================
 	protected final double mySigmaTol;
 
 	private double[] dmean;
 	private double[][] A, mattmp;
 
-	// ==========================================================================
-	// CONSTRUCTORS
-	// ==========================================================================
 	/**
 	 *
 	 * @param tolerance
@@ -105,9 +96,6 @@ public final class CholeskyCmaesAlgorithm extends AbstractCmaesOptimizer {
 		mySigmaTol = stdevTolerance;
 	}
 
-	// ==========================================================================
-	// IMPLEMENTATIONS
-	// ==========================================================================
 	@Override
 	public final void initialize(final Function<? super double[], Double> func, final double[] guess) {
 		super.initialize(func, guess);
@@ -224,9 +212,6 @@ public final class CholeskyCmaesAlgorithm extends AbstractCmaesOptimizer {
 		return m2 <= (myLambda - 1) * mySigmaTol * mySigmaTol;
 	}
 
-	// ==========================================================================
-	// HELPER METHODS
-	// ==========================================================================
 	private static void rank1update(final int D, final double[][] a, final double beta, final double[] v,
 			final double[] artmp) {
 		System.arraycopy(v, 0, artmp, 0, D);

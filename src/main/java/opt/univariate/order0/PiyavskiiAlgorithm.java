@@ -23,6 +23,8 @@ package opt.univariate.order0;
 
 import java.util.function.Function;
 
+import opt.OptimizerSolution;
+import opt.univariate.DerivativeFreeOptimizer;
 import utils.IntMath;
 
 /**
@@ -39,15 +41,9 @@ import utils.IntMath;
  */
 public final class PiyavskiiAlgorithm extends DerivativeFreeOptimizer {
 
-	// ==========================================================================
-	// FIELDS
-	// ==========================================================================
 	private final double myR;
 	private final double myXi;
 
-	// ==========================================================================
-	// CONSTRUCTORS
-	// ==========================================================================
 	/**
 	 *
 	 * @param tolerance
@@ -71,26 +67,22 @@ public final class PiyavskiiAlgorithm extends DerivativeFreeOptimizer {
 		this(tolerance, maxEvaluations, 1.4, 1e-6);
 	}
 
-	// ==========================================================================
-	// IMPLEMENTATIONS
-	// ==========================================================================
 	@Override
-	public double optimize(final Function<? super Double, Double> f, final double a, final double b) {
+	public OptimizerSolution<Double, Double> optimize(final Function<? super Double, Double> f, final double a,
+			final double b) {
 
 		// prepare variables
 		final int[] fev = new int[1];
+		final boolean[] converged = new boolean[1];
 
 		// call main subroutine
-		final double result = shubert(f, a, b, myTol, myMaxEvals, fev, myR, myXi);
-		myEvals += fev[0];
-		return result;
+		final double result = shubert(f, a, b, myTol, myMaxEvals, fev, myR, myXi, converged);
+		return new OptimizerSolution<>(result, fev[0], 0, converged[0]);
 	}
 
-	// ==========================================================================
-	// HELPER METHODS
-	// ==========================================================================
 	public static double shubert(final Function<? super Double, Double> func, final double a, final double b,
-			final double tol, final int maxiters, final int[] fev, final double r, final double xi) {
+			final double tol, final int maxiters, final int[] fev, final double r, final double xi,
+			final boolean[] converged) {
 		final double[] xlist = new double[maxiters];
 		final double[] zlist = new double[maxiters];
 		final double[] llist = new double[maxiters];
@@ -183,6 +175,7 @@ public final class PiyavskiiAlgorithm extends DerivativeFreeOptimizer {
 
 				// we have converged
 				final int imin = argmin(k, zlist);
+				converged[0] = true;
 				return xlist[imin];
 			}
 		}

@@ -98,40 +98,6 @@ public final class RealMath {
 		return b >= 0.0 ? Math.abs(a) : -Math.abs(a);
 	}
 
-	/**
-	 *
-	 * @param xs
-	 * @return
-	 */
-	public static final double maxAbs(final double... xs) {
-		double max = 0.0;
-		for (final double x : xs) {
-			max = Math.max(max, Math.abs(x));
-		}
-		return max;
-	}
-
-	/**
-	 *
-	 * @param x
-	 * @return
-	 */
-	public static final int roundInt(final double x) {
-		return (int) Math.round(x);
-	}
-
-	/**
-	 * 
-	 * @param x
-	 * @return
-	 */
-	public static final long roundLong(final double x) {
-		return (long) Math.round(x);
-	}
-
-	// ==========================================================================
-	// CONSTRUCTORS
-	// ==========================================================================
 	private RealMath() {
 	}
 }

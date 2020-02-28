@@ -16,6 +16,8 @@ package opt.multivariate.unconstrained.order1;
 import java.util.Arrays;
 import java.util.function.Function;
 
+import opt.OptimizerSolution;
+import opt.multivariate.GradientOptimizer;
 import utils.BlasMath;
 import utils.Constants;
 
@@ -35,27 +37,19 @@ import utils.Constants;
  */
 public final class TruncatedNewtonAlgorithm extends GradientOptimizer {
 
-	// ==========================================================================
-	// STATIC CLASSES
-	// ==========================================================================
 	@FunctionalInterface
 	private interface Sfun {
 
 		double apply(int n, double[] x, int xi, double[] g, int gi);
 	}
 
-	// ==========================================================================
-	// FIELDS
-	// ==========================================================================
 	private final int myMaxIters, myMaxEvals;
 	private final double myEta, myStepMax;
 
 	// COMMON/SUBSCR/
 	private int lgv, lz1, lzk, lv, lsk, lyk, ldiagb, lsr, lyr, loldg, lhg, lhyk, lpk, lemat, lwtest;
+	private int myEvals, myGEvals;
 
-	// ==========================================================================
-	// CONSTRUCTORS
-	// ==========================================================================
 	/**
 	 *
 	 * @param tolerance
@@ -83,11 +77,8 @@ public final class TruncatedNewtonAlgorithm extends GradientOptimizer {
 		this(tolerance, maxIterations, maxEvals, 0.25, 10.0);
 	}
 
-	// ==========================================================================
-	// IMPLEMENTATIONS
-	// ==========================================================================
 	@Override
-	public final double[] optimize(final Function<? super double[], Double> f,
+	public final OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> f,
 			final Function<? super double[], double[]> df, final double[] guess) {
 
 		// prepare variables
@@ -101,7 +92,7 @@ public final class TruncatedNewtonAlgorithm extends GradientOptimizer {
 		final double[] fx = { f.apply(x) };
 		final double[] g = df.apply(x);
 		final double[] w = new double[lw];
-		++myEvals;
+		myEvals = myGEvals = 1;
 
 		// prepare function
 		final Sfun sfun = (nn, xx, xi, gg, gi) -> {
@@ -114,7 +105,7 @@ public final class TruncatedNewtonAlgorithm extends GradientOptimizer {
 
 		// call main subroutine
 		lmqn(err, n, x, fx, g, w, lw, sfun, mgslvl, myMaxIters, myMaxEvals, myEta, myStepMax, accrcy, xtol);
-		return err[0] == 0 || err[0] == 3 ? x : null;
+		return new OptimizerSolution<>(x, myEvals, myGEvals, err[0] == 0 || err[0] == 3);
 	}
 
 	// ==========================================================================
@@ -129,8 +120,8 @@ public final class TruncatedNewtonAlgorithm extends GradientOptimizer {
 	 * @param up
 	 * @return
 	 */
-	public final double[] optimize(final Function<double[], Double> f, final Function<double[], double[]> df,
-			final double[] guess, final double[] low, final double[] up) {
+	public final OptimizerSolution<double[], Double> optimize(final Function<double[], Double> f,
+			final Function<double[], double[]> df, final double[] guess, final double[] low, final double[] up) {
 
 		// prepare variables
 		final int mgslvl = 1;
@@ -144,7 +135,7 @@ public final class TruncatedNewtonAlgorithm extends GradientOptimizer {
 		final double[] fx = { f.apply(x) };
 		final double[] g = df.apply(x);
 		final double[] w = new double[lw];
-		++myEvals;
+		myEvals = myGEvals = 1;
 
 		// prepare function
 		final Sfun sfun = (nn, xx, xi, gg, gi) -> {
@@ -158,12 +149,9 @@ public final class TruncatedNewtonAlgorithm extends GradientOptimizer {
 		// call main subroutine
 		lmqnbc(err, n, x, fx, g, w, lw, sfun, low, up, ipivot, mgslvl, myMaxIters, myMaxEvals, myEta, myStepMax, accrcy,
 				xtol);
-		return err[0] == 0 || err[0] == 3 ? x : null;
+		return new OptimizerSolution<>(x, myEvals, myGEvals, err[0] == 0 || err[0] == 3);
 	}
 
-	// ==========================================================================
-	// HELPER METHODS
-	// ==========================================================================
 	private void lmqn(final int[] ifail, final int n, final double[] x, final double[] f, final double[] g,
 			final double[] w, final int lw, final Sfun sfun, final int msglvl, final int maxit, final int maxfun,
 			final double eta, final double stepmx, final double accrcy, final double xtol) {

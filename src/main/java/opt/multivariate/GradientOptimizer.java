@@ -19,35 +19,46 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-package utils;
+package opt.multivariate;
+
+import java.util.function.Function;
+
+import opt.Optimizer;
+import opt.OptimizerSolution;
 
 /**
  *
  */
-public final class IntMath {
+public abstract class GradientOptimizer extends Optimizer<double[], Double, Function<? super double[], Double>> {
+
+	protected final double myTol;
 
 	/**
 	 *
-	 * @param n
-	 * @return
+	 * @param tolerance
 	 */
-	public static final int abs(final int n) {
-		final int mask = n >> 31;
-		return (n + mask) ^ mask;
+	public GradientOptimizer(final double tolerance) {
+		myTol = tolerance;
 	}
 
 	/**
-	 *
-	 * @param x
-	 * @param y
+	 * 
+	 * @param f
+	 * @param df
+	 * @param guess
 	 * @return
 	 */
-	public static final int average(final int x, final int y) {
+	public abstract OptimizerSolution<double[], Double> optimize(Function<? super double[], Double> f,
+			Function<? super double[], double[]> df, double[] guess);
 
-		// Hacker's delight 2-5 (3)
-		return (x & y) + ((x ^ y) >> 1);
-	}
-
-	private IntMath() {
+	/**
+	 *
+	 * @param f
+	 * @param guess
+	 * @return
+	 */
+	public OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> f,
+			final double[] guess) {
+		throw new IllegalArgumentException("f' not provided; no numerical diff. method exists yet!");
 	}
 }
