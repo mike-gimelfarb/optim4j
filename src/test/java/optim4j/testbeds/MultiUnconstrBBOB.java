@@ -635,9 +635,10 @@ public class MultiUnconstrBBOB {
 
 	public static void main(String[] args) {
 		final int scales = 7;
-		final int n = 5;
-		for (int i = 0; i <= scales * 5; ++i) {
-			final int fevs = (int) Math.pow(10, i / 5.0);
+		final int n = 20;
+		final int m = 1;
+		for (int i = 0; i <= scales * m; ++i) {
+			final int fevs = (int) Math.pow(10, i / (m * 1.)) * n;
 			int passed = 0;
 			for (final String key : ALL_FUNCTIONS.keySet()) {
 				final Function<double[], Double> func = ALL_FUNCTIONS.get(key);
@@ -653,7 +654,7 @@ public class MultiUnconstrBBOB {
 						lb[l] = -5.0;
 						ub[l] = 5.0;
 					}
-					NewuoaAlgorithm alg = new NewuoaAlgorithm(0, 2.0, fevs);
+					BiPopCmaesAlgorithm alg = new BiPopCmaesAlgorithm(-1, 1e-13, 2.0, fevs, 2000, false);
 					double[] res = alg.optimize(func, guess).getOptimalPoint();
 					if (res != null) {
 						double fit = func.apply(res);
@@ -671,7 +672,7 @@ public class MultiUnconstrBBOB {
 				}
 			}
 			double passpercent = (double) passed / (24 * 11);
-			System.out.println(Math.log10(fevs) + "\t" + passpercent);
+			System.out.println(Math.log10(fevs / n) + "\t" + passpercent);
 		}
 	}
 }

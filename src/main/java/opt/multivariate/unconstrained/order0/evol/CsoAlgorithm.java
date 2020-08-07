@@ -27,6 +27,7 @@ import java.util.function.Function;
 import opt.OptimizerSolution;
 import opt.multivariate.GradientFreeOptimizer;
 import utils.BlasMath;
+import utils.Sequences;
 
 /**
  * A particle swarm optimization algorithm with competition, using an optional
@@ -213,7 +214,7 @@ public final class CsoAlgorithm extends GradientFreeOptimizer {
 
 		// split m particles in the swarm into pairs:
 		// shuffle the swarm and assign element i to m/2 + i
-		shuffle(mySwarm);
+		Sequences.shuffle(RAND, 0, mySwarm.length - 1, mySwarm);
 
 		// now go through each pairing and perform fitness selection
 		final int halfm = mySize >>> 1;
@@ -357,22 +358,5 @@ public final class CsoAlgorithm extends GradientFreeOptimizer {
 			}
 		}
 		return new OptimizerSolution<>(myBest == null ? null : myBest.myPos, myEvals, 0, myBest != null && converged);
-	}
-
-	@SafeVarargs
-	private static final <T> void shuffle(final T... arr) {
-		for (int i = arr.length - 1; i > 0; --i) {
-			final int index = RAND.nextInt(i + 1);
-			swap(arr, index, i);
-		}
-	}
-
-	private static final <T> void swap(final T[] data, final int i, final int j) {
-		if (i == j) {
-			return;
-		}
-		final T temp = data[i];
-		data[i] = data[j];
-		data[j] = temp;
 	}
 }

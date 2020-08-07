@@ -25,7 +25,7 @@ import java.util.function.Function;
 
 import opt.OptimizerSolution;
 import opt.univariate.DerivativeFreeOptimizer;
-import utils.IntMath;
+import utils.Sequences;
 
 /**
  * 
@@ -158,7 +158,7 @@ public final class PiyavskiiAlgorithm extends DerivativeFreeOptimizer {
 				}
 
 				// determine where to insert the next point
-				final int iins = sortedIndex(xtry, k, xlist);
+				final int iins = Sequences.sortedIndex(xtry, k, xlist);
 
 				// insert the next trial point into memory
 				if (iins == 0) {
@@ -174,42 +174,11 @@ public final class PiyavskiiAlgorithm extends DerivativeFreeOptimizer {
 			} else {
 
 				// we have converged
-				final int imin = argmin(k, zlist);
+				final int imin = Sequences.argmin(k, zlist);
 				converged[0] = true;
 				return xlist[imin];
 			}
 		}
 		return Double.NaN;
-	}
-
-	private static final int argmin(final int len, final double... data) {
-		int k = 0;
-		int imin = -1;
-		double min = 0;
-		for (final double t : data) {
-			if (k >= len) {
-				break;
-			}
-			if (k == 0 || t < min) {
-				min = t;
-				imin = k;
-			}
-			++k;
-		}
-		return imin;
-	}
-
-	private static final int sortedIndex(final double item, final int len, final double... data) {
-		int i = 0;
-		int j = len;
-		while (i < j) {
-			final int m = IntMath.average(i, j);
-			if (data[m] < item) {
-				i = m + 1;
-			} else {
-				j = m;
-			}
-		}
-		return i;
 	}
 }

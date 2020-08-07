@@ -27,6 +27,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import opt.OptimizerSolution;
+import utils.Sequences;
 
 /**
  * An algorithm for minimization of a general function subject to general
@@ -159,7 +160,7 @@ public final class BoxComplexAlgorithm {
 				break;
 			}
 		}
-		final int imin = argmin(myN, myValue);
+		final int imin = Sequences.argmin(myN, myValue);
 		return new OptimizerSolution<>(myPts[imin], myFEvals, myGEvals, converged);
 	}
 
@@ -256,7 +257,7 @@ public final class BoxComplexAlgorithm {
 
 		// find the point with the highest value and the center of the remaining
 		// points in the complex
-		final int imax = argmax(myValue);
+		final int imax = Sequences.argmax(myValue.length, myValue);
 		final double[] xhigh = myPts[imax];
 		for (int j = 0; j < myN; ++j) {
 			myCenter0[j] = myCenter[j] + (myCenter[j] - xhigh[j]) / (myK - 1);
@@ -291,7 +292,7 @@ public final class BoxComplexAlgorithm {
 
 		// while the fitness of the new point is worse than the worst in the
 		// box, move the new point closer to the center
-		final int imin = argmin(myValue.length, myValue);
+		final int imin = Sequences.argmin(myValue.length, myValue);
 		final double[] xlow = myPts[imin];
 		final double fhigh = myValue[imax];
 		double freflect = myObj.apply(myXReflect);
@@ -337,36 +338,5 @@ public final class BoxComplexAlgorithm {
 			m2 += delta * delta2;
 		}
 		return m2 <= (count - 1.0) * myTol * myTol;
-	}
-
-	private static final int argmin(final int len, final double... data) {
-		int k = 0;
-		int imin = -1;
-		double min = 0;
-		for (final double t : data) {
-			if (k >= len) {
-				break;
-			}
-			if (k == 0 || t < min) {
-				min = t;
-				imin = k;
-			}
-			++k;
-		}
-		return imin;
-	}
-
-	private static final int argmax(final double... data) {
-		int k = 0;
-		int imax = -1;
-		double max = 0.0;
-		for (final double t : data) {
-			if (k == 0 || t > max) {
-				max = t;
-				imax = k;
-			}
-			++k;
-		}
-		return imax;
 	}
 }

@@ -30,6 +30,7 @@ import java.util.function.Function;
 import opt.OptimizerSolution;
 import opt.multivariate.GradientFreeOptimizer;
 import utils.BlasMath;
+import utils.Sequences;
 
 //%
 //%
@@ -241,8 +242,8 @@ public final class DifferentialSearchAlgorithm extends GradientFreeOptimizer {
 
 			// converge when distance in fitness between best and worst points
 			// is below the given tolerance
-			final int imin = argmin(mySwarmSize, fit_super);
-			final int imax = argmax(fit_super);
+			final int imin = Sequences.argmin(mySwarmSize, fit_super);
+			final int imax = Sequences.argmax(fit_super.length, fit_super);
 			final double best = fit_super[imin];
 			final double worst = fit_super[imax];
 			final double distY = Math.abs(best - worst);
@@ -272,7 +273,7 @@ public final class DifferentialSearchAlgorithm extends GradientFreeOptimizer {
 		}
 
 		// update results
-		final int imin = argmin(mySwarmSize, fit_super);
+		final int imin = Sequences.argmin(mySwarmSize, fit_super);
 		final double[] sol = superorganism[imin];
 		return new OptimizerSolution<>(sol, myEvals, 0, converged);
 	}
@@ -288,7 +289,7 @@ public final class DifferentialSearchAlgorithm extends GradientFreeOptimizer {
 			for (int i = 0; i < size; ++i) {
 				jind[i] = i;
 			}
-			shuffle(jind);
+			Sequences.shuffle(RAND, 0, jind.length - 1, jind);
 			for (int i = 0; i < size; ++i) {
 				final int j = jind[i];
 				direction[i] = superorganism[j];
@@ -329,7 +330,7 @@ public final class DifferentialSearchAlgorithm extends GradientFreeOptimizer {
 			// ELITIST DSA #2 (E2-DSA) (i.e., go-to-best DSA)
 			// philosophy: evolve the superorganism (i.e.,population)
 			// towards to "the best" solution
-			final int imin = argmin(fit.length, fit);
+			final int imin = Sequences.argmin(fit.length, fit);
 			for (int i = 0; i < size; ++i) {
 				direction[i] = superorganism[imin];
 			}
@@ -412,53 +413,5 @@ public final class DifferentialSearchAlgorithm extends GradientFreeOptimizer {
 			}
 		}
 		return map;
-	}
-
-	private static final int argmax(final double... data) {
-		int k = 0;
-		int imax = -1;
-		double max = 0.0;
-		for (final double t : data) {
-			if (k == 0 || t > max) {
-				max = t;
-				imax = k;
-			}
-			++k;
-		}
-		return imax;
-	}
-
-	private static final int argmin(final int len, final double... data) {
-		int k = 0;
-		int imin = -1;
-		double min = 0;
-		for (final double t : data) {
-			if (k >= len) {
-				break;
-			}
-			if (k == 0 || t < min) {
-				min = t;
-				imin = k;
-			}
-			++k;
-		}
-		return imin;
-	}
-
-	@SafeVarargs
-	private static final <T> void shuffle(final T... arr) {
-		for (int i = arr.length - 1; i > 0; --i) {
-			final int index = RAND.nextInt(i + 1);
-			swap(arr, index, i);
-		}
-	}
-
-	private static final <T> void swap(final T[] data, final int i, final int j) {
-		if (i == j) {
-			return;
-		}
-		final T temp = data[i];
-		data[i] = data[j];
-		data[j] = temp;
 	}
 }

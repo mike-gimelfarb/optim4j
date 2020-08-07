@@ -26,6 +26,7 @@ import java.util.function.Function;
 import opt.OptimizerSolution;
 import opt.multivariate.GradientFreeOptimizer;
 import utils.BlasMath;
+import utils.Sequences;
 
 /**
  * 
@@ -272,8 +273,8 @@ public class CcPsoAlgorithm extends GradientFreeOptimizer {
 		mySampledCauchy = new boolean[mySwarmCount][mySwarmSize];
 
 		// initialize the component indices for each swarm
-		final int[] range = range(myD);
-		shuffle(range);
+		final int[] range = Sequences.range(myD);
+		Sequences.shuffle(RAND, 0, range.length - 1, range);
 		int i = 0;
 		for (final int[] k : myK) {
 			for (int j = 0; j < myCompsPerSwarm; ++j) {
@@ -366,7 +367,7 @@ public class CcPsoAlgorithm extends GradientFreeOptimizer {
 			}
 
 			// get the best local particle among neighbors
-			final int imin = argmin(3, myTopFit);
+			final int imin = Sequences.argmin(3, myTopFit);
 			myLocalBestPos[ip] = myPersBestPos[myTopIndices[imin]];
 		}
 
@@ -454,46 +455,5 @@ public class CcPsoAlgorithm extends GradientFreeOptimizer {
 
 	private static double cauchy() {
 		return Math.tan(Math.PI * (RAND.nextDouble() - 0.5));
-	}
-
-	private static final void shuffle(final int... arr) {
-		for (int i = arr.length - 1; i > 0; --i) {
-			final int index = RAND.nextInt(i + 1);
-			swap(arr, index, i);
-		}
-	}
-
-	private static final void swap(final int[] data, final int i, final int j) {
-		if (i == j) {
-			return;
-		}
-		final int temp = data[i];
-		data[i] = data[j];
-		data[j] = temp;
-	}
-
-	private static final int[] range(final int end) {
-		final int[] result = new int[end];
-		for (int i = 0; i < end; ++i) {
-			result[i] = i;
-		}
-		return result;
-	}
-
-	private static final int argmin(final int len, final double... data) {
-		int k = 0;
-		int imin = -1;
-		double min = 0;
-		for (final double t : data) {
-			if (k >= len) {
-				break;
-			}
-			if (k == 0 || t < min) {
-				min = t;
-				imin = k;
-			}
-			++k;
-		}
-		return imin;
 	}
 }

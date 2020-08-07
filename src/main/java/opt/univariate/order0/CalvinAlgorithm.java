@@ -25,6 +25,7 @@ import java.util.function.Function;
 
 import opt.OptimizerSolution;
 import opt.univariate.DerivativeFreeOptimizer;
+import utils.Sequences;
 
 /**
  * 
@@ -135,7 +136,7 @@ public final class CalvinAlgorithm extends DerivativeFreeOptimizer {
 
 			// check convergence
 			if (tau <= tolerance) {
-				final int imin = argmin(f);
+				final int imin = Sequences.argmin(f.length, f);
 				if (imin >= 0) {
 					converged[0] = true;
 					return t[imin];
@@ -144,24 +145,11 @@ public final class CalvinAlgorithm extends DerivativeFreeOptimizer {
 				}
 			}
 		}
-		final int imin = argmin(f);
+		final int imin = Sequences.argmin(f.length, f);
 		if (imin >= 0) {
 			return t[imin];
 		} else {
 			return Double.NaN;
 		}
-	}
-
-	private static final int argmin(final double[] data) {
-		int imin = -1;
-		double min = 0.0;
-		for (int k = 0; k < data.length; ++k) {
-			if (k == 0 || data[k] < min) {
-				min = data[k];
-				imin = k;
-			}
-			++k;
-		}
-		return imin;
 	}
 }

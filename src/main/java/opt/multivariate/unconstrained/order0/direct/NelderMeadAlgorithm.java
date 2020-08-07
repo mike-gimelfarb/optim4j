@@ -12,6 +12,7 @@ import java.util.function.Function;
 
 import opt.OptimizerSolution;
 import opt.multivariate.GradientFreeOptimizer;
+import utils.Sequences;
 
 /**
  * A translation of the Nelder Mead algorithm by R. O'Neill (1979) for
@@ -127,7 +128,7 @@ public final class NelderMeadAlgorithm extends GradientFreeOptimizer {
 
 		// YNEWLO is, of course, the HIGHEST value???
 		converged = false;
-		ihi = argmax(y) + 1;
+		ihi = Sequences.argmax(y.length, y) + 1;
 		ynewlo = y[ihi - 1];
 
 		// Calculate PBAR, the centroid of the simplex vertices
@@ -200,7 +201,7 @@ public final class NelderMeadAlgorithm extends GradientFreeOptimizer {
 						y[j - 1] = myFunc.apply(xmin);
 						++icount;
 					}
-					ilo = argmin(n + 1, y) + 1;
+					ilo = Sequences.argmin(n + 1, y) + 1;
 					ylo = y[ilo - 1];
 					converged = false;
 					return;
@@ -293,7 +294,7 @@ public final class NelderMeadAlgorithm extends GradientFreeOptimizer {
 
 			// Find highest and lowest Y values. YNEWLO = Y(IHI) indicates
 			// the vertex of the simplex to be replaced.
-			ilo = argmin(n + 1, y) + 1;
+			ilo = Sequences.argmin(n + 1, y) + 1;
 			ylo = y[ilo - 1];
 
 			// Inner loop.
@@ -337,36 +338,5 @@ public final class NelderMeadAlgorithm extends GradientFreeOptimizer {
 			System.arraycopy(xmin, 0, start, 0, n);
 			del = eps;
 		}
-	}
-
-	private static final int argmin(final int len, final double... data) {
-		int k = 0;
-		int imin = -1;
-		double min = 0;
-		for (final double t : data) {
-			if (k >= len) {
-				break;
-			}
-			if (k == 0 || t < min) {
-				min = t;
-				imin = k;
-			}
-			++k;
-		}
-		return imin;
-	}
-
-	private static final int argmax(final double... data) {
-		int k = 0;
-		int imax = -1;
-		double max = 0.0;
-		for (final double t : data) {
-			if (k == 0 || t > max) {
-				max = t;
-				imax = k;
-			}
-			++k;
-		}
-		return imax;
 	}
 }

@@ -332,7 +332,7 @@ public final class MultiUnconstrStandard {
 				double besterr = Double.POSITIVE_INFINITY;
 				double bestfit = Double.POSITIVE_INFINITY;
 				for (int j = -8; j <= 2; ++j) {
-					BiPopCmaesAlgorithm alg = new BiPopCmaesAlgorithm(-1, 1e-12, 2.0, fevs, 1000, false);
+					BiPopCmaesAlgorithm alg = new BiPopCmaesAlgorithm(-1, 1e-10, 2.0, fevs, 2000, false);
 					final double[] guess = new double[n];
 					for (int l = 0; l < n; ++l) {
 						guess[l] = RAND.nextDouble() * 2 - 1;

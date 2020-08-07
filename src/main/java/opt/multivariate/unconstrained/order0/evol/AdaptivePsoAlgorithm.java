@@ -27,6 +27,7 @@ import java.util.function.Function;
 import opt.OptimizerSolution;
 import opt.multivariate.GradientFreeOptimizer;
 import utils.BlasMath;
+import utils.Sequences;
 
 /**
  * 
@@ -445,7 +446,7 @@ public final class AdaptivePsoAlgorithm extends GradientFreeOptimizer {
 		mu[3] = m4;
 		switch (oldState) {
 		case 0: {
-			return argmax(mu) + 1;
+			return Sequences.argmax(mu.length, mu) + 1;
 		}
 		case 1: {
 			if (m1 > 0) {
@@ -540,19 +541,5 @@ public final class AdaptivePsoAlgorithm extends GradientFreeOptimizer {
 		} else {
 			return 1.0;
 		}
-	}
-
-	private static final int argmax(final double... data) {
-		int k = 0;
-		int imax = -1;
-		double max = 0.0;
-		for (final double t : data) {
-			if (k == 0 || t > max) {
-				max = t;
-				imax = k;
-			}
-			++k;
-		}
-		return imax;
 	}
 }

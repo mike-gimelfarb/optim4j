@@ -27,6 +27,7 @@ import java.util.function.Function;
 import opt.OptimizerSolution;
 import opt.multivariate.GradientFreeOptimizer;
 import utils.BlasMath;
+import utils.Sequences;
 
 /**
  *
@@ -301,7 +302,7 @@ public final class RosenbrockAlgorithm extends GradientFreeOptimizer {
 		// POINTS. FOR THE REMAINING THREE POINTS, COMPUTE THE LAGRANGE
 		// QUADRATIC INTERPOLATION BY FITTING A PARABOLA THROUGH THE POINTS
 		// AND COMPUTE THE MINIMUM
-		imin = argmin(n, fs);
+		imin = Sequences.argmin(n, fs);
 		if (imin == 1) {
 			num = s[0] * (fs[0] - fs[2]);
 			den = 2.0 * (fs[0] - 2.0 * fs[1] + fs[2]);
@@ -338,22 +339,5 @@ public final class RosenbrockAlgorithm extends GradientFreeOptimizer {
 		}
 		s[0] = stepf;
 		return 0;
-	}
-
-	private static final int argmin(final int len, final double... data) {
-		int k = 0;
-		int imin = -1;
-		double min = 0;
-		for (final double t : data) {
-			if (k >= len) {
-				break;
-			}
-			if (k == 0 || t < min) {
-				min = t;
-				imin = k;
-			}
-			++k;
-		}
-		return imin;
 	}
 }

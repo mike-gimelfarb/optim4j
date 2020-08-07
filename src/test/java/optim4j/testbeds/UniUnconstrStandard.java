@@ -155,7 +155,7 @@ public final class UniUnconstrStandard {
 		int success = 0;
 		for (String key : ALL_FUNCTIONS.keySet()) {
 			final Function<Double, Double> func = ALL_FUNCTIONS.get(key);
-			final CalvinAlgorithm optimizer = new CalvinAlgorithm(1e-14, 500);
+			final BrentAlgorithm optimizer = new BrentAlgorithm(1e-12, 1e-12, 3000);
 			final double min = optimizer.optimize(func, 0, 1).getOptimalPoint();
 			final double fmin = func.apply(min);
 			System.out.println(key + ": " + "error: " + fmin);

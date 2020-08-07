@@ -33,6 +33,7 @@ import java.util.function.Function;
 import opt.OptimizerSolution;
 import opt.multivariate.GradientFreeOptimizer;
 import utils.BlasMath;
+import utils.Sequences;
 
 /**
  * [1] Bosman, Peter AN, J�rn Grahl, and Dirk Thierens. "AMaLGaM IDEAs in
@@ -526,7 +527,7 @@ public final class AmalgamAlgorithm extends GradientFreeOptimizer {
 
 		// perturb n_ams random solutions
 		// shift the solutions by a multiple of mu_shift
-		shuffle(1, n - 1, sols);
+		Sequences.shuffle(RAND, 1, n - 1, sols);
 		for (int m = 1; m <= nams; ++m) {
 			BlasMath.daxpym(d, delams * cmult, mushift, 1, sols[m].x, 1);
 		}
@@ -618,22 +619,5 @@ public final class AmalgamAlgorithm extends GradientFreeOptimizer {
 				}
 			}
 		}
-	}
-
-	@SafeVarargs
-	private static final <T> void shuffle(final int i1, final int i2, final T... arr) {
-		for (int i = i2; i > i1; --i) {
-			final int index = RAND.nextInt(i - i1 + 1) + i1;
-			swap(arr, index, i);
-		}
-	}
-
-	private static final <T> void swap(final T[] data, final int i, final int j) {
-		if (i == j) {
-			return;
-		}
-		final T temp = data[i];
-		data[i] = data[j];
-		data[j] = temp;
 	}
 }
