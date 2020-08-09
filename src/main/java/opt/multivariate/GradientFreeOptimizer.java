@@ -25,7 +25,6 @@ import java.util.Random;
 import java.util.function.Function;
 
 import opt.Optimizer;
-import opt.OptimizerSolution;
 import utils.Constants;
 
 /**
@@ -50,6 +49,6 @@ public abstract class GradientFreeOptimizer extends Optimizer<double[], Double, 
 
 	public abstract void iterate();
 
-	public abstract OptimizerSolution<double[], Double> optimize(Function<? super double[], Double> func,
+	public abstract MultivariateOptimizerSolution optimize(Function<? super double[], Double> func,
 			double[] guess);
 }

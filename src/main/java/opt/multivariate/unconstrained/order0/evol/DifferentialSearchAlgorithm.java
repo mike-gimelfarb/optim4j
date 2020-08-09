@@ -27,8 +27,8 @@ package opt.multivariate.unconstrained.order0.evol;
 import java.util.Arrays;
 import java.util.function.Function;
 
-import opt.OptimizerSolution;
 import opt.multivariate.GradientFreeOptimizer;
+import opt.multivariate.MultivariateOptimizerSolution;
 import utils.BlasMath;
 import utils.Sequences;
 
@@ -174,8 +174,7 @@ public final class DifferentialSearchAlgorithm extends GradientFreeOptimizer {
 	}
 
 	@Override
-	public OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> func,
-			final double[] guess) {
+	public MultivariateOptimizerSolution optimize(final Function<? super double[], Double> func, final double[] guess) {
 		final double[] lo = new double[guess.length];
 		final double[] hi = new double[guess.length];
 		for (int i = 0; i < guess.length; ++i) {
@@ -227,8 +226,8 @@ public final class DifferentialSearchAlgorithm extends GradientFreeOptimizer {
 	 * @param upper
 	 * @return
 	 */
-	public OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> func,
-			final double[] lower, final double[] upper) {
+	public MultivariateOptimizerSolution optimize(final Function<? super double[], Double> func, final double[] lower,
+			final double[] upper) {
 
 		// initialization of swarm
 		initialize(func, lower, upper);
@@ -275,7 +274,7 @@ public final class DifferentialSearchAlgorithm extends GradientFreeOptimizer {
 		// update results
 		final int imin = Sequences.argmin(mySwarmSize, fit_super);
 		final double[] sol = superorganism[imin];
-		return new OptimizerSolution<>(sol, myEvals, 0, converged);
+		return new MultivariateOptimizerSolution(sol, myEvals, 0, converged);
 	}
 
 	private static double[][] generate_dir(final double[][] direction, final int method, final double[][] superorganism,

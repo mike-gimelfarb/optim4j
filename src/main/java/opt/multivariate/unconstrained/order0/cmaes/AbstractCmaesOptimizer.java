@@ -24,8 +24,8 @@ package opt.multivariate.unconstrained.order0.cmaes;
 import java.util.Arrays;
 import java.util.function.Function;
 
-import opt.OptimizerSolution;
 import opt.multivariate.GradientFreeOptimizer;
+import opt.multivariate.MultivariateOptimizerSolution;
 import utils.BlasMath;
 
 /**
@@ -257,8 +257,7 @@ public abstract class AbstractCmaesOptimizer extends GradientFreeOptimizer {
 	}
 
 	@Override
-	public OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> func,
-			final double[] guess) {
+	public MultivariateOptimizerSolution optimize(final Function<? super double[], Double> func, final double[] guess) {
 		initialize(func, guess);
 		boolean converged = false;
 		while (myEvals < myMaxEvals) {
@@ -268,7 +267,7 @@ public abstract class AbstractCmaesOptimizer extends GradientFreeOptimizer {
 				break;
 			}
 		}
-		return new OptimizerSolution<>(getBestSolution(), myEvals, 0, converged);
+		return new MultivariateOptimizerSolution(getBestSolution(), myEvals, 0, converged);
 	}
 
 	/**

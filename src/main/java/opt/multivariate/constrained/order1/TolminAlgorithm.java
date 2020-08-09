@@ -23,7 +23,7 @@ package opt.multivariate.constrained.order1;
 import java.util.Arrays;
 import java.util.function.Function;
 
-import opt.OptimizerSolution;
+import opt.multivariate.MultivariateOptimizerSolution;
 import utils.BlasMath;
 import utils.IntMath;
 import utils.RealMath;
@@ -47,6 +47,7 @@ public final class TolminAlgorithm {
 
 		double fgcalc(int n, double[] x, double[] g);
 	}
+
 	private final double[] fsave = new double[1];
 	private final double myTol;
 
@@ -70,7 +71,7 @@ public final class TolminAlgorithm {
 	 * @param guess
 	 * @return
 	 */
-	public final OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> func,
+	public final MultivariateOptimizerSolution optimize(final Function<? super double[], Double> func,
 			final Function<? super double[], double[]> dfunc, final int meq, final double[][] a, final double[] b,
 			final double[] xl, final double[] xu, final double[] guess) {
 
@@ -91,7 +92,7 @@ public final class TolminAlgorithm {
 		// call main subroutine
 		// TODO: fix evaluation counter
 		getmin(fg, n, m, meq, a, b, xl, xu, x, myTol, iact, nact, par, 0, info);
-		return new OptimizerSolution<>(x, 0, 0, info[0] == 1);
+		return new MultivariateOptimizerSolution(x, 0, 0, info[0] == 1);
 	}
 
 	private void getmin(final Fg fg, final int n, final int m, final int meq, final double[][] a, final double[] b,

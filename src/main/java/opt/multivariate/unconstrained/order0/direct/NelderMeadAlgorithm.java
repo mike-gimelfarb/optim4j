@@ -10,8 +10,8 @@ package opt.multivariate.unconstrained.order0.direct;
 import java.util.Arrays;
 import java.util.function.Function;
 
-import opt.OptimizerSolution;
 import opt.multivariate.GradientFreeOptimizer;
+import opt.multivariate.MultivariateOptimizerSolution;
 import utils.Sequences;
 
 /**
@@ -261,15 +261,14 @@ public final class NelderMeadAlgorithm extends GradientFreeOptimizer {
 	}
 
 	@Override
-	public OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> func,
-			final double[] guess) {
+	public MultivariateOptimizerSolution optimize(final Function<? super double[], Double> func, final double[] guess) {
 
 		// prepare variables
 		initialize(func, guess);
 
 		// call main subroutine
 		final int ifault = nelmin();
-		return new OptimizerSolution<>(xmin, icount, 0, ifault == 0);
+		return new MultivariateOptimizerSolution(xmin, icount, 0, ifault == 0);
 	}
 
 	private int nelmin() {

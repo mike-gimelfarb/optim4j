@@ -24,7 +24,6 @@ package opt.multivariate.unconstrained.leastsquares;
 import java.util.function.Function;
 
 import opt.Optimizer;
-import opt.OptimizerSolution;
 
 /**
  * An abstract class for least-squares optimization.
@@ -42,6 +41,5 @@ public abstract class LeastSquaresOptimizer
 		myTol = tolerance;
 	}
 
-	public abstract OptimizerSolution<double[], double[]> optimize(Function<? super double[], double[]> func,
-			double[] guess);
+	public abstract LeastSquaresOptimizerSolution optimize(Function<? super double[], double[]> func, double[] guess);
 }

@@ -26,7 +26,7 @@ import java.util.Random;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import opt.OptimizerSolution;
+import opt.multivariate.MultivariateOptimizerSolution;
 import utils.Sequences;
 
 /**
@@ -135,7 +135,7 @@ public final class BoxComplexAlgorithm {
 	 * @param guess
 	 * @return
 	 */
-	public final OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> objective,
+	public final MultivariateOptimizerSolution optimize(final Function<? super double[], Double> objective,
 			final Predicate<? super double[]> feasibleRegion, final double[] lowerBound, final double[] upperBound,
 			final double[] guess) {
 
@@ -161,7 +161,7 @@ public final class BoxComplexAlgorithm {
 			}
 		}
 		final int imin = Sequences.argmin(myN, myValue);
-		return new OptimizerSolution<>(myPts[imin], myFEvals, myGEvals, converged);
+		return new MultivariateOptimizerSolution(myPts[imin], myFEvals, myGEvals, converged);
 	}
 
 	/**

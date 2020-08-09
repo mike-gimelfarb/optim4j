@@ -23,8 +23,8 @@ package opt.multivariate.unconstrained.order0.quad;
 import java.util.Arrays;
 import java.util.function.Function;
 
-import opt.OptimizerSolution;
 import opt.multivariate.GradientFreeOptimizer;
+import opt.multivariate.MultivariateOptimizerSolution;
 import utils.BlasMath;
 import utils.RealMath;
 
@@ -63,8 +63,7 @@ public final class UobyqaAlgorithm extends GradientFreeOptimizer {
 	}
 
 	@Override
-	public final OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> func,
-			final double[] guess) {
+	public final MultivariateOptimizerSolution optimize(final Function<? super double[], Double> func, final double[] guess) {
 
 		// prepare variables
 		final int n = guess.length;
@@ -74,7 +73,7 @@ public final class UobyqaAlgorithm extends GradientFreeOptimizer {
 		// call main subroutine
 		// TODO: check convergence
 		uobyqa1(func, n, x, myMaxFev, myRho0, myTol, fev);
-		return new OptimizerSolution<>(x, fev[0], 0, false);
+		return new MultivariateOptimizerSolution(x, fev[0], 0, false);
 	}
 
 	private static void uobyqa1(final Function<? super double[], Double> func, final int n, final double[] x,

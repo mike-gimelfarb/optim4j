@@ -23,7 +23,7 @@ package opt.multivariate.constrained.order0;
 import java.util.Arrays;
 import java.util.function.Function;
 
-import opt.OptimizerSolution;
+import opt.multivariate.MultivariateOptimizerSolution;
 import utils.BlasMath;
 import utils.RealMath;
 
@@ -80,8 +80,8 @@ public final class LincoaAlgorithm {
 	 * @param guess
 	 * @return
 	 */
-	public final OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> func,
-			final double[][] a, final double[] b, final double[] guess) {
+	public final MultivariateOptimizerSolution optimize(final Function<? super double[], Double> func, final double[][] a,
+			final double[] b, final double[] guess) {
 
 		final int n = guess.length;
 		final double[] x = Arrays.copyOf(guess, n);
@@ -90,7 +90,7 @@ public final class LincoaAlgorithm {
 
 		// TODO: check convergence
 		lincoa(func, n, mySize.apply(n), m, a, n, b, x, myRho0, myTol, 0, myMaxEvals, fev);
-		return new OptimizerSolution<>(x, fev[0], 0, false);
+		return new MultivariateOptimizerSolution(x, fev[0], 0, false);
 	}
 
 	private static void lincoa(final Function<? super double[], Double> func, final int n, final int npt, final int m,

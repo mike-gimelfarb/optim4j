@@ -24,8 +24,8 @@ package opt.multivariate.unconstrained.order0.cmaes;
 import java.util.Arrays;
 import java.util.function.Function;
 
-import opt.OptimizerSolution;
 import opt.multivariate.GradientFreeOptimizer;
+import opt.multivariate.MultivariateOptimizerSolution;
 import opt.multivariate.unconstrained.order0.cmaes.AbstractCmaesOptimizer.AbstractCmaesFactory;
 
 /**
@@ -161,7 +161,7 @@ public final class BiPopCmaesAlgorithm extends GradientFreeOptimizer {
 		myX0 = Arrays.copyOf(myXGuess, myD);
 
 		// first default run with small population size
-		final OptimizerSolution<double[], Double> sol = myCmaes.optimize(func, myX0);
+		final MultivariateOptimizerSolution sol = myCmaes.optimize(func, myX0);
 		myX = sol.getOptimalPoint();
 		myFx = func.apply(myX);
 
@@ -251,8 +251,7 @@ public final class BiPopCmaesAlgorithm extends GradientFreeOptimizer {
 	}
 
 	@Override
-	public OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> func,
-			final double[] guess) {
+	public MultivariateOptimizerSolution optimize(final Function<? super double[], Double> func, final double[] guess) {
 		initialize(func, guess);
 		boolean converged = false;
 		while (true) {
@@ -273,7 +272,7 @@ public final class BiPopCmaesAlgorithm extends GradientFreeOptimizer {
 				myFxold = myFx;
 			}
 		}
-		return new OptimizerSolution<>(myXBest, myEvals, 0, converged);
+		return new MultivariateOptimizerSolution(myXBest, myEvals, 0, converged);
 	}
 
 	/**
@@ -299,7 +298,7 @@ public final class BiPopCmaesAlgorithm extends GradientFreeOptimizer {
 		myCmaes = myCmaesFactory.createCmaStrategy(myCmaesTol, myLambdal, mySigma, myEvalsref);
 
 		// run the CMAES with increasing population size
-		final OptimizerSolution<double[], Double> sol = myCmaes.optimize(myFunc, myX0);
+		final MultivariateOptimizerSolution sol = myCmaes.optimize(myFunc, myX0);
 		myX = sol.getOptimalPoint();
 		myFx = myFunc.apply(myX);
 
@@ -336,7 +335,7 @@ public final class BiPopCmaesAlgorithm extends GradientFreeOptimizer {
 		myCmaes = myCmaesFactory.createCmaStrategy(myCmaesTol, myLambda, mySigma, myEvalsref);
 
 		// run the CMAES with small population size
-		final OptimizerSolution<double[], Double> sol = myCmaes.optimize(myFunc, myX0);
+		final MultivariateOptimizerSolution sol = myCmaes.optimize(myFunc, myX0);
 		myX = sol.getOptimalPoint();
 		myFx = myFunc.apply(myX);
 

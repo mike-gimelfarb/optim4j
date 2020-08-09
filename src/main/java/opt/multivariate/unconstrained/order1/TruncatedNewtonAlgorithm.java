@@ -16,8 +16,8 @@ package opt.multivariate.unconstrained.order1;
 import java.util.Arrays;
 import java.util.function.Function;
 
-import opt.OptimizerSolution;
 import opt.multivariate.GradientOptimizer;
+import opt.multivariate.MultivariateOptimizerSolution;
 import utils.BlasMath;
 import utils.Constants;
 
@@ -78,7 +78,7 @@ public final class TruncatedNewtonAlgorithm extends GradientOptimizer {
 	}
 
 	@Override
-	public final OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> f,
+	public final MultivariateOptimizerSolution optimize(final Function<? super double[], Double> f,
 			final Function<? super double[], double[]> df, final double[] guess) {
 
 		// prepare variables
@@ -105,7 +105,7 @@ public final class TruncatedNewtonAlgorithm extends GradientOptimizer {
 
 		// call main subroutine
 		lmqn(err, n, x, fx, g, w, lw, sfun, mgslvl, myMaxIters, myMaxEvals, myEta, myStepMax, accrcy, xtol);
-		return new OptimizerSolution<>(x, myEvals, myGEvals, err[0] == 0 || err[0] == 3);
+		return new MultivariateOptimizerSolution(x, myEvals, myGEvals, err[0] == 0 || err[0] == 3);
 	}
 
 	// ==========================================================================
@@ -120,7 +120,7 @@ public final class TruncatedNewtonAlgorithm extends GradientOptimizer {
 	 * @param up
 	 * @return
 	 */
-	public final OptimizerSolution<double[], Double> optimize(final Function<double[], Double> f,
+	public final MultivariateOptimizerSolution optimize(final Function<double[], Double> f,
 			final Function<double[], double[]> df, final double[] guess, final double[] low, final double[] up) {
 
 		// prepare variables
@@ -149,7 +149,7 @@ public final class TruncatedNewtonAlgorithm extends GradientOptimizer {
 		// call main subroutine
 		lmqnbc(err, n, x, fx, g, w, lw, sfun, low, up, ipivot, mgslvl, myMaxIters, myMaxEvals, myEta, myStepMax, accrcy,
 				xtol);
-		return new OptimizerSolution<>(x, myEvals, myGEvals, err[0] == 0 || err[0] == 3);
+		return new MultivariateOptimizerSolution(x, myEvals, myGEvals, err[0] == 0 || err[0] == 3);
 	}
 
 	private void lmqn(final int[] ifail, final int n, final double[] x, final double[] f, final double[] g,

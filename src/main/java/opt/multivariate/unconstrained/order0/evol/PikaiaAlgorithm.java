@@ -29,8 +29,8 @@ package opt.multivariate.unconstrained.order0.evol;
 import java.util.Arrays;
 import java.util.function.Function;
 
-import opt.OptimizerSolution;
 import opt.multivariate.GradientFreeOptimizer;
+import opt.multivariate.MultivariateOptimizerSolution;
 import utils.RealMath;
 
 /**
@@ -206,8 +206,7 @@ public class PikaiaAlgorithm extends GradientFreeOptimizer {
 	}
 
 	@Override
-	public OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> func,
-			final double[] guess) {
+	public MultivariateOptimizerSolution optimize(final Function<? super double[], Double> func, final double[] guess) {
 		initialize(func, guess);
 
 		// Main Generation Loop
@@ -220,7 +219,7 @@ public class PikaiaAlgorithm extends GradientFreeOptimizer {
 
 		// Return best phenotype and its fitness
 		// TODO: check convergence
-		return new OptimizerSolution<>(Arrays.copyOf(oldph[ifit[np[0] - 1] - 1], n), myEvals, 0, false);
+		return new MultivariateOptimizerSolution(Arrays.copyOf(oldph[ifit[np[0] - 1] - 1], n), myEvals, 0, false);
 	}
 
 	private static void setctl(final double[] ctrl, final int n, final int[] np, final int[] ngen, final int[] nd,

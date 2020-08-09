@@ -47,6 +47,17 @@ public class OptimizerSolution<X, Y> {
 		myFEvals = fevals;
 		myDEvals = dfevals;
 		myConverged = converged;
+
+	}
+
+	@Override
+	public String toString() {
+		String result = "";
+		result += "x*: " + mySol.toString() + "\n";
+		result += "calls to f: " + myFEvals + "\n";
+		result += "calls to df/dx: " + myDEvals + "\n";
+		result += "converged: " + myConverged;
+		return result;
 	}
 
 	/**

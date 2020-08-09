@@ -23,8 +23,8 @@ package opt.multivariate.unconstrained.order0.evol;
 
 import java.util.function.Function;
 
-import opt.OptimizerSolution;
 import opt.multivariate.GradientFreeOptimizer;
+import opt.multivariate.MultivariateOptimizerSolution;
 import utils.BlasMath;
 import utils.Sequences;
 
@@ -153,8 +153,7 @@ public class CcPsoAlgorithm extends GradientFreeOptimizer {
 	}
 
 	@Override
-	public OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> func,
-			final double[] guess) {
+	public MultivariateOptimizerSolution optimize(final Function<? super double[], Double> func, final double[] guess) {
 		final double[] lo = new double[guess.length];
 		final double[] hi = new double[guess.length];
 		for (int i = 0; i < guess.length; ++i) {
@@ -207,8 +206,8 @@ public class CcPsoAlgorithm extends GradientFreeOptimizer {
 	 * @param upper
 	 * @return
 	 */
-	public OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> func,
-			final double[] lower, final double[] upper) {
+	public MultivariateOptimizerSolution optimize(final Function<? super double[], Double> func, final double[] lower,
+			final double[] upper) {
 
 		// initialization
 		initialize(func, lower, upper);
@@ -257,7 +256,7 @@ public class CcPsoAlgorithm extends GradientFreeOptimizer {
 				}
 			}
 		}
-		return new OptimizerSolution<>(myBestPos, myEvals, 0, converged);
+		return new MultivariateOptimizerSolution(myBestPos, myEvals, 0, converged);
 	}
 
 	private void randomizeComponents() {

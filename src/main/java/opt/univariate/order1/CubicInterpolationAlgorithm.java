@@ -23,7 +23,7 @@ package opt.univariate.order1;
 
 import java.util.function.Function;
 
-import opt.OptimizerSolution;
+import opt.univariate.UnivariateOptimizerSolution;
 import opt.univariate.DerivativeOptimizer;
 import utils.Constants;
 
@@ -49,7 +49,7 @@ public final class CubicInterpolationAlgorithm extends DerivativeOptimizer {
 	}
 
 	@Override
-	public final OptimizerSolution<Double, Double> optimize(final Function<? super Double, Double> f,
+	public final UnivariateOptimizerSolution optimize(final Function<? super Double, Double> f,
 			final Function<? super Double, Double> df, final double a, final double b) {
 
 		// prepare variables
@@ -58,7 +58,7 @@ public final class CubicInterpolationAlgorithm extends DerivativeOptimizer {
 
 		// call main subroutine
 		final double result = hybridcubic(f, df, a, b, myTol, myRelTol, myMaxEvals, fev, converged);
-		return new OptimizerSolution<>(result, fev[0], fev[0], converged[0]);
+		return new UnivariateOptimizerSolution(result, fev[0], fev[0], converged[0]);
 	}
 
 	private static double hybridcubic(final Function<? super Double, Double> func,

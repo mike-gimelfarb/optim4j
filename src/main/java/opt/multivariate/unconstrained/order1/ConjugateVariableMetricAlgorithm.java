@@ -50,8 +50,8 @@ package opt.multivariate.unconstrained.order1;
 import java.util.Arrays;
 import java.util.function.Function;
 
-import opt.OptimizerSolution;
 import opt.multivariate.GradientOptimizer;
+import opt.multivariate.MultivariateOptimizerSolution;
 import utils.BlasMath;
 import utils.IntMath;
 import utils.RealMath;
@@ -119,7 +119,7 @@ public final class ConjugateVariableMetricAlgorithm extends GradientOptimizer {
 	}
 
 	@Override
-	public final OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> func,
+	public final MultivariateOptimizerSolution optimize(final Function<? super double[], Double> func,
 			final Function<? super double[], double[]> dfunc, final double[] guess) {
 
 		// prepare functions
@@ -141,7 +141,7 @@ public final class ConjugateVariableMetricAlgorithm extends GradientOptimizer {
 		// call main subroutine
 		plicu(obj, dobj, nf, x, ipar, rpar, f, gmax, iprnt, iterm);
 		final boolean converged = iterm[0] == 1 || iterm[0] == 2 || iterm[0] == 3 || iterm[0] == 4 || iterm[0] == 6;
-		return new OptimizerSolution<>(x, nfv, nfg, converged);
+		return new MultivariateOptimizerSolution(x, nfv, nfg, converged);
 	}
 
 	private void plicu(final Obj obj, final DObj dobj, final int[] nf, final double[] x, final int[] ipar,

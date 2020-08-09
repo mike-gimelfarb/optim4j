@@ -19,44 +19,44 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-package opt.multivariate;
+package opt.multivariate.unconstrained.leastsquares;
 
-import java.util.function.Function;
-
-import opt.Optimizer;
+import opt.OptimizerSolution;
 
 /**
+ * 
  *
  */
-public abstract class GradientOptimizer extends Optimizer<double[], Double, Function<? super double[], Double>> {
-
-	protected final double myTol;
-
-	/**
-	 *
-	 * @param tolerance
-	 */
-	public GradientOptimizer(final double tolerance) {
-		myTol = tolerance;
-	}
+public class LeastSquaresOptimizerSolution extends OptimizerSolution<double[], double[]> {
 
 	/**
 	 * 
-	 * @param f
-	 * @param df
-	 * @param guess
-	 * @return
+	 * @param sol
+	 * @param fevals
+	 * @param dfevals
+	 * @param converged
 	 */
-	public abstract MultivariateOptimizerSolution optimize(Function<? super double[], Double> f,
-			Function<? super double[], double[]> df, double[] guess);
+	public LeastSquaresOptimizerSolution(final double[] sol, final int fevals, final int dfevals,
+			final boolean converged) {
+		super(sol, fevals, dfevals, converged);
+	}
 
-	/**
-	 *
-	 * @param f
-	 * @param guess
-	 * @return
-	 */
-	public MultivariateOptimizerSolution optimize(final Function<? super double[], Double> f, final double[] guess) {
-		throw new IllegalArgumentException("f' not provided; no numerical diff. method exists yet!");
+	@Override
+	public String toString() {
+		String result = "";
+		result += "x*: " + compactToString(mySol) + "\n";
+		result += "calls to f: " + myFEvals + "\n";
+		result += "calls to df/dx: " + myDEvals + "\n";
+		result += "converged: " + myConverged;
+		return result;
+	}
+
+	private static final String compactToString(final double[] arr) {
+		String result = "[";
+		for (final double x : arr) {
+			result += String.format("%.6f", x) + " ";
+		}
+		result = result.trim() + "]";
+		return result;
 	}
 }

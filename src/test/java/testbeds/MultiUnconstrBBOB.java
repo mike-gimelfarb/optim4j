@@ -19,38 +19,94 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-package optim4j.testbeds;
+package testbeds;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Random;
 import java.util.function.Function;
 
-import opt.OptimizerSolution;
-import opt.multivariate.unconstrained.order0.cmaes.ActiveCmaesAlgorithm;
 import opt.multivariate.unconstrained.order0.cmaes.BiPopCmaesAlgorithm;
-import opt.multivariate.unconstrained.order0.cmaes.CholeskyCmaesAlgorithm;
-import opt.multivariate.unconstrained.order0.cmaes.CmaesAlgorithm;
-import opt.multivariate.unconstrained.order0.cmaes.IPopCmaesAlgorithm;
-import opt.multivariate.unconstrained.order0.cmaes.LmCmaesAlgorithm;
-import opt.multivariate.unconstrained.order0.cmaes.SepCmaesAlgorithm;
-import opt.multivariate.unconstrained.order0.direct.CrsAlgorithm;
-import opt.multivariate.unconstrained.order0.direct.DirectAlgorithm;
-import opt.multivariate.unconstrained.order0.direct.NelderMeadAlgorithm;
-import opt.multivariate.unconstrained.order0.direct.RosenbrockAlgorithm;
-import opt.multivariate.unconstrained.order0.evol.AdaptivePsoAlgorithm;
-import opt.multivariate.unconstrained.order0.evol.AmalgamAlgorithm;
-import opt.multivariate.unconstrained.order0.evol.CcPsoAlgorithm;
-import opt.multivariate.unconstrained.order0.evol.CsoAlgorithm;
-import opt.multivariate.unconstrained.order0.evol.DifferentialSearchAlgorithm;
-import opt.multivariate.unconstrained.order0.evol.EschAlgorithm;
-import opt.multivariate.unconstrained.order0.evol.SadeAlgorithm;
-import opt.multivariate.unconstrained.order0.quad.BobyqaAlgorithm;
-import opt.multivariate.unconstrained.order0.quad.NewuoaAlgorithm;
 import utils.BlasMath;
 import utils.RealMath;
 
 public class MultiUnconstrBBOB {
+
+	public static final double[][][] qr(final double[][] mat) {
+
+		// copy original matrix
+		final int m = mat.length;
+		final int n = mat[0].length;
+		final double[][] QR = new double[m][];
+		for (int i = 0; i < m; ++i) {
+			QR[i] = mat[i].clone();
+		}
+
+		// apply Householder transformations
+		final double[] Rdiag = new double[n];
+		for (int k = 0; k < n; k++) {
+			double nrm = 0;
+			for (int i = k; i < m; i++) {
+				nrm = RealMath.hypot(nrm, QR[i][k]);
+			}
+			if (nrm != 0.0) {
+				if (QR[k][k] < 0) {
+					nrm = -nrm;
+				}
+				for (int i = k; i < m; i++) {
+					QR[i][k] /= nrm;
+				}
+				QR[k][k] += 1.0;
+				for (int j = k + 1; j < n; j++) {
+					double s = 0.0;
+					for (int i = k; i < m; i++) {
+						s += QR[i][k] * QR[i][j];
+					}
+					s = -s / QR[k][k];
+					for (int i = k; i < m; i++) {
+						QR[i][j] += s * QR[i][k];
+					}
+				}
+			}
+			Rdiag[k] = -nrm;
+		}
+
+		// compute the matrix R
+		final double[][] R = new double[n][n];
+		for (int i = 0; i < n; i++) {
+			for (int j = 0; j < n; j++) {
+				if (i < j) {
+					R[i][j] = QR[i][j];
+				} else if (i == j) {
+					R[i][j] = Rdiag[i];
+				} else {
+					R[i][j] = 0.0;
+				}
+			}
+		}
+
+		// compute the matrix Q
+		final double[][] Q = new double[m][n];
+		for (int k = n - 1; k >= 0; k--) {
+			for (int i = 0; i < m; i++) {
+				Q[i][k] = 0.0;
+			}
+			Q[k][k] = 1.0;
+			for (int j = k; j < n; j++) {
+				if (QR[k][k] != 0) {
+					double s = 0.0;
+					for (int i = k; i < m; i++) {
+						s += QR[i][k] * Q[i][j];
+					}
+					s = -s / QR[k][k];
+					for (int i = k; i < m; i++) {
+						Q[i][j] += s * QR[i][k];
+					}
+				}
+			}
+		}
+		return new double[][][] { Q, R };
+	}
 
 	public static final Map<String, Function<double[], Double>> ALL_FUNCTIONS = new LinkedHashMap<String, Function<double[], Double>>() {
 
@@ -154,7 +210,7 @@ public class MultiUnconstrBBOB {
 				mat[i][j] = RAND.nextGaussian();
 			}
 		}
-		return QR.qr(mat)[0];
+		return qr(mat)[0];
 	}
 
 	// cache fixed quantities for quick computation

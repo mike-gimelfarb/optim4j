@@ -8,7 +8,7 @@ package opt.univariate.order0;
 
 import java.util.function.Function;
 
-import opt.OptimizerSolution;
+import opt.univariate.UnivariateOptimizerSolution;
 import opt.univariate.DerivativeFreeOptimizer;
 import utils.RealMath;
 
@@ -37,7 +37,7 @@ public final class BrentAlgorithm extends DerivativeFreeOptimizer {
 	}
 
 	@Override
-	public final OptimizerSolution<Double, Double> optimize(final Function<? super Double, Double> f, final double a,
+	public final UnivariateOptimizerSolution optimize(final Function<? super Double, Double> f, final double a,
 			final double b) {
 
 		// prepare variables
@@ -62,7 +62,7 @@ public final class BrentAlgorithm extends DerivativeFreeOptimizer {
 				++evals;
 			}
 		}
-		return new OptimizerSolution<>(arg[0], evals, 0, converged);
+		return new UnivariateOptimizerSolution(arg[0], evals, 0, converged);
 	}
 
 	private void localmin(final double[] a, final double[] b, final double[] arg, final int[] status,

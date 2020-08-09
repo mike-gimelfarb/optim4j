@@ -23,7 +23,7 @@ package opt.univariate.order0;
 
 import java.util.function.Function;
 
-import opt.OptimizerSolution;
+import opt.univariate.UnivariateOptimizerSolution;
 import opt.univariate.DerivativeFreeOptimizer;
 
 /**
@@ -58,7 +58,7 @@ public final class DaviesSwannCampeyAlgorithm extends DerivativeFreeOptimizer {
 	}
 
 	@Override
-	public OptimizerSolution<Double, Double> optimize(final Function<? super Double, Double> f, final double a,
+	public UnivariateOptimizerSolution optimize(final Function<? super Double, Double> f, final double a,
 			final double b) {
 
 		// prepare work arrays
@@ -67,7 +67,7 @@ public final class DaviesSwannCampeyAlgorithm extends DerivativeFreeOptimizer {
 
 		// call main subroutine
 		final double result = dsc(f, a, b, myL, myTol, fev, myMaxEvals, converged);
-		return new OptimizerSolution<>(result, fev[0], 0, converged[0]);
+		return new UnivariateOptimizerSolution(result, fev[0], 0, converged[0]);
 	}
 
 	private static double dsc(final Function<? super Double, Double> f, final double a, final double b, final double K,

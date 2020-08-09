@@ -31,8 +31,8 @@ package opt.multivariate.unconstrained.order1;
 
 import java.util.function.Function;
 
-import opt.OptimizerSolution;
 import opt.multivariate.GradientOptimizer;
+import opt.multivariate.MultivariateOptimizerSolution;
 import utils.BlasMath;
 
 /**
@@ -74,7 +74,7 @@ public final class TrustRegionNewtonAlgorithm extends GradientOptimizer {
 	}
 
 	@Override
-	public final OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> f,
+	public final MultivariateOptimizerSolution optimize(final Function<? super double[], Double> f,
 			final Function<? super double[], double[]> df, final double[] guess) {
 
 		// prepare work arrays
@@ -85,7 +85,7 @@ public final class TrustRegionNewtonAlgorithm extends GradientOptimizer {
 		// call main subroutine
 		final double[] result = trust(f, df, null, guess.length, guess, 1, myDelta0, myDeltaM, myE1, myE2, myE3, myT1,
 				myT2, myTol, fev, dfev, myMaxEvals, converged);
-		return new OptimizerSolution<>(result, fev[0], dfev[0], converged[0]);
+		return new MultivariateOptimizerSolution(result, fev[0], dfev[0], converged[0]);
 	}
 
 	/**
@@ -96,7 +96,7 @@ public final class TrustRegionNewtonAlgorithm extends GradientOptimizer {
 	 * @param guess
 	 * @return
 	 */
-	public final OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> f,
+	public final MultivariateOptimizerSolution optimize(final Function<? super double[], Double> f,
 			final Function<? super double[], double[]> df, final Function<? super double[], double[][]> hess,
 			final double[] guess) {
 
@@ -108,7 +108,7 @@ public final class TrustRegionNewtonAlgorithm extends GradientOptimizer {
 		// call main subroutine
 		final double[] result = trust(f, df, hess, guess.length, guess, 0, myDelta0, myDeltaM, myE1, myE2, myE3, myT1,
 				myT2, myTol, fev, dfev, myMaxEvals, converged);
-		return new OptimizerSolution<>(result, fev[0], dfev[0], converged[0]);
+		return new MultivariateOptimizerSolution(result, fev[0], dfev[0], converged[0]);
 	}
 
 	private static double[] trust(final Function<? super double[], Double> f,

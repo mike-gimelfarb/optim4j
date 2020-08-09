@@ -14,8 +14,8 @@ package opt.multivariate.unconstrained.order1;
 import java.util.Arrays;
 import java.util.function.Function;
 
-import opt.OptimizerSolution;
 import opt.multivariate.GradientOptimizer;
+import opt.multivariate.MultivariateOptimizerSolution;
 import utils.BlasMath;
 
 /**
@@ -71,7 +71,7 @@ public final class ConjugateGradientAlgorithm extends GradientOptimizer {
 	}
 
 	@Override
-	public final OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> f,
+	public final MultivariateOptimizerSolution optimize(final Function<? super double[], Double> f,
 			final Function<? super double[], double[]> df, final double[] guess) {
 
 		// prepare variables
@@ -81,7 +81,7 @@ public final class ConjugateGradientAlgorithm extends GradientOptimizer {
 		// call main subroutine
 		// TODO: check convergence
 		final double[] result = main(f, df, guess, myTol, evals, converged);
-		return new OptimizerSolution<>(result, evals[0], evals[0], converged[0]);
+		return new MultivariateOptimizerSolution(result, evals[0], evals[0], converged[0]);
 	}
 
 	private double[] main(final Function<? super double[], Double> func,

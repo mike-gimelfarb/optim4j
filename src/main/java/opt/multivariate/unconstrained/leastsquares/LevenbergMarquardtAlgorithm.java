@@ -56,7 +56,6 @@ package opt.multivariate.unconstrained.leastsquares;
 import java.util.Arrays;
 import java.util.function.Function;
 
-import opt.OptimizerSolution;
 import utils.BlasMath;
 import utils.RealMath;
 
@@ -85,7 +84,7 @@ public final class LevenbergMarquardtAlgorithm extends LeastSquaresOptimizer {
 	}
 
 	@Override
-	public final OptimizerSolution<double[], double[]> optimize(final Function<? super double[], double[]> func,
+	public final LeastSquaresOptimizerSolution optimize(final Function<? super double[], double[]> func,
 			final double[] guess) {
 
 		// prepare variables
@@ -95,7 +94,7 @@ public final class LevenbergMarquardtAlgorithm extends LeastSquaresOptimizer {
 
 		// call main subroutine
 		final double[] result = dnlse1(func, guess, myTol, myTol, myTol, myMaxEvals, 0.0, 100.0, info, nfev, njev);
-		return new OptimizerSolution<>(result, nfev[0], njev[0], info[0] >= 1 && info[0] <= 4);
+		return new LeastSquaresOptimizerSolution(result, nfev[0], njev[0], info[0] >= 1 && info[0] <= 4);
 	}
 
 	/**
@@ -105,7 +104,7 @@ public final class LevenbergMarquardtAlgorithm extends LeastSquaresOptimizer {
 	 * @param guess
 	 * @return
 	 */
-	public final OptimizerSolution<double[], double[]> optimize(final Function<double[], double[]> func,
+	public final LeastSquaresOptimizerSolution optimize(final Function<double[], double[]> func,
 			final Function<double[], double[][]> jacobian, final double[] guess) {
 
 		// prepare variables
@@ -116,7 +115,7 @@ public final class LevenbergMarquardtAlgorithm extends LeastSquaresOptimizer {
 		// call main subroutine
 		final double[] result = dnlse2(func, jacobian, guess, myTol, myTol, myTol, myMaxEvals, 0.0, 100.0, info, nfev,
 				njev);
-		return new OptimizerSolution<>(result, nfev[0], njev[0], info[0] >= 1 && info[0] <= 4);
+		return new LeastSquaresOptimizerSolution(result, nfev[0], njev[0], info[0] >= 1 && info[0] <= 4);
 	}
 
 	private static double[] dnlse1(final Function<? super double[], double[]> func, final double[] x, final double ftol,

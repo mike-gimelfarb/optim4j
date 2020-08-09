@@ -24,8 +24,8 @@ package opt.multivariate.unconstrained.order0.evol;
 import java.util.Arrays;
 import java.util.function.Function;
 
-import opt.OptimizerSolution;
 import opt.multivariate.GradientFreeOptimizer;
+import opt.multivariate.MultivariateOptimizerSolution;
 import utils.BlasMath;
 
 /**
@@ -109,8 +109,7 @@ public final class SadeAlgorithm extends GradientFreeOptimizer {
 	}
 
 	@Override
-	public OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> func,
-			final double[] guess) {
+	public MultivariateOptimizerSolution optimize(final Function<? super double[], Double> func, final double[] guess) {
 		final double[] lo = new double[guess.length];
 		final double[] hi = new double[guess.length];
 		for (int i = 0; i < guess.length; ++i) {
@@ -278,8 +277,8 @@ public final class SadeAlgorithm extends GradientFreeOptimizer {
 	 * @param ub
 	 * @return
 	 */
-	public final OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> function,
-			final double[] lb, final double[] ub) {
+	public final MultivariateOptimizerSolution optimize(final Function<? super double[], Double> function, final double[] lb,
+			final double[] ub) {
 
 		// initialize parameters
 		initialize(function, lb, ub);
@@ -318,7 +317,7 @@ public final class SadeAlgorithm extends GradientFreeOptimizer {
 				}
 			}
 		}
-		return new OptimizerSolution<>(pool[ibw[0]], myEvals, 0, converged);
+		return new MultivariateOptimizerSolution(pool[ibw[0]], myEvals, 0, converged);
 	}
 
 	/**

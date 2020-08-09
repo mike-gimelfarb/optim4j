@@ -30,8 +30,8 @@ package opt.multivariate.unconstrained.order0.evol;
 import java.util.Arrays;
 import java.util.function.Function;
 
-import opt.OptimizerSolution;
 import opt.multivariate.GradientFreeOptimizer;
+import opt.multivariate.MultivariateOptimizerSolution;
 import utils.BlasMath;
 import utils.Sequences;
 
@@ -132,8 +132,7 @@ public final class AmalgamAlgorithm extends GradientFreeOptimizer {
 	}
 
 	@Override
-	public OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> func,
-			final double[] guess) {
+	public MultivariateOptimizerSolution optimize(final Function<? super double[], Double> func, final double[] guess) {
 		final double[] lo = new double[guess.length];
 		final double[] hi = new double[guess.length];
 		for (int i = 0; i < guess.length; ++i) {
@@ -331,8 +330,8 @@ public final class AmalgamAlgorithm extends GradientFreeOptimizer {
 	 * @param upper
 	 * @return
 	 */
-	public OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> func,
-			final double[] lower, final double[] upper) {
+	public MultivariateOptimizerSolution optimize(final Function<? super double[], Double> func, final double[] lower,
+			final double[] upper) {
 		initialize(func, lower, upper);
 		while (true) {
 			iterate();
@@ -343,7 +342,7 @@ public final class AmalgamAlgorithm extends GradientFreeOptimizer {
 				} else {
 					sol = mySols[0].x;
 				}
-				return new OptimizerSolution<>(sol, myEvals, 0, myEvals < myMaxEvals);
+				return new MultivariateOptimizerSolution(sol, myEvals, 0, myEvals < myMaxEvals);
 			}
 		}
 	}
@@ -360,7 +359,7 @@ public final class AmalgamAlgorithm extends GradientFreeOptimizer {
 			final AmalgamAlgorithm algr = new AmalgamAlgorithm(myTol, 0, myBudget, myPopSize, myIamalgam, false, false);
 
 			// perform the optimization
-			final OptimizerSolution<double[], Double> sol = algr.optimize(myFunc, myLower, myUpper);
+			final MultivariateOptimizerSolution sol = algr.optimize(myFunc, myLower, myUpper);
 			myEvals += sol.getFEvals();
 			myBudget -= sol.getFEvals();
 			final double[] optr = sol.getOptimalPoint();

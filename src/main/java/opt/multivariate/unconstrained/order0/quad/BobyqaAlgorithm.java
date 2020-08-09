@@ -23,8 +23,8 @@ package opt.multivariate.unconstrained.order0.quad;
 import java.util.Arrays;
 import java.util.function.Function;
 
-import opt.OptimizerSolution;
 import opt.multivariate.GradientFreeOptimizer;
+import opt.multivariate.MultivariateOptimizerSolution;
 import utils.BlasMath;
 import utils.IntMath;
 import utils.RealMath;
@@ -79,8 +79,7 @@ public final class BobyqaAlgorithm extends GradientFreeOptimizer {
 	}
 
 	@Override
-	public final OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> func,
-			final double[] guess) {
+	public final MultivariateOptimizerSolution optimize(final Function<? super double[], Double> func, final double[] guess) {
 
 		// prepare variables
 		final int n = guess.length;
@@ -103,8 +102,8 @@ public final class BobyqaAlgorithm extends GradientFreeOptimizer {
 	 * @param upper
 	 * @return
 	 */
-	public final OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> func,
-			final double[] guess, final double[] lower, final double[] upper) {
+	public final MultivariateOptimizerSolution optimize(final Function<? super double[], Double> func, final double[] guess,
+			final double[] lower, final double[] upper) {
 
 		// prepare variables
 		final int d = guess.length;
@@ -114,7 +113,7 @@ public final class BobyqaAlgorithm extends GradientFreeOptimizer {
 		// call main subroutine
 		// TODO: check convergence
 		final double[] result = bobyqa(func, guess, lower, upper, npt, myRho0, myTol, myMaxFEvals, nf);
-		return new OptimizerSolution<>(result, nf[0], 0, false);
+		return new MultivariateOptimizerSolution(result, nf[0], 0, false);
 	}
 
 	private static double[] bobyqa(final Function<? super double[], Double> func, final double[] guess,

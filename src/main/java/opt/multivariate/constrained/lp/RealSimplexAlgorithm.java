@@ -27,7 +27,7 @@ package opt.multivariate.constrained.lp;
 import java.util.Arrays;
 
 import opt.Optimizer;
-import opt.OptimizerSolution;
+import opt.multivariate.MultivariateOptimizerSolution;
 import utils.Constants;
 import utils.RealMath;
 
@@ -54,7 +54,7 @@ public final class RealSimplexAlgorithm extends Optimizer<double[], Double, Real
 	}
 
 	@Override
-	public final OptimizerSolution<double[], Double> optimize(final RealLinearProgram lp, final double[] guess) {
+	public final MultivariateOptimizerSolution optimize(final RealLinearProgram lp, final double[] guess) {
 
 		// prepare variables
 		final double[][] a = lp.mySimplex.getA();
@@ -74,7 +74,7 @@ public final class RealSimplexAlgorithm extends Optimizer<double[], Double, Real
 
 		// call main subroutine
 		final double[] result = smplx(a, b, c, iter, myMaxIters, numle, numge, rerr, converged);
-		return new OptimizerSolution<>(result, iter[0], 0, converged[0]);
+		return new MultivariateOptimizerSolution(result, iter[0], 0, converged[0]);
 	}
 
 	private static double[] smplx(final double[][] a, final double[] b0, final double[] c, final int[] iter,

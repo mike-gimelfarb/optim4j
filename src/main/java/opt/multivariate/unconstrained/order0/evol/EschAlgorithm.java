@@ -26,8 +26,8 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.function.Function;
 
-import opt.OptimizerSolution;
 import opt.multivariate.GradientFreeOptimizer;
+import opt.multivariate.MultivariateOptimizerSolution;
 
 /**
  * 
@@ -140,8 +140,7 @@ public final class EschAlgorithm extends GradientFreeOptimizer {
 	}
 
 	@Override
-	public OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> func,
-			final double[] guess) {
+	public MultivariateOptimizerSolution optimize(final Function<? super double[], Double> func, final double[] guess) {
 		final double[] lo = new double[guess.length];
 		final double[] hi = new double[guess.length];
 		for (int i = 0; i < guess.length; ++i) {
@@ -240,14 +239,14 @@ public final class EschAlgorithm extends GradientFreeOptimizer {
 	 * @param ub
 	 * @return
 	 */
-	public OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> func,
-			final double[] guess, final double[] lb, final double[] ub) {
+	public MultivariateOptimizerSolution optimize(final Function<? super double[], Double> func, final double[] guess,
+			final double[] lb, final double[] ub) {
 		initialize(func, guess, lb, ub);
 		while (myEvals < myMaxEvals) {
 			iterate();
 		}
 		// TODO: check convergence
-		return new OptimizerSolution<>(esparents[0].parameters, myEvals, 0, false);
+		return new MultivariateOptimizerSolution(esparents[0].parameters, myEvals, 0, false);
 	}
 
 	private static int compare(final Individual a, final Individual b) {

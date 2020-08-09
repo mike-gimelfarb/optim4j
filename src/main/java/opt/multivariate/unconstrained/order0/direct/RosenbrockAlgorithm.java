@@ -24,8 +24,8 @@ package opt.multivariate.unconstrained.order0.direct;
 import java.util.Arrays;
 import java.util.function.Function;
 
-import opt.OptimizerSolution;
 import opt.multivariate.GradientFreeOptimizer;
+import opt.multivariate.MultivariateOptimizerSolution;
 import utils.BlasMath;
 import utils.Sequences;
 
@@ -88,8 +88,7 @@ public final class RosenbrockAlgorithm extends GradientFreeOptimizer {
 	}
 
 	@Override
-	public OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> func,
-			final double[] guess) {
+	public MultivariateOptimizerSolution optimize(final Function<? super double[], Double> func, final double[] guess) {
 
 		// prepare variables
 		final int n = guess.length;
@@ -100,7 +99,7 @@ public final class RosenbrockAlgorithm extends GradientFreeOptimizer {
 
 		// call main subroutine
 		dsc(func, n, x0, myStep0, myRho, myTol, myMaxEvals, x1, fun, ierr);
-		return new OptimizerSolution<>(x1, fun[0], 0, ierr[0] == 0);
+		return new MultivariateOptimizerSolution(x1, fun[0], 0, ierr[0] == 0);
 	}
 
 	private static void dsc(final Function<? super double[], Double> func, final int n, final double[] x0,

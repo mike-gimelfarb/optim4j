@@ -21,8 +21,8 @@ package opt.multivariate.unconstrained.order1;
 import java.util.Arrays;
 import java.util.function.Function;
 
-import opt.OptimizerSolution;
 import opt.multivariate.GradientOptimizer;
+import opt.multivariate.MultivariateOptimizerSolution;
 import utils.BlasMath;
 import utils.Constants;
 
@@ -45,7 +45,7 @@ public final class LBFGSBAlgorithm extends GradientOptimizer {
 	}
 
 	@Override
-	public final OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> f,
+	public final MultivariateOptimizerSolution optimize(final Function<? super double[], Double> f,
 			final Function<? super double[], double[]> df, final double[] guess) {
 
 		// prepare variables
@@ -62,7 +62,7 @@ public final class LBFGSBAlgorithm extends GradientOptimizer {
 		// call main subroutine
 		final double[] result = lbfgsb(f, df, guess, l, u, nbd, mySize, 10.0, myTol, fev);
 		// TODO: check convergence
-		return new OptimizerSolution<>(result, fev[0], fev[0], false);
+		return new MultivariateOptimizerSolution(result, fev[0], fev[0], false);
 	}
 
 	/**
@@ -74,7 +74,7 @@ public final class LBFGSBAlgorithm extends GradientOptimizer {
 	 * @param ub
 	 * @return
 	 */
-	public final OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> f,
+	public final MultivariateOptimizerSolution optimize(final Function<? super double[], Double> f,
 			final Function<? super double[], double[]> df, final double[] guess, final double[] lb, final double[] ub) {
 
 		// prepare variables
@@ -87,7 +87,7 @@ public final class LBFGSBAlgorithm extends GradientOptimizer {
 		// call main subroutine
 		// TODO: check convergence
 		final double[] result = lbfgsb(f, df, guess, lb, ub, nbd, mySize, 10.0, myTol, fev);
-		return new OptimizerSolution<>(result, fev[0], fev[0], false);
+		return new MultivariateOptimizerSolution(result, fev[0], fev[0], false);
 	}
 
 	private static double[] lbfgsb(final Function<? super double[], Double> func,

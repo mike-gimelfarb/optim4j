@@ -23,7 +23,7 @@ package opt.multivariate.constrained.order0;
 import java.util.Arrays;
 import java.util.function.Function;
 
-import opt.OptimizerSolution;
+import opt.multivariate.MultivariateOptimizerSolution;
 import utils.BlasMath;
 
 /**
@@ -64,7 +64,7 @@ public final class CobylaAlgorithm {
 		myMaxEvals = maxEvaluations;
 	}
 
-	public final OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> func,
+	public final MultivariateOptimizerSolution optimize(final Function<? super double[], Double> func,
 			final Function<? super double[], double[]> constr, final int m, final double[] guess) {
 
 		// prepare variables
@@ -75,7 +75,7 @@ public final class CobylaAlgorithm {
 		// call main subroutine
 		// TODO: check convergence
 		cobyla(func, constr, n, m, x, myRho0, myTol, maxfun);
-		return new OptimizerSolution<>(x, maxfun[0], 0, false);
+		return new MultivariateOptimizerSolution(x, maxfun[0], 0, false);
 	}
 
 	private static void cobyla(final Function<? super double[], Double> func,

@@ -23,7 +23,7 @@ package opt.univariate.order0;
 
 import java.util.function.Function;
 
-import opt.OptimizerSolution;
+import opt.univariate.UnivariateOptimizerSolution;
 import opt.univariate.DerivativeFreeOptimizer;
 import utils.Sequences;
 
@@ -60,8 +60,7 @@ public final class CalvinAlgorithm extends DerivativeFreeOptimizer {
 	}
 
 	@Override
-	public OptimizerSolution<Double, Double> optimize(final Function<? super Double, Double> f, final double a,
-			double b) {
+	public UnivariateOptimizerSolution optimize(final Function<? super Double, Double> f, final double a, double b) {
 
 		// prepare variables
 		final int[] fevals = new int[1];
@@ -69,7 +68,7 @@ public final class CalvinAlgorithm extends DerivativeFreeOptimizer {
 
 		// call main subroutine
 		final double result = optimize(f, a, b, myTol, myLambda, myMaxEvals, fevals, converged);
-		return new OptimizerSolution<>(result, fevals[0], 0, converged[0]);
+		return new UnivariateOptimizerSolution(result, fevals[0], 0, converged[0]);
 	}
 
 	private static double optimize(final Function<? super Double, Double> func, final double a, final double b,

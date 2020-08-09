@@ -23,7 +23,7 @@ package opt.univariate.order1;
 
 import java.util.function.Function;
 
-import opt.OptimizerSolution;
+import opt.univariate.UnivariateOptimizerSolution;
 import opt.univariate.DerivativeOptimizer;
 
 /**
@@ -43,7 +43,7 @@ public final class SecantAlgorithm extends DerivativeOptimizer {
 	}
 
 	@Override
-	public final OptimizerSolution<Double, Double> optimize(final Function<? super Double, Double> f,
+	public final UnivariateOptimizerSolution optimize(final Function<? super Double, Double> f,
 			final Function<? super Double, Double> df, final double a, final double b) {
 
 		// prepare variables
@@ -52,7 +52,7 @@ public final class SecantAlgorithm extends DerivativeOptimizer {
 
 		// call main subroutine
 		final double result = secantMin(df, a, b, myTol, myRelTol, myMaxEvals, dfev, converged);
-		return new OptimizerSolution<>(result, 0, dfev[0], converged[0]);
+		return new UnivariateOptimizerSolution(result, 0, dfev[0], converged[0]);
 	}
 
 	private static double secantMin(final Function<? super Double, Double> dfunc, double a, double b, final double tol,

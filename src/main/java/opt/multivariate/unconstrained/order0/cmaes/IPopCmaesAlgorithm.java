@@ -24,8 +24,8 @@ package opt.multivariate.unconstrained.order0.cmaes;
 import java.util.Arrays;
 import java.util.function.Function;
 
-import opt.OptimizerSolution;
 import opt.multivariate.GradientFreeOptimizer;
+import opt.multivariate.MultivariateOptimizerSolution;
 import opt.multivariate.unconstrained.order0.cmaes.AbstractCmaesOptimizer.AbstractCmaesFactory;
 
 /**
@@ -167,7 +167,7 @@ public final class IPopCmaesAlgorithm extends GradientFreeOptimizer {
 		myXStart = Arrays.copyOf(myXGuess, myD);
 
 		// run initial CMAES algorithm
-		final OptimizerSolution<double[], Double> sol = myCmaes.optimize(myFunc, myXStart);
+		final MultivariateOptimizerSolution sol = myCmaes.optimize(myFunc, myXStart);
 		myX = sol.getOptimalPoint();
 		myFx = myFunc.apply(myX);
 
@@ -216,7 +216,7 @@ public final class IPopCmaesAlgorithm extends GradientFreeOptimizer {
 		myCmaes = myCmaesFactory.createCmaStrategy(myCmaesTol, myLambda, mySigma, myMaxEv);
 
 		// run CMAES again
-		final OptimizerSolution<double[], Double> sol = myCmaes.optimize(myFunc, myXStart);
+		final MultivariateOptimizerSolution sol = myCmaes.optimize(myFunc, myXStart);
 		myX = sol.getOptimalPoint();
 		myFx = myFunc.apply(myX);
 
@@ -239,8 +239,7 @@ public final class IPopCmaesAlgorithm extends GradientFreeOptimizer {
 	}
 
 	@Override
-	public OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> func,
-			final double[] guess) {
+	public MultivariateOptimizerSolution optimize(final Function<? super double[], Double> func, final double[] guess) {
 		initialize(func, guess);
 		boolean converged = false;
 		while (myEvals < myMaxEvals) {
@@ -255,6 +254,6 @@ public final class IPopCmaesAlgorithm extends GradientFreeOptimizer {
 				}
 			}
 		}
-		return new OptimizerSolution<>(myXBest, myEvals, 0, converged);
+		return new MultivariateOptimizerSolution(myXBest, myEvals, 0, converged);
 	}
 }

@@ -27,8 +27,8 @@ package opt.multivariate.unconstrained.order0.direct;
 import java.util.Arrays;
 import java.util.function.Function;
 
-import opt.OptimizerSolution;
 import opt.multivariate.GradientFreeOptimizer;
+import opt.multivariate.MultivariateOptimizerSolution;
 import utils.BlasMath;
 import utils.Constants;
 import utils.RealMath;
@@ -74,8 +74,7 @@ public final class PraxisAlgorithm extends GradientFreeOptimizer {
 	}
 
 	@Override
-	public final OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> func,
-			final double[] guess) {
+	public final MultivariateOptimizerSolution optimize(final Function<? super double[], Double> func, final double[] guess) {
 
 		// prepare variables
 		final int n = guess.length;
@@ -84,7 +83,7 @@ public final class PraxisAlgorithm extends GradientFreeOptimizer {
 		// call main subroutine
 		// TODO: check convergence
 		praxis(myTol, Constants.EPSILON, H0, n, x, func);
-		return new OptimizerSolution<>(x, nf, 0, false);
+		return new MultivariateOptimizerSolution(x, nf, 0, false);
 	}
 
 	private double praxis(final double t0, final double machep, final double h0, final int n, final double[] x,

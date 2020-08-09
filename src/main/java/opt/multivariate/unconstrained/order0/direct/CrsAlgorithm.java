@@ -25,8 +25,8 @@ import java.util.Arrays;
 import java.util.TreeSet;
 import java.util.function.Function;
 
-import opt.OptimizerSolution;
 import opt.multivariate.GradientFreeOptimizer;
+import opt.multivariate.MultivariateOptimizerSolution;
 import utils.BlasMath;
 
 /**
@@ -132,8 +132,7 @@ public final class CrsAlgorithm extends GradientFreeOptimizer {
 	}
 
 	@Override
-	public OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> func,
-			final double[] guess) {
+	public MultivariateOptimizerSolution optimize(final Function<? super double[], Double> func, final double[] guess) {
 		final double[] lo = new double[guess.length];
 		final double[] hi = new double[guess.length];
 		for (int i = 0; i < guess.length; ++i) {
@@ -201,14 +200,14 @@ public final class CrsAlgorithm extends GradientFreeOptimizer {
 	 * @param ub
 	 * @param guess
 	 */
-	public OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> func,
-			final double[] lb, final double[] ub, final double[] guess) {
+	public MultivariateOptimizerSolution optimize(final Function<? super double[], Double> func, final double[] lb,
+			final double[] ub, final double[] guess) {
 		initialize(func, lb, ub, guess);
 		while (!done) {
 			iterate();
 		}
 		// TODO: check convergence
-		return new OptimizerSolution<>(Arrays.copyOf(x, n), data.evals, 0, false);
+		return new MultivariateOptimizerSolution(Arrays.copyOf(x, n), data.evals, 0, false);
 	}
 
 	private static void random_trial(final CrsData d, final RbNode best) {

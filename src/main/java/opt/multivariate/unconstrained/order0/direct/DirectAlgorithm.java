@@ -27,8 +27,8 @@ package opt.multivariate.unconstrained.order0.direct;
 import java.util.Arrays;
 import java.util.function.Function;
 
-import opt.OptimizerSolution;
 import opt.multivariate.GradientFreeOptimizer;
+import opt.multivariate.MultivariateOptimizerSolution;
 
 /**
  * 
@@ -105,8 +105,7 @@ public final class DirectAlgorithm extends GradientFreeOptimizer {
 	}
 
 	@Override
-	public final OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> func,
-			final double[] guess) {
+	public final MultivariateOptimizerSolution optimize(final Function<? super double[], Double> func, final double[] guess) {
 
 		// prepare data
 		final int n = guess.length;
@@ -117,7 +116,7 @@ public final class DirectAlgorithm extends GradientFreeOptimizer {
 
 		// call main subroutine
 		Direct(func, x, n, eps, maxf, maxT[0], fmin, lx, ux, method, Ierror, fglobal, fglper, volper, sigmaper);
-		return new OptimizerSolution<>(x, maxf[0], 0, Ierror[0] > 0);
+		return new MultivariateOptimizerSolution(x, maxf[0], 0, Ierror[0] > 0);
 	}
 
 	private void Direct(final Function<? super double[], Double> fcn, final double[] x, final int n, final double[] eps,

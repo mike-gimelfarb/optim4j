@@ -24,8 +24,8 @@ package opt.multivariate.unconstrained.order0.evol;
 import java.util.Arrays;
 import java.util.function.Function;
 
-import opt.OptimizerSolution;
 import opt.multivariate.GradientFreeOptimizer;
+import opt.multivariate.MultivariateOptimizerSolution;
 import utils.BlasMath;
 import utils.Sequences;
 
@@ -160,8 +160,7 @@ public final class AdaptivePsoAlgorithm extends GradientFreeOptimizer {
 	}
 
 	@Override
-	public OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> func,
-			final double[] guess) {
+	public MultivariateOptimizerSolution optimize(final Function<? super double[], Double> func, final double[] guess) {
 		final double[] lo = new double[guess.length];
 		final double[] hi = new double[guess.length];
 		for (int i = 0; i < guess.length; ++i) {
@@ -254,8 +253,8 @@ public final class AdaptivePsoAlgorithm extends GradientFreeOptimizer {
 	 * @param ub
 	 * @return
 	 */
-	public final OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> func,
-			final double[] lb, final double[] ub) {
+	public final MultivariateOptimizerSolution optimize(final Function<? super double[], Double> func, final double[] lb,
+			final double[] ub) {
 
 		// initialize parameters
 		initialize(func, lb, ub);
@@ -294,7 +293,7 @@ public final class AdaptivePsoAlgorithm extends GradientFreeOptimizer {
 				}
 			}
 		}
-		return new OptimizerSolution<>(myGBest, myEvals, 0, converged);
+		return new MultivariateOptimizerSolution(myGBest, myEvals, 0, converged);
 	}
 
 	private void updateGlobalBest(final double[] p, final int it, final int itmax) {

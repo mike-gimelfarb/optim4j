@@ -24,8 +24,8 @@ package opt.multivariate.unconstrained.order0.evol;
 import java.util.Arrays;
 import java.util.function.Function;
 
-import opt.OptimizerSolution;
 import opt.multivariate.GradientFreeOptimizer;
+import opt.multivariate.MultivariateOptimizerSolution;
 import utils.BlasMath;
 import utils.Sequences;
 
@@ -198,8 +198,7 @@ public final class CsoAlgorithm extends GradientFreeOptimizer {
 	}
 
 	@Override
-	public final OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> func,
-			final double[] guess) {
+	public final MultivariateOptimizerSolution optimize(final Function<? super double[], Double> func, final double[] guess) {
 		final double[] lo = new double[guess.length];
 		final double[] hi = new double[guess.length];
 		for (int i = 0; i < guess.length; ++i) {
@@ -317,8 +316,8 @@ public final class CsoAlgorithm extends GradientFreeOptimizer {
 	 * @param ub
 	 * @return
 	 */
-	public final OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> func,
-			final double[] lb, final double[] ub) {
+	public final MultivariateOptimizerSolution optimize(final Function<? super double[], Double> func, final double[] lb,
+			final double[] ub) {
 
 		// initialize parameters
 		initialize(func, lb, ub);
@@ -357,6 +356,6 @@ public final class CsoAlgorithm extends GradientFreeOptimizer {
 				}
 			}
 		}
-		return new OptimizerSolution<>(myBest == null ? null : myBest.myPos, myEvals, 0, myBest != null && converged);
+		return new MultivariateOptimizerSolution(myBest == null ? null : myBest.myPos, myEvals, 0, myBest != null && converged);
 	}
 }

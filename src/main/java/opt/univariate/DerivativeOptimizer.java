@@ -23,7 +23,6 @@ package opt.univariate;
 
 import java.util.function.Function;
 
-import opt.OptimizerSolution;
 import utils.Constants;
 
 /**
@@ -42,29 +41,29 @@ public abstract class DerivativeOptimizer extends UnivariateOptimizer {
 		super(absoluteTolerance, relativeTolerance, maxEvaluations);
 	}
 
-	public abstract OptimizerSolution<Double, Double> optimize(Function<? super Double, Double> f,
+	public abstract UnivariateOptimizerSolution optimize(Function<? super Double, Double> f,
 			Function<? super Double, Double> df, double a, double b);
 
 	@Override
-	public OptimizerSolution<Double, Double> optimize(final Function<? super Double, Double> f, final Double guess) {
+	public UnivariateOptimizerSolution optimize(final Function<? super Double, Double> f, final Double guess) {
 		throw new IllegalArgumentException("f' not provided; no numerical diff. method exists yet!");
 	}
 
-	public OptimizerSolution<Double, Double> optimize(final Function<? super Double, Double> f,
+	public UnivariateOptimizerSolution optimize(final Function<? super Double, Double> f,
 			final Function<? super Double, Double> df, final Double guess) {
 
 		// first use guess to compute a bracket [a, b] that contains a min
 		final int[] fev = new int[1];
 		final double[] brackt = bracket(f, guess, Constants.GOLDEN, myMaxEvals, fev);
 		if (brackt == null) {
-			return new OptimizerSolution<>(Double.NaN, fev[0], 0, false);
+			return new UnivariateOptimizerSolution(Double.NaN, fev[0], 0, false);
 		}
 		final double a = brackt[0];
 		final double b = brackt[1];
 
 		// perform optimization using the bracketed routine
-		final OptimizerSolution<Double, Double> result = optimize(f, df, a, b);
-		return new OptimizerSolution<>(result.getOptimalPoint(), result.getFEvals() + fev[0], result.getDFEvals(),
-				result.converged());
+		final UnivariateOptimizerSolution result = optimize(f, df, a, b);
+		return new UnivariateOptimizerSolution(result.getOptimalPoint(), result.getFEvals() + fev[0],
+				result.getDFEvals(), result.converged());
 	}
 }

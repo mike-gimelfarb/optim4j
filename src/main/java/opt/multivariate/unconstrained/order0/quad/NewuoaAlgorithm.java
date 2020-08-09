@@ -23,8 +23,8 @@ package opt.multivariate.unconstrained.order0.quad;
 import java.util.Arrays;
 import java.util.function.Function;
 
-import opt.OptimizerSolution;
 import opt.multivariate.GradientFreeOptimizer;
+import opt.multivariate.MultivariateOptimizerSolution;
 import utils.BlasMath;
 import utils.RealMath;
 
@@ -78,8 +78,7 @@ public final class NewuoaAlgorithm extends GradientFreeOptimizer {
 	}
 
 	@Override
-	public final OptimizerSolution<double[], Double> optimize(final Function<? super double[], Double> func,
-			final double[] guess) {
+	public final MultivariateOptimizerSolution optimize(final Function<? super double[], Double> func, final double[] guess) {
 
 		// prepare data
 		final int n = guess.length;
@@ -90,7 +89,7 @@ public final class NewuoaAlgorithm extends GradientFreeOptimizer {
 		// call main subroutine
 		// TODO: check convergence
 		x = newuoa(func, n, npt, x, myRho0, myTol, myMaxFev, fev);
-		return new OptimizerSolution<>(x, fev[0], 0, false);
+		return new MultivariateOptimizerSolution(x, fev[0], 0, false);
 	}
 
 	private static double[] newuoa(final Function<? super double[], Double> calfun, final int n, final int npt,

@@ -23,7 +23,7 @@ package opt.univariate.order0;
 
 import java.util.function.Function;
 
-import opt.OptimizerSolution;
+import opt.univariate.UnivariateOptimizerSolution;
 import opt.univariate.DerivativeFreeOptimizer;
 import utils.Constants;
 
@@ -44,7 +44,7 @@ public final class GoldenSectionAlgorithm extends DerivativeFreeOptimizer {
 	}
 
 	@Override
-	public final OptimizerSolution<Double, Double> optimize(final Function<? super Double, Double> f, final double a,
+	public final UnivariateOptimizerSolution optimize(final Function<? super Double, Double> f, final double a,
 			final double b) {
 
 		// prepare variables
@@ -53,7 +53,7 @@ public final class GoldenSectionAlgorithm extends DerivativeFreeOptimizer {
 
 		// call main subroutine
 		final double result = gssearch(f, a, b, myRelTol, myTol, myMaxEvals, fev, converged);
-		return new OptimizerSolution<>(result, fev[0], 0, converged[0]);
+		return new UnivariateOptimizerSolution(result, fev[0], 0, converged[0]);
 	}
 
 	private static double gssearch(final Function<? super Double, Double> f, final double a, final double b,

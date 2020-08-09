@@ -1,4 +1,4 @@
-package optim4j.testbeds;
+package testbeds;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -6,8 +6,6 @@ import java.util.function.Function;
 
 import opt.OptimizerSolution;
 import opt.univariate.order0.*;
-import opt.univariate.order1.CubicInterpolationAlgorithm;
-import opt.univariate.order1.SecantAlgorithm;
 
 public final class UniUnconstrStandard {
 
@@ -167,7 +165,6 @@ public final class UniUnconstrStandard {
 		System.out.println("success rate: " + success_rate);
 
 		Function<Double, Double> f = UniUnconstrStandard::p10;
-		Function<Double, Double> df = UniUnconstrStandard::dp10;
 		CalvinAlgorithm alg = new CalvinAlgorithm(1e-4, 500);
 		OptimizerSolution<Double, Double> opt = alg.optimize(f, 0, 1);
 		System.out.println("sol = " + opt.getOptimalPoint());
