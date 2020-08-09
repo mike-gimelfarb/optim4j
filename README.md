@@ -21,7 +21,7 @@ The current version supports the optimization algorithms list below. Please note
 	- Strong Wolfe Conditions
 2. univariate problems:
 	- derivative-free methods:
-		- Brent (two local versions)
+		- Brent (local version)
 		- Brent (global version)
 		- Calvin
 		- Davies-Swann-Campey
@@ -54,6 +54,7 @@ The current version supports the optimization algorithms list below. Please note
 				- Praxis
 				- Rosenbrock
 			- evolutionary and swarm-based methods:
+				- Adaptive Firefly
 				- Adaptive PSO
 				- Cooperatively Co-Evolving PSO
 				- Competitive Swarm Optimization (CSO)
@@ -65,8 +66,7 @@ The current version supports the optimization algorithms list below. Please note
 		- first and second-order methods:
 			- Conjugate Gradient (CG+)
 			- Conjugate Variable Metric (PLIC)
-			- Limited-Memory BFGS (LBFGS)
-			- Box-Constrained Limited-Memory BFGS (LBFGS-B)
+			- Limited-Memory BFGS (LBFGS-B)
 			- Truncated Newton
 			- Trust-Region Newton
 	- constrained problems:
