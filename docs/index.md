@@ -6,8 +6,8 @@
 
 *optim4j* is a free and open-source library of subroutines for performing local and global minimization of non-linear functions (some state-of-the-art), written entirely in Java. It consists of:
 
-1. existing subroutines, often written originally in other programming languages (mostly Fortran and C/C++) and provided generously for the benefit of the public, that were translated to Java
-2. algorithms implemented from scratch based on existing literature.
+1. Existing subroutines, often written originally in other programming languages (mostly Fortran and C/C++) and provided generously for the benefit of the public, that were translated to Java.
+2. Algorithms implemented from scratch based on existing literature.
 
 **This library is a work in progress (read: beta version). There can still be errors in translation (e.g. from other packages) or errors in code written for this package. Detailed testing of current algorithms still remains to be done, and many additional features and algorithms will be added in the future.**
 
@@ -18,11 +18,7 @@ Download and Installation
 There are currently only two ways to install the project: 
 
 1. Download the java archive from the [releases page](https://github.com/mike-gimelfarb/optim4j/releases) and use it directly in your projects.
-
-2. Download the source code and compile it locally on your machine:
-
--	[v0.1.zip](https://codeload.github.com/mike-gimelfarb/optim4j/zip/v0.1)
--	[v0.1.tar.gz](https://codeload.github.com/mike-gimelfarb/optim4j/tar.gz/v0.1)
+2. Download the source code as [zip](https://codeload.github.com/mike-gimelfarb/optim4j/zip/v0.1) or [tar](https://codeload.github.com/mike-gimelfarb/optim4j/tar.gz/v0.1). and compile it locally on your machine:
 
 Maven support will be provided in the near future.
 
@@ -32,7 +28,7 @@ Documentation
 
 The classification of available algorithms and their related work can be found [here](algorithms.md).
 
-
+A list of examples covering many use cases can be found [here](examples_index.md).
 
 Licensing
 ----------------

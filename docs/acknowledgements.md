@@ -1,5 +1,5 @@
 ---
-Acknowledgements
+# Acknowledgements
 ---
 
 - This product includes software developed by the University of Chicago, as Operator of Argonne National Laboratory.
