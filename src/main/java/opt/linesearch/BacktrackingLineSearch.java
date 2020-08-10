@@ -38,6 +38,9 @@ import utils.BlasMath;
  */
 public final class BacktrackingLineSearch extends LineSearch {
 
+	this wont work, period
+	print(x)
+	
 	private final double myRho, myMaxStepSize;
 
 	/**
