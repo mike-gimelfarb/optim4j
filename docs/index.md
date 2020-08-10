@@ -1,7 +1,7 @@
-![center|600px](images/optim4j.png)
+![center|300px](images/optim4j.png)
 
 
-optim4j
+Optim4J
 -------------------------
 
 *optim4j* is a free and open-source library of subroutines for performing local and global minimization of non-linear functions (some state-of-the-art), written entirely in Java. It consists of:
@@ -12,10 +12,10 @@ optim4j
 **This library is a work in progress (read: beta version). There can still be errors in translation (e.g. from other packages) or errors in code written for this package. Detailed testing of current algorithms still remains to be done, and many additional features and algorithms will be added in the future.**
 
 
-Download and installation
+Download and Installation
 -------------------------
 
-There are currently only two ways to install the project:
+There are currently only two ways to install the project: 
 
 1. Download the java archive and incorporate directly into your projects
 
