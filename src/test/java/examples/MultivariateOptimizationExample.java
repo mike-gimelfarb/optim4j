@@ -15,10 +15,11 @@ public class MultivariateOptimizationExample {
 		final double[] lower = new double[30];
 		final double[] upper = new double[30];
 		Arrays.fill(lower, -5.0);
-		Arrays.fill(upper, 6.0);
-		final AdaptiveFireflyAlgorithm alg = new AdaptiveFireflyAlgorithm(20, 0.1, 0.9, 0.5, new Sh2014(0.2), 2, 0.05,
-				100000);
+		Arrays.fill(upper, 5.0);
+		final AdaptiveFireflyAlgorithm alg = new AdaptiveFireflyAlgorithm(20, 0.1, 0.9, 0.5, new Geometric(0.2, 0.995),
+				2, 0.05, 100000);
 		final MultivariateOptimizerSolution result = alg.optimize(func, lower, upper);
+		System.out.println(func.apply(result.getOptimalPoint()));
 		System.out.println(result);
 	}
 }
