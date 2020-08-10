@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.com/mike-gimelfarb/optim4j.svg?branch=master)](https://travis-ci.com/mike-gimelfarb/optim4j)
+[![Documentation Status](https://readthedocs.org/projects/optim4j/badge/?version=latest)](https://optim4j.readthedocs.io/en/latest/?badge=latest)
 [![License: LGPL v2](https://img.shields.io/badge/License-LGPL%20v2-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0)
 
 
