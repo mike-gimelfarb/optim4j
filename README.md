@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.com/mike-gimelfarb/optim4j.svg?branch=master)](https://travis-ci.com/mike-gimelfarb/optim4j)
 [![License: LGPL v2](https://img.shields.io/badge/License-LGPL%20v2-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0)
 
 
