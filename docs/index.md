@@ -1,4 +1,4 @@
-![center|300px](images/optim4j.png)
+<img src="images/optim4j.png" width="300"/>
 
 ---
 # Optim4J
