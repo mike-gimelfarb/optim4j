@@ -7,8 +7,9 @@
 
 # optim4j
 This is a self-contained library of algorithms for performing local and global minimization of non-linear and black-box functions written in Java. Main features:
-1. most algorithms are either state-of-the-art in the field (e.g. adaptive PSO, firefly) and/or translated from professional implementations of classical algorithms (e.g. LBFGS)
-2. many aspects of the code are optimized for java (e.g. array copying) and can solve problems with thousands or more variables.
+1. many algorithms are re-implementations of recently published algorithms (e.g. adaptive PSO, firefly) and can be seen as state-of-the-art
+2. some algorithms are translations of professional implementations of classical algorithms (e.g. LBFGS)
+2. flexible licensing (full project under LGPL, but some algorithms can be used under the MIT license)
 
 **This library is a work in progress (read: beta version). There can still be errors in translation (e.g. from other packages) or errors in code written for this package. Detailed testing of current algorithms still remains to be done, and many additional features and algorithms will be added in the future.**
 
