@@ -6,9 +6,9 @@
 
 
 # optim4j
-This is a self-contained library of subroutines for performing local and global minimization of non-linear functions (some state-of-the-art), written entirely in Java. It consists of:
-1. existing subroutines, often written originally in other programming languages (mostly Fortran and C/C++) and provided generously for the benefit of the public, that were translated to Java
-2. algorithms implemented from scratch based on existing literature.
+This is a self-contained library of algorithms for performing local and global minimization of non-linear and black-box functions (some state-of-the-art), written entirely in Java. Main features:
+1. most algorithms are either state-of-the-art in the field (e.g. adaptive PSO, firefly) and/or translated from professional implementations of classical algorithms (e.g. LBFGS)
+2. many aspects of the code are optimized for java (e.g. array copying) and can solve problems with thousands or more variables.
 
 **This library is a work in progress (read: beta version). There can still be errors in translation (e.g. from other packages) or errors in code written for this package. Detailed testing of current algorithms still remains to be done, and many additional features and algorithms will be added in the future.**
 
