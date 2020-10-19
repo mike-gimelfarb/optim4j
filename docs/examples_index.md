@@ -5,7 +5,7 @@
 Optimizing Continuous Functions of One Variable
 -------------------------
 
-- A first example.
+- [A first example.](examples/univariate_sharpe_optimization.md)
 - Using derivative information.
 - Performing a global search.
 

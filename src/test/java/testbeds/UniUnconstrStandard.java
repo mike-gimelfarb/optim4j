@@ -150,28 +150,33 @@ public final class UniUnconstrStandard {
 
 	public static void main(String[] args) {
 
-		int success = 0;
-		for (String key : ALL_FUNCTIONS.keySet()) {
-			final Function<Double, Double> func = ALL_FUNCTIONS.get(key);
-			final BrentAlgorithm optimizer = new BrentAlgorithm(1e-12, 1e-12, 3000);
-			final double min = optimizer.optimize(func, 0, 1).getOptimalPoint();
-			final double fmin = func.apply(min);
-			System.out.println(key + ": " + "error: " + fmin);
-			if (Math.abs(fmin - 0) < 1e-5) {
-				success += 1;
-			}
-		}
-		double success_rate = 1. * success / ALL_FUNCTIONS.size();
-		System.out.println("success rate: " + success_rate);
+		PiyavskiiAlgorithm alg = new PiyavskiiAlgorithm(1e-6, 500);
+		Function<Double, Double> f = x -> -(1.4 - 3. * x) * Math.sin(18. * x);
+		System.out.println(alg.optimize(f, 0., 1.2));
 
-		Function<Double, Double> f = UniUnconstrStandard::p10;
-		CalvinAlgorithm alg = new CalvinAlgorithm(1e-4, 500);
-		OptimizerSolution<Double, Double> opt = alg.optimize(f, 0, 1);
-		System.out.println("sol = " + opt.getOptimalPoint());
-		System.out.println("val = " + f.apply(opt.getOptimalPoint()));
-		System.out.println("fev = " + opt.getFEvals());
-		System.out.println("dfev = " + opt.getDFEvals());
-		System.out.println("conv = " + opt.converged());
+		//
+//		int success = 0;
+//		for (String key : ALL_FUNCTIONS.keySet()) {
+//			final Function<Double, Double> func = ALL_FUNCTIONS.get(key);
+//			final BrentAlgorithm optimizer = new BrentAlgorithm(1e-12, 1e-12, 3000);
+//			final double min = optimizer.optimize(func, 0, 1).getOptimalPoint();
+//			final double fmin = func.apply(min);
+//			System.out.println(key + ": " + "error: " + fmin);
+//			if (Math.abs(fmin - 0) < 1e-5) {
+//				success += 1;
+//			}
+//		}
+//		double success_rate = 1. * success / ALL_FUNCTIONS.size();
+//		System.out.println("success rate: " + success_rate);
+//
+//		Function<Double, Double> f = UniUnconstrStandard::p10;
+//		CalvinAlgorithm alg = new CalvinAlgorithm(1e-4, 500);
+//		OptimizerSolution<Double, Double> opt = alg.optimize(f, 0, 1);
+//		System.out.println("sol = " + opt.getOptimalPoint());
+//		System.out.println("val = " + f.apply(opt.getOptimalPoint()));
+//		System.out.println("fev = " + opt.getFEvals());
+//		System.out.println("dfev = " + opt.getDFEvals());
+//		System.out.println("conv = " + opt.converged());
 	}
 
 	private UniUnconstrStandard() {

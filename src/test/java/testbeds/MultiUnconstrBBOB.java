@@ -27,6 +27,8 @@ import java.util.Random;
 import java.util.function.Function;
 
 import opt.multivariate.unconstrained.order0.cmaes.BiPopCmaesAlgorithm;
+import opt.multivariate.unconstrained.order0.evol.AdaptiveFireflyAlgorithm;
+import opt.multivariate.unconstrained.order0.evol.AdaptiveFireflyAlgorithm.Geometric;
 import utils.BlasMath;
 import utils.RealMath;
 
@@ -690,9 +692,9 @@ public class MultiUnconstrBBOB {
 	}
 
 	public static void main(String[] args) {
-		final int scales = 7;
-		final int n = 20;
-		final int m = 1;
+		final int scales = 6;
+		final int n = 5;
+		final int m = 3;
 		for (int i = 0; i <= scales * m; ++i) {
 			final int fevs = (int) Math.pow(10, i / (m * 1.)) * n;
 			int passed = 0;
@@ -706,12 +708,15 @@ public class MultiUnconstrBBOB {
 					final double[] ub = new double[n];
 					final double[] guess = new double[n];
 					for (int l = 0; l < n; ++l) {
-						guess[l] = RAND.nextDouble() * 2 - 1;
+						guess[l] = RAND.nextDouble() * 10 - 1;
 						lb[l] = -5.0;
 						ub[l] = 5.0;
 					}
-					BiPopCmaesAlgorithm alg = new BiPopCmaesAlgorithm(-1, 1e-13, 2.0, fevs, 2000, false);
-					double[] res = alg.optimize(func, guess).getOptimalPoint();
+					// BiPopCmaesAlgorithm alg = new BiPopCmaesAlgorithm(-1, 1e-12, 2.0, fevs, 2000,
+					// false);
+					final AdaptiveFireflyAlgorithm alg = new AdaptiveFireflyAlgorithm(20, 0.1, 0.9, 0.5,
+							new Geometric(0.2, 0.9975), 2, 0.05, fevs);
+					double[] res = alg.optimize(func, lb, ub).getOptimalPoint();
 					if (res != null) {
 						double fit = func.apply(res);
 						double ferr = Math.abs(fit - 0.0);
