@@ -6,91 +6,20 @@
 
 
 # optim4j
-This is a self-contained library of subroutines for performing local and global minimization of non-linear functions (some state-of-the-art), written entirely in Java. It consists of:
-1. existing subroutines, often written originally in other programming languages (mostly Fortran and C/C++) and provided generously for the benefit of the public, that were translated to Java
-2. algorithms implemented from scratch based on existing literature.
+This is a self-contained library of algorithms for performing local and global minimization of non-linear and black-box functions written in Java. Main features:
+1. support for univariate problems up to multivariate problems with tens of thousands of variables, and constrained problems
+1. many algorithms are re-implementations of recently published algorithms (e.g. adaptive PSO, firefly) and can be seen as state-of-the-art
+2. some algorithms are translations of professional implementations of classical algorithms (e.g. LBFGS)
+2. flexible licensing (full project under LGPL, but some algorithms can be used under the MIT license)
 
 **This library is a work in progress (read: beta version). There can still be errors in translation (e.g. from other packages) or errors in code written for this package. Detailed testing of current algorithms still remains to be done, and many additional features and algorithms will be added in the future.**
 
 ## Requirements and Installation
 This package only requires JRE >= 1.8. No dependencies!
 
-## Coverage
+## Support
 
-The current version supports the optimization algorithms list below. Please note: this list may be updated in the future as new algorithms are introduced:
-
-1. line search methods:
-	- Backtracking
-	- Constant Step Size
-	- Fletcher
-	- Hager-Zhang
-	- More-Thuente
-	- Strong Wolfe Conditions
-2. univariate problems:
-	- derivative-free methods:
-		- Brent (local version)
-		- Brent (global version)
-		- Calvin
-		- Davies-Swann-Campey
-		- Fibonacci Search
-		- Gaussian Estimation-of-Distribution (Gaussian-EDA)
-		- Golden Section Search
-		- Modified Piyavskii
-	- first-order methods:
-		- Cubic Interpolation
-		- Modified Secant
-3. multivariate problems:
-	- unconstrained and box-constrained problems:
-		- derivative-free methods:
-			- quadratic approximation methods:
-				- BOBYQA
-				- NEWUOA
-				- UOBYQA
-			- CMA-ES methods and variants:
-				- Vanilla (CMA-ES)
-				- Active (aCMA-ES)
-				- Cholesky (cholesky CMA-ES)
-				- Limited Memory (LM-CMA-ES)
-				- Separable (sep-CMA-ES)
-				- Restarts with Increasing Pop. (IPOP, NIPOP...)
-				- Restarts with Two Pop. (BIPOP, NBIPOP...)
-			- direct search methods:
-				- Controlled Random Search (CRS)
-				- Dividing Rectangles (DIRECT)
-				- Nelder-Mead Simplex
-				- Praxis
-				- Rosenbrock
-			- evolutionary and swarm-based methods:
-				- Adaptive Firefly
-				- Adaptive PSO
-				- Cooperatively Co-Evolving PSO
-				- Competitive Swarm Optimization (CSO)
-				- AMaLGaM IDEA
-				- Differential Search
-				- ESCH
-				- PIKAIA
-				- Self-Adaptive Differential Evolution with Neighborhood Search (SaNSDE)
-		- first and second-order methods:
-			- Conjugate Gradient (CG+)
-			- Conjugate Variable Metric (PLIC)
-			- Limited-Memory BFGS (LBFGS-B)
-			- Truncated Newton
-			- Trust-Region Newton
-	- constrained problems:
-		- derivative-free methods:
-			- Box Complex
-			- COBYLA
-			- LINCOA
-		- first and second-order methods:
-			- Shor (SOLVOPT)
-			- SQP Variable Metric (PSQP)
-			- TOLMIN
-	- other problems with specific structure:
-		- linear programming problems:
-			- Revised Simplex
-		- least-squares problems:
-			- Levenberg-Marquardt
-		
+The project documentation site is found here: https://optim4j.readthedocs.io/en/latest/.
 	
 ## Usage
 This program is designed to work with Java functions or lambda expressions. Below is a worked example.
