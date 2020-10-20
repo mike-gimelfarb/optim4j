@@ -1,8 +1,7 @@
----
 # Optimizing Continuous Functions of One Variable - Performing a Global Search
 ---
 
-Portfolio Optimization with Two Stocks
+Optimizing the 1D Rastrigin Function
 -------------------------
 
 Some functions are difficult to optimize using algorithms that perform local search or use gradients, since they can get stuck in locally optimal solutions. In such situations, it may be worth to consider an algorithm based on global search. The optim4j package provides several globally convergent algorithms for optimizing functions of a single variable.
