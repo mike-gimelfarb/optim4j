@@ -6,7 +6,7 @@
 
 
 # optim4j
-This is a self-contained library of algorithms for performing local and global minimization of non-linear and black-box functions written in Java. Main features:
+This is a self-contained library of algorithms for performing local and global optimization of functions written in Java. Main features:
 1. support for univariate problems up to multivariate problems with tens of thousands of variables, and constrained problems
 1. many algorithms are re-implementations of recently published algorithms (e.g. adaptive PSO, firefly) and can be seen as state-of-the-art
 2. some algorithms are translations of professional implementations of classical algorithms (e.g. LBFGS)
